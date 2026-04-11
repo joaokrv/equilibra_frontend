@@ -42,6 +42,17 @@ export const ContasPage = () => {
     queryFn: () => investimentosApi.listar(),
   });
 
+  const ensureArray = <T,>(value: unknown): T[] => {
+    if (Array.isArray(value)) return value as T[];
+    if (value && typeof value === 'object' && Array.isArray((value as any).content)) {
+      return (value as any).content as T[];
+    }
+    return [];
+  };
+
+  const contasList = ensureArray<ContaResponseDTO>(contas);
+  const investimentosList = ensureArray<any>(investimentos);
+
   const criarMutation = useMutation({
     mutationFn: () =>
       ContaControllerService.criarConta({ nome: nome.trim(), saldo: saldo ? Number(saldo) : 0 }),
@@ -106,16 +117,16 @@ export const ContasPage = () => {
     setContaParaDeletar({ id, nome: nomeConta });
   };
 
-  const saldoContas = contas.reduce((acc, c) => acc + (c.saldo ?? 0), 0);
-  const saldoInvestimentos = investimentos.reduce((acc, i) => acc + (i.valorAtual ?? 0), 0);
+  const saldoContas = contasList.reduce((acc, c) => acc + (c.saldo ?? 0), 0);
+  const saldoInvestimentos = investimentosList.reduce((acc, i) => acc + (i.valorAtual ?? 0), 0);
   const saldoTotal = saldoContas + saldoInvestimentos;
-  const investidoPorConta = investimentos.reduce((acc, inv) => {
+  const investidoPorConta = investimentosList.reduce((acc, inv) => {
     const contaOrigem = (inv.nomeContaOrigem ?? '').trim();
     if (!contaOrigem) return acc;
     acc[contaOrigem] = (acc[contaOrigem] ?? 0) + (inv.valorAtual ?? 0);
     return acc;
   }, {} as Record<string, number>);
-  const contasFiltradas = contas.filter((conta) =>
+  const contasFiltradas = contasList.filter((conta) =>
     (conta.nome ?? '').toLowerCase().includes(busca.toLowerCase().trim())
   );
 
