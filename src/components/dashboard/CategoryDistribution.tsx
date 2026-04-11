@@ -57,14 +57,14 @@ export const CategoryDistribution = ({
   );
 
   return (
-  <div className="glass p-8 rounded-3xl flex flex-col items-center">
-    <div className="w-full mb-8 text-center">
-      <h4 className="text-xl font-bold text-white">{t(language, 'distributionTitle')}</h4>
+  <div className="glass p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl flex flex-col items-center">
+    <div className="w-full mb-5 sm:mb-8 text-center">
+      <h4 className="text-lg sm:text-xl font-bold text-white">{t(language, 'distributionTitle')}</h4>
       <p className="text-xs text-muted-foreground font-medium uppercase tracking-widest mt-1">
         {t(language, 'byCategory')}
       </p>
 
-      <div className="mt-4 inline-flex rounded-full bg-secondary/50 p-1 border border-white/10">
+      <div className="mt-4 inline-flex flex-wrap justify-center gap-1 rounded-2xl sm:rounded-full bg-secondary/50 p-1 border border-white/10">
         {[
           { id: 'DESPESA', label: t(language, 'filterExpenses') },
           { id: 'RECEITA', label: t(language, 'filterIncome') },
@@ -74,7 +74,7 @@ export const CategoryDistribution = ({
             key={item.id}
             type="button"
             onClick={() => setFiltro(item.id as 'DESPESA' | 'RECEITA' | 'AMBOS')}
-            className={`px-3 py-1.5 text-xs font-bold uppercase tracking-wider rounded-full transition-all ${
+            className={`px-3 py-1.5 text-[11px] sm:text-xs font-bold uppercase tracking-wider rounded-full transition-all ${
               filtro === item.id
                 ? 'bg-primary text-primary-foreground'
                 : 'text-muted-foreground hover:text-white'
@@ -121,7 +121,7 @@ export const CategoryDistribution = ({
       )}
     </div>
 
-    <div className="w-full mt-8 space-y-3">
+    <div className="w-full mt-5 sm:mt-8 space-y-3">
       {dadosFiltrados.slice(0, 4).map((cat, idx) => (
         <div key={cat.name} className="flex items-center justify-between">
           <div className="flex items-center gap-2">

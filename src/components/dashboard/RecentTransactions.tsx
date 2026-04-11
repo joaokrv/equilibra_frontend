@@ -22,9 +22,9 @@ export const RecentTransactions = ({ transacoesList }: RecentTransactionsProps) 
 
   return (
   <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
-    <div className="glass p-8 rounded-3xl pb-10">
-      <div className="flex items-center justify-between mb-8">
-        <h4 className="text-xl font-bold text-white">{translate(language, 'topTransactions')}</h4>
+    <div className="glass p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl pb-6 sm:pb-10">
+      <div className="flex items-center justify-between gap-3 mb-5 sm:mb-8">
+        <h4 className="text-lg sm:text-xl font-bold text-white">{translate(language, 'topTransactions')}</h4>
         <Link 
           to="/extrato" 
           className="text-xs font-bold text-primary hover:underline uppercase tracking-widest transition-all hover:opacity-80"
@@ -33,24 +33,24 @@ export const RecentTransactions = ({ transacoesList }: RecentTransactionsProps) 
         </Link>
       </div>
 
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-5 lg:gap-6">
         {transacoesList.slice(0, 3).map((transacao: any) => (
           <div
             key={transacao.id}
-            className="flex items-center justify-between p-5 bg-secondary/20 rounded-2xl border border-white/5 hover:border-primary/30 transition-all cursor-pointer group"
+            className="flex items-center justify-between gap-3 p-3 sm:p-5 bg-secondary/20 rounded-xl sm:rounded-2xl border border-white/5 hover:border-primary/30 transition-all cursor-pointer group"
           >
-            <div className="flex items-center gap-4">
+            <div className="flex items-center gap-3 sm:gap-4 min-w-0">
               <div
-                className={`w-12 h-12 rounded-2xl ${
+                className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl ${
                   transacao.tipo === TransacaoResponseDTO.tipo.RECEITA
                     ? 'bg-emerald-500/10 text-emerald-500'
                     : 'bg-rose-500/10 text-rose-500'
                 } flex items-center justify-center group-hover:bg-primary/10 transition-colors`}
               >
-                {transacao.tipo === TransacaoResponseDTO.tipo.RECEITA ? <TrendingUp size={20} /> : <TrendingDown size={20} />}
+                {transacao.tipo === TransacaoResponseDTO.tipo.RECEITA ? <TrendingUp size={18} /> : <TrendingDown size={18} />}
               </div>
-              <div>
-                <p className="text-sm font-bold text-white mb-0.5">{transacao.descricao}</p>
+              <div className="min-w-0">
+                <p className="text-sm font-bold text-white mb-0.5 truncate">{transacao.descricao}</p>
                 <p className="text-xs uppercase text-muted-foreground tracking-widest font-bold">
                   {transacao.nomeCategoria || translate(language, 'uncategorized')} •{' '}
                   {format(new Date(transacao.data!), 'dd MMM', { locale: dateLocale })}

@@ -125,20 +125,20 @@ export const ExtratoPage = ({ filtroTipo, titulo, descricao }: ExtratoPageProps)
 
   return (
     <MainLayout>
-      <div className="p-6 space-y-6 animate-in fade-in duration-500">
+      <div className="p-3 sm:p-4 lg:p-6 space-y-5 sm:space-y-6 animate-in fade-in duration-500">
         <div>
           <h1 className="text-2xl font-bold text-white">{tituloPagina}</h1>
           <p className="text-sm text-muted-foreground mt-1">{descricaoPagina}</p>
         </div>
 
         {/* Navegação por mês + busca */}
-        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center gap-3 sm:gap-4">
           <div className="flex items-center gap-3 glass rounded-xl px-3 py-2">
             <button onClick={() => navMes(-1)} className="p-1 rounded-lg hover:bg-white/10 text-muted-foreground hover:text-white transition-all"><ChevronLeft size={18} /></button>
             <span className="text-sm font-bold text-white capitalize min-w-[140px] text-center">{nomeMes}</span>
             <button onClick={() => navMes(1)} className="p-1 rounded-lg hover:bg-white/10 text-muted-foreground hover:text-white transition-all"><ChevronRight size={18} /></button>
           </div>
-          <div className="relative flex-1 max-w-xs">
+          <div className="relative w-full sm:flex-1 sm:max-w-xs">
             <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
             <input type="text" value={busca} onChange={(e) => handleBuscaChange(e.target.value)} placeholder={tr('Buscar transação...', 'Search transaction...')} className="w-full bg-secondary/30 border border-white/5 rounded-xl pl-9 pr-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium placeholder:text-muted-foreground/30" />
           </div>
@@ -184,7 +184,7 @@ export const ExtratoPage = ({ filtroTipo, titulo, descricao }: ExtratoPageProps)
         {isLoading ? (
           <div className="flex items-center justify-center h-48"><Loader2 className="animate-spin text-primary" size={32} /></div>
         ) : filtradas.length === 0 ? (
-          <div className="glass rounded-2xl p-12 flex flex-col items-center justify-center gap-4 text-center">
+          <div className="glass rounded-2xl p-6 sm:p-10 lg:p-12 flex flex-col items-center justify-center gap-4 text-center">
             <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center text-primary/50"><Receipt size={32} /></div>
             <p className="text-sm text-muted-foreground font-medium max-w-xs leading-relaxed">
               {busca ? tr('Nenhuma transação encontrada para esta busca.', 'No transactions found for this search.') : tr('Nenhuma transação neste mês.', 'No transactions in this month.')}
@@ -193,7 +193,7 @@ export const ExtratoPage = ({ filtroTipo, titulo, descricao }: ExtratoPageProps)
         ) : (
           <div className="glass rounded-2xl divide-y divide-white/5 overflow-hidden">
             {filtradas.map((t: TransacaoResponseDTO) => (
-              <div key={t.id} className="group flex items-center gap-4 px-5 py-4 hover:bg-white/5 transition-all">
+              <div key={t.id} className="group flex items-center gap-3 sm:gap-4 px-3 sm:px-5 py-4 hover:bg-white/5 transition-all">
                 <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 ${
                   t.tipo === TransacaoResponseDTO.tipo.RECEITA ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'
                 }`}>
@@ -232,7 +232,7 @@ export const ExtratoPage = ({ filtroTipo, titulo, descricao }: ExtratoPageProps)
                 </div>
 
                 {/* Ações — visíveis no hover */}
-                <div className="flex items-center gap-1 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
+                <div className="flex items-center gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity flex-shrink-0">
                   <button
                     onClick={() => abrirEditar(t)}
                     className="p-1.5 rounded-lg hover:bg-white/10 text-muted-foreground hover:text-primary transition-all"

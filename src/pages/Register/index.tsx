@@ -87,14 +87,14 @@ export function RegisterPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-4 font-sans py-12">
-      <div className="glass w-full max-w-2xl p-12 rounded-[2.5rem] flex flex-col items-center">
+    <div className="min-h-screen flex items-center justify-center bg-background p-3 sm:p-4 font-sans py-6 sm:py-12">
+      <div className="glass w-full max-w-2xl p-5 sm:p-8 lg:p-12 rounded-2xl sm:rounded-[2.5rem] flex flex-col items-center">
         <Link to="/login">
           <img src={logo} alt="Equilibra" className="w-24 h-24 mb-2 drop-shadow-[0_0_15px_rgba(124,58,237,0.5)]" />
         </Link>
         
-        <h1 className="text-3xl font-bold text-gradient mb-1 tracking-tighter">{tr('Criar Conta', 'Create Account')}</h1>
-        <p className="text-muted-foreground mb-8 text-center text-sm font-medium">
+        <h1 className="text-2xl sm:text-3xl font-bold text-gradient mb-1 tracking-tighter">{tr('Criar Conta', 'Create Account')}</h1>
+        <p className="text-muted-foreground mb-6 sm:mb-8 text-center text-sm font-medium">
           {tr('Comece sua jornada rumo à liberdade financeira.', 'Start your journey toward financial freedom.')}
         </p>
 
@@ -179,7 +179,7 @@ export function RegisterPage() {
           </div>
 
           {/* Checklist de Senha */}
-          <div className="bg-secondary/20 p-4 rounded-xl border border-white/5 grid grid-cols-2 gap-y-2 gap-x-4">
+          <div className="bg-secondary/20 p-3 sm:p-4 rounded-xl border border-white/5 grid grid-cols-1 sm:grid-cols-2 gap-y-2 gap-x-4">
             {passwordRequirements.map((req, idx) => (
               <div key={idx} className="flex items-center gap-2">
                 {req.met ? (
@@ -198,7 +198,7 @@ export function RegisterPage() {
             type="submit"
             disabled={registerMutation.isPending}
             id="btn-register"
-            className="w-full bg-primary hover:bg-primary/90 text-white font-bold py-5 rounded-xl transition-all shadow-xl shadow-primary/20 mt-4 active:scale-[0.98] text-base tracking-widest disabled:opacity-50"
+            className="w-full bg-primary hover:bg-primary/90 text-white font-bold py-4 sm:py-5 rounded-xl transition-all shadow-xl shadow-primary/20 mt-4 active:scale-[0.98] text-sm sm:text-base tracking-widest disabled:opacity-50"
           >
             {registerMutation.isPending ? tr('PROCESSANDO...', 'PROCESSING...') : tr('CRIAR MINHA CONTA', 'CREATE MY ACCOUNT')}
           </button>
@@ -210,7 +210,7 @@ export function RegisterPage() {
           )}
         </form>
 
-        <p className="text-sm text-muted-foreground font-medium uppercase tracking-widest mt-10 px-1 text-center">
+        <p className="text-xs sm:text-sm text-muted-foreground font-medium uppercase tracking-wider sm:tracking-widest mt-7 sm:mt-10 px-1 text-center">
           {tr('Já tem uma conta?', 'Already have an account?')} <Link to="/login" className="text-primary hover:underline font-bold">{tr('Fazer Login', 'Sign In')}</Link>
         </p>
       </div>

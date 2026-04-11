@@ -34,8 +34,8 @@ export const PatrimonyChart = ({ dados, moeda }: PatrimonyChartProps) => {
   );
 
   return (
-  <div className="lg:col-span-2 glass p-8 rounded-3xl min-h-[450px] flex flex-col">
-    <div className="flex items-center justify-between mb-8">
+  <div className="lg:col-span-2 glass p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl min-h-[340px] sm:min-h-[450px] flex flex-col">
+    <div className="flex items-center justify-between mb-5 sm:mb-8">
       <div>
         <h4 className="text-lg font-bold text-white">{t(language, 'patrimonyEvolution')}</h4>
         <p className="text-xs text-muted-foreground font-medium uppercase tracking-widest mt-1">
@@ -45,7 +45,7 @@ export const PatrimonyChart = ({ dados, moeda }: PatrimonyChartProps) => {
     </div>
 
     {dadosGrafico.length > 1 ? (
-      <div className="flex-1 min-h-[320px]">
+      <div className="flex-1 min-h-[240px] sm:min-h-[320px]">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={dadosGrafico} margin={{ top: 10, right: 10, left: 0, bottom: 0 }}>
             <XAxis

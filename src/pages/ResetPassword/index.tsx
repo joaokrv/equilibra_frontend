@@ -97,7 +97,7 @@ export function ResetPasswordPage() {
   if (tokenValido === null) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="glass p-10 rounded-3xl flex flex-col items-center gap-4">
+        <div className="glass p-6 sm:p-10 rounded-2xl sm:rounded-3xl flex flex-col items-center gap-4">
           <Loader2 size={40} className="text-primary animate-spin" />
           <p className="text-muted-foreground text-sm font-medium uppercase tracking-widest">
             {tr('Validando link de recuperação...', 'Validating recovery link...')}
@@ -111,11 +111,11 @@ export function ResetPasswordPage() {
   if (!tokenValido) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background p-4">
-        <div className="glass w-full max-w-lg p-10 rounded-3xl flex flex-col items-center">
+        <div className="glass w-full max-w-lg p-5 sm:p-8 lg:p-10 rounded-2xl sm:rounded-3xl flex flex-col items-center">
           <img
             src={logo}
             alt="Equilibra Logo"
-            className="w-28 h-28 mb-4 drop-shadow-[0_0_20px_rgba(124,58,237,0.6)] opacity-50"
+            className="w-24 h-24 sm:w-28 sm:h-28 mb-4 drop-shadow-[0_0_20px_rgba(124,58,237,0.6)] opacity-50"
           />
           <h1 className="text-2xl font-bold text-destructive mb-3">{tr('Link Inválido', 'Invalid Link')}</h1>
           <p className="text-muted-foreground text-center text-sm mb-8 leading-relaxed max-w-sm">
@@ -142,15 +142,15 @@ export function ResetPasswordPage() {
   // Formulário de nova senha
   return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4 font-sans">
-      <div className="glass w-full max-w-lg p-10 rounded-3xl flex flex-col items-center">
+      <div className="glass w-full max-w-lg p-5 sm:p-8 lg:p-10 rounded-2xl sm:rounded-3xl flex flex-col items-center">
         <img
           src={logo}
           alt="Equilibra Logo"
           id="reset-password-logo"
-          className="w-28 h-28 mb-2 drop-shadow-[0_0_20px_rgba(124,58,237,0.6)]"
+          className="w-24 h-24 sm:w-28 sm:h-28 mb-2 drop-shadow-[0_0_20px_rgba(124,58,237,0.6)]"
         />
 
-        <h1 className="text-3xl font-bold text-gradient mb-2 tracking-tighter">{tr('Nova Senha', 'New Password')}</h1>
+        <h1 className="text-2xl sm:text-3xl font-bold text-gradient mb-2 tracking-tighter">{tr('Nova Senha', 'New Password')}</h1>
         <p className="text-muted-foreground mb-2 text-center text-sm font-medium">
           {tr('Crie uma nova senha para a conta:', 'Create a new password for account:')}
         </p>
@@ -190,7 +190,7 @@ export function ResetPasswordPage() {
             type="submit"
             disabled={resetMutation.isPending}
             id="btn-resetar-senha"
-            className="w-full bg-primary hover:bg-primary/90 text-white font-bold py-5 rounded-xl transition-all shadow-xl shadow-primary/25 mt-4 active:scale-[0.98] text-base tracking-widest disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
+            className="w-full bg-primary hover:bg-primary/90 text-white font-bold py-4 sm:py-5 rounded-xl transition-all shadow-xl shadow-primary/25 mt-4 active:scale-[0.98] text-sm sm:text-base tracking-wider sm:tracking-widest disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
           >
             <ShieldCheck size={18} />
             {resetMutation.isPending ? tr('REDEFININDO...', 'RESETTING...') : tr('REDEFINIR SENHA', 'RESET PASSWORD')}

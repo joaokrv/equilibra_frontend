@@ -171,13 +171,13 @@ export const InvestimentosPage = () => {
 
   return (
     <MainLayout>
-      <div className="p-6 space-y-6 animate-in fade-in duration-500">
-        <div className="flex items-center justify-between">
+      <div className="p-3 sm:p-4 lg:p-6 space-y-5 sm:space-y-6 animate-in fade-in duration-500">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
           <div>
             <h1 className="text-2xl font-bold text-white">{tr('Investimentos', 'Investments')}</h1>
             <p className="text-sm text-muted-foreground mt-1">{tr('Acompanhe suas metas e faca aportes ou resgates.', 'Track your goals and make deposits or withdrawals.')}</p>
           </div>
-          <button onClick={() => setModal('criar')} className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white font-bold px-4 py-2.5 rounded-xl transition-all shadow-lg shadow-primary/20 active:scale-[0.98] text-sm">
+          <button onClick={() => setModal('criar')} className="w-full sm:w-auto flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-white font-bold px-4 py-2.5 rounded-xl transition-all shadow-lg shadow-primary/20 active:scale-[0.98] text-sm">
             <Plus size={16} /> {tr('Novo Investimento', 'New Investment')}
           </button>
         </div>
@@ -203,7 +203,7 @@ export const InvestimentosPage = () => {
         {isLoading ? (
           <div className="flex items-center justify-center h-48"><Loader2 className="animate-spin text-primary" size={32} /></div>
         ) : investimentos.length === 0 ? (
-          <div className="glass rounded-2xl p-12 flex flex-col items-center justify-center gap-4 text-center">
+          <div className="glass rounded-2xl p-6 sm:p-10 lg:p-12 flex flex-col items-center justify-center gap-4 text-center">
             <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center text-primary/50"><Target size={32} /></div>
             <p className="text-sm text-muted-foreground font-medium max-w-xs leading-relaxed">{tr('Nenhum investimento criado. Defina sua primeira meta.', 'No investments created. Set your first goal.')}</p>
           </div>
@@ -231,7 +231,7 @@ export const InvestimentosPage = () => {
                         </p>
                       </div>
                     </div>
-                    <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div className="flex gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
                       <button onClick={() => abrirMeta(inv)} className="p-1.5 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all" title={tr('Editar meta', 'Edit goal')}><Pencil size={14} /></button>
                       <button onClick={() => handleDeletar(inv.id!, inv.descricao || '')} disabled={deletandoId === inv.id} className="p-1.5 rounded-lg text-muted-foreground hover:text-rose-400 hover:bg-rose-500/10 transition-all disabled:opacity-50" title={tr('Remover', 'Remove')}>
                         {deletandoId === inv.id ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}

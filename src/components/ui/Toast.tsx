@@ -115,7 +115,7 @@ export const ToastContainer = () => {
   if (toasts.length === 0) return null;
 
   return (
-    <div className="fixed top-4 right-4 z-[9999] flex flex-col gap-3 pointer-events-auto">
+    <div className="fixed top-3 left-3 right-3 sm:top-4 sm:right-4 sm:left-auto z-[9999] flex flex-col gap-3 pointer-events-auto">
       {toasts.map((t) => (
         <ToastItem key={t.id} {...t} />
       ))}

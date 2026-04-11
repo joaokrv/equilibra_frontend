@@ -207,13 +207,13 @@ export const CartoesPage = () => {
 
   return (
     <MainLayout>
-      <div className="p-6 space-y-6 animate-in fade-in duration-500">
-        <div className="flex items-center justify-between">
+      <div className="p-3 sm:p-4 lg:p-6 space-y-5 sm:space-y-6 animate-in fade-in duration-500">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
           <div>
             <h1 className="text-2xl font-bold text-white">{tr('Meus Cartões', 'My Cards')}</h1>
             <p className="text-sm text-muted-foreground mt-1">{tr('Gerencie seus cartões de crédito e acompanhe faturas.', 'Manage your credit cards and track invoices.')}</p>
           </div>
-          <button onClick={() => setModalAberto(true)} className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white font-bold px-4 py-2.5 rounded-xl transition-all shadow-lg shadow-primary/20 active:scale-[0.98] text-sm">
+          <button onClick={() => setModalAberto(true)} className="w-full sm:w-auto flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-white font-bold px-4 py-2.5 rounded-xl transition-all shadow-lg shadow-primary/20 active:scale-[0.98] text-sm">
             <Plus size={16} /> {tr('Novo Cartão', 'New Card')}
           </button>
         </div>
@@ -238,7 +238,7 @@ export const CartoesPage = () => {
         {isLoading ? (
           <div className="flex items-center justify-center h-48"><Loader2 className="animate-spin text-primary" size={32} /></div>
         ) : cartoes.length === 0 ? (
-          <div className="glass rounded-2xl p-12 flex flex-col items-center justify-center gap-4 text-center">
+          <div className="glass rounded-2xl p-6 sm:p-10 lg:p-12 flex flex-col items-center justify-center gap-4 text-center">
             <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center text-primary/50"><CreditCard size={32} /></div>
             <p className="text-sm text-muted-foreground font-medium max-w-xs leading-relaxed">{tr('Nenhum cartão cadastrado. Adicione seu primeiro cartão de crédito.', 'No cards registered. Add your first credit card.')}</p>
           </div>
@@ -247,7 +247,7 @@ export const CartoesPage = () => {
             {cartoes.map((cartao) => (
               <div key={cartao.id} className="glass rounded-2xl overflow-hidden">
                 {/* Card header */}
-                <div className="p-5 flex items-center gap-4 cursor-pointer hover:bg-white/5 transition-all" onClick={() => toggleExpand(cartao.id!)}>
+                <div className="p-4 sm:p-5 flex items-center gap-3 sm:gap-4 cursor-pointer hover:bg-white/5 transition-all" onClick={() => toggleExpand(cartao.id!)}>
                   <div className="w-14 h-10 flex items-center justify-center flex-shrink-0">
                     {cartao.bandeira && BANDEIRA_IMAGENS[cartao.bandeira] ? (
                       <img
