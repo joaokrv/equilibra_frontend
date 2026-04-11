@@ -57,10 +57,19 @@ export const useDashboardData = () => {
     queryFn: () => patrimonioApi.listarEvolucao(180),
   });
 
+  const ensureArray = <T,>(value: unknown): T[] => {
+    if (Array.isArray(value)) return value as T[];
+    if (value && typeof value === 'object' && Array.isArray((value as any).content)) {
+      return (value as any).content as T[];
+    }
+    return [];
+  };
+
   // Normalizar lista (paginação ou array direto)
-  const transacoesList: TransacaoResponseDTO[] = Array.isArray(transacoes)
-    ? transacoes
-    : (transacoes as any).content || [];
+  const transacoesList: TransacaoResponseDTO[] = ensureArray<TransacaoResponseDTO>(transacoes);
+  const contasList = ensureArray<any>(contas);
+  const investimentosList = ensureArray<any>(investimentos);
+  const evolucaoPatrimonioList = ensureArray<any>(evolucaoPatrimonioBruta);
 
   // Cálculos de resumo
   const totalReceitas = transacoesList
@@ -71,12 +80,12 @@ export const useDashboardData = () => {
     .filter((t) => t.tipo === TransacaoResponseDTO.tipo.DESPESA)
     .reduce((acc, t) => acc + (t.valor || 0), 0);
 
-  const saldoTotalContas = (contas as any[]).reduce(
+  const saldoTotalContas = contasList.reduce(
     (acc: number, c: any) => acc + (c.saldo || 0),
     0,
   );
 
-  const totalInvestido = (investimentos as any[]).reduce(
+  const totalInvestido = investimentosList.reduce(
     (acc: number, i: any) => acc + (i.valorAtual || 0),
     0,
   );
@@ -128,7 +137,7 @@ export const useDashboardData = () => {
     totalInvestido: totalInvestido * conversionRate,
     despesasPorCategoria: despesasPorCategoria.map(d => ({ ...d, value: d.value * conversionRate })),
     receitasPorCategoria: receitasPorCategoria.map(r => ({ ...r, value: r.value * conversionRate })),
-    evolucaoPatrimonio: evolucaoPatrimonioBruta.map(item => ({
+    evolucaoPatrimonio: evolucaoPatrimonioList.map(item => ({
       dataReferencia: item.dataReferencia,
       valorTotal: Number(item.valorTotal || 0) * conversionRate,
     })),
