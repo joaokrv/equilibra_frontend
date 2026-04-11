@@ -68,6 +68,17 @@ export const InvestimentosPage = () => {
     queryFn: () => ContaControllerService.listarContas(),
   });
 
+  const ensureArray = <T,>(value: unknown): T[] => {
+    if (Array.isArray(value)) return value as T[];
+    if (value && typeof value === 'object' && Array.isArray((value as any).content)) {
+      return (value as any).content as T[];
+    }
+    return [];
+  };
+
+  const investimentosList = ensureArray<InvestimentoItem>(investimentos);
+  const contasList = ensureArray<any>(contas);
+
   const invalidar = () => {
     queryClient.invalidateQueries({ queryKey: ['investimentos'] });
     queryClient.invalidateQueries({ queryKey: ['contas'] });
@@ -165,8 +176,8 @@ export const InvestimentosPage = () => {
     setInvestimentoParaDeletar({ id, descricao: desc });
   };
 
-  const totalInvestido = investimentos.reduce((acc, i) => acc + (i.valorAtual ?? 0), 0);
-  const totalMeta = investimentos.reduce((acc, i) => acc + (i.metaAtual ?? 0), 0);
+  const totalInvestido = investimentosList.reduce((acc, i) => acc + (i.valorAtual ?? 0), 0);
+  const totalMeta = investimentosList.reduce((acc, i) => acc + (i.metaAtual ?? 0), 0);
   const progressoGeral = totalMeta > 0 ? Math.min(100, (totalInvestido / totalMeta) * 100) : 0;
 
   return (
@@ -202,14 +213,14 @@ export const InvestimentosPage = () => {
 
         {isLoading ? (
           <div className="flex items-center justify-center h-48"><Loader2 className="animate-spin text-primary" size={32} /></div>
-        ) : investimentos.length === 0 ? (
+        ) : investimentosList.length === 0 ? (
           <div className="glass rounded-2xl p-6 sm:p-10 lg:p-12 flex flex-col items-center justify-center gap-4 text-center">
             <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center text-primary/50"><Target size={32} /></div>
             <p className="text-sm text-muted-foreground font-medium max-w-xs leading-relaxed">{tr('Nenhum investimento criado. Defina sua primeira meta.', 'No investments created. Set your first goal.')}</p>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {investimentos.map((inv) => {
+            {investimentosList.map((inv) => {
               const progresso = (inv.metaAtual ?? 0) > 0 ? Math.min(100, ((inv.valorAtual ?? 0) / (inv.metaAtual ?? 1)) * 100) : 0;
               const possuiMeta = inv.metaAtual != null && inv.metaAtual > 0;
               const atingiu = progresso >= 100;
@@ -297,7 +308,7 @@ export const InvestimentosPage = () => {
                 <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Conta de Origem', 'Source Account')}</label>
                 <select value={contaId} onChange={(e) => setContaId(e.target.value)} className="w-full bg-secondary/30 border border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium appearance-none">
                   <option value="" className="bg-card text-white">{tr('Selecione a conta...', 'Select account...')}</option>
-                  {contas.map((c) => (
+                  {contasList.map((c) => (
                     <option key={c.id} value={c.id} className="bg-card text-white">{c.nome} — {formatarMoeda(c.saldo ?? 0, moeda)}</option>
                   ))}
                 </select>
@@ -314,7 +325,7 @@ export const InvestimentosPage = () => {
                 <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Conta de Destino', 'Destination Account')}</label>
                 <select value={contaDestinoId} onChange={(e) => setContaDestinoId(e.target.value)} className="w-full bg-secondary/30 border border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium appearance-none">
                   <option value="" className="bg-card text-white">{tr('Mesma da origem', 'Same as source')}</option>
-                  {contas.map((c) => (
+                  {contasList.map((c) => (
                     <option key={c.id} value={c.id} className="bg-card text-white">{c.nome} — {formatarMoeda(c.saldo ?? 0, moeda)}</option>
                   ))}
                 </select>
@@ -348,7 +359,7 @@ export const InvestimentosPage = () => {
                 </label>
                 <select value={contaId} onChange={(e) => setContaId(e.target.value)} className="w-full bg-secondary/30 border border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium appearance-none">
                   <option value="" className="bg-card text-white">{tr('Selecione...', 'Select...')}</option>
-                  {contas.map((c) => (
+                  {contasList.map((c) => (
                     <option key={c.id} value={c.id} className="bg-card text-white">{c.nome} — {formatarMoeda(c.saldo ?? 0, moeda)}</option>
                   ))}
                 </select>

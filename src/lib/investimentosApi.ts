@@ -50,10 +50,14 @@ const getAuthHeaders = () => {
 
 export const investimentosApi = {
   async listar(): Promise<InvestimentoItem[]> {
-    const { data } = await axios.get<InvestimentoItem[]>('/api/investimentos', {
+    const { data } = await axios.get<InvestimentoItem[] | { content?: InvestimentoItem[] }>('/api/investimentos', {
       headers: getAuthHeaders(),
     });
-    return data;
+    if (Array.isArray(data)) return data;
+    if (data && typeof data === 'object' && Array.isArray((data as any).content)) {
+      return (data as any).content as InvestimentoItem[];
+    }
+    return [];
   },
 
   async criar(payload: InvestimentoRegistroPayload): Promise<InvestimentoItem> {
