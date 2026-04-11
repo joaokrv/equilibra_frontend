@@ -2,6 +2,8 @@ import axios from 'axios';
 import type { AxiosError, InternalAxiosRequestConfig } from 'axios';
 import { useAuthStore } from '../store/useAuthStore';
 
+const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || '';
+
 /**
  * Instância Axios centralizada para toda a aplicação.
  *
@@ -11,7 +13,7 @@ import { useAuthStore } from '../store/useAuthStore';
  * - Fazer logout e redirecionar quando todas as tentativas falharem
  */
 const apiClient = axios.create({
-  baseURL: '',
+  baseURL: API_BASE_URL,
   headers: {
     'Content-Type': 'application/json',
   },
@@ -94,7 +96,7 @@ apiClient.interceptors.response.use(
 
     try {
       // Chamar endpoint de refresh do backend
-      const { data } = await axios.post('/api/auth/refresh', {
+      const { data } = await axios.post(`${API_BASE_URL}/api/auth/refresh`, {
         refreshToken,
       });
 
