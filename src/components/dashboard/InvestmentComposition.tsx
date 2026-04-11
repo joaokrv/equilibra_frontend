@@ -28,15 +28,15 @@ export const InvestmentComposition = ({
   const total = saldoTotalContas + totalInvestido;
 
   return (
-    <div className="glass p-8 rounded-3xl flex flex-col items-center mb-10 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-250">
-      <div className="w-full mb-8 text-center">
-        <h4 className="text-xl font-bold text-white">{t(language, 'compositionTitle')}</h4>
+    <div className="glass p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl flex flex-col items-center mb-8 sm:mb-10 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-250">
+      <div className="w-full mb-5 sm:mb-8 text-center">
+        <h4 className="text-lg sm:text-xl font-bold text-white">{t(language, 'compositionTitle')}</h4>
         <p className="text-xs text-muted-foreground font-medium uppercase tracking-widest mt-1">
           {t(language, 'accountsVsInvestments')}
         </p>
       </div>
 
-      <div className="relative w-full max-w-md aspect-square max-h-[260px]">
+      <div className="relative w-full max-w-sm sm:max-w-md aspect-square max-h-[220px] sm:max-h-[260px]">
         {dados.length > 0 ? (
           <>
             <ResponsiveContainer width="100%" height="100%">
@@ -71,7 +71,7 @@ export const InvestmentComposition = ({
         )}
       </div>
 
-      <div className="w-full max-w-md mt-6 space-y-3">
+      <div className="w-full max-w-md mt-5 sm:mt-6 space-y-3">
         {dados.map((item, idx) => (
           <div key={item.name} className="flex items-center justify-between text-sm">
             <div className="flex items-center gap-2">

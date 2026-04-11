@@ -404,14 +404,14 @@ const CategoriaItem = ({
           <>
             <button
               onClick={onIniciarEdicao}
-              className="opacity-0 group-hover:opacity-100 p-1.5 rounded-lg hover:bg-white/10 text-muted-foreground hover:text-primary transition-all"
+              className="opacity-100 sm:opacity-0 sm:group-hover:opacity-100 p-1.5 rounded-lg hover:bg-white/10 text-muted-foreground hover:text-primary transition-all"
               title={tr('Editar nome', 'Edit name')}
             >
               <Pencil size={13} />
             </button>
             <button
               onClick={onDeletar}
-              className="opacity-0 group-hover:opacity-100 p-1.5 rounded-lg hover:bg-rose-500/10 text-muted-foreground hover:text-rose-400 transition-all"
+              className="opacity-100 sm:opacity-0 sm:group-hover:opacity-100 p-1.5 rounded-lg hover:bg-rose-500/10 text-muted-foreground hover:text-rose-400 transition-all"
               title={tr(`Remover ${categoria.nome}`, `Remove ${categoria.nome}`)}
             >
               <Trash2 size={13} />

@@ -45,8 +45,8 @@ export const Dashboard = () => {
 
   return (
     <MainLayout>
-      <header className="mb-10 animate-in fade-in slide-in-from-top-4 duration-700">
-        <h2 className="text-3xl font-bold tracking-tight text-white mb-2">{t(language, 'dashboardTitle')}</h2>
+      <header className="mb-8 sm:mb-10 animate-in fade-in slide-in-from-top-4 duration-700">
+        <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white mb-2">{t(language, 'dashboardTitle')}</h2>
         <p className="text-muted-foreground font-medium">
           {t(language, 'dashboardSubtitle')}{' '}
           {format(new Date(), 'MMMM', { locale: monthLocale })}.
@@ -61,7 +61,7 @@ export const Dashboard = () => {
         moeda={moeda}
       />
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 mb-10 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 mb-8 sm:mb-10 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200">
         <PatrimonyChart dados={evolucaoPatrimonio} moeda={moeda} />
         <CategoryDistribution
           despesasPorCategoria={despesasPorCategoria}

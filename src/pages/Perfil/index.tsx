@@ -145,11 +145,11 @@ export function PerfilPage() {
 
   return (
     <MainLayout>
-      <div className="max-w-6xl mx-auto space-y-10 animate-fade-in pb-12">
+      <div className="max-w-6xl mx-auto space-y-6 sm:space-y-10 animate-fade-in pb-8 sm:pb-12 px-1 sm:px-0">
         {/* Header Seção */}
-        <header className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 sm:gap-6">
           <div className="animate-in fade-in slide-in-from-left-4 duration-700">
-            <h1 className="text-4xl font-black tracking-tight text-white mb-2 uppercase italic">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight text-white mb-2 uppercase italic">
               {tr('Configuracoes', 'Settings')} <span className="text-primary">{tr('do Perfil', 'Profile')}</span>
             </h1>
             <p className="text-muted-foreground font-medium">
@@ -170,15 +170,15 @@ export function PerfilPage() {
           </div>
         </header>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-8">
           
           {/* Coluna Central: Dados do Usuário e Foto */}
-          <div className="lg:col-span-4 space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
-            <div className="glass rounded-[2rem] p-8 border border-white/10 relative overflow-hidden flex flex-col items-center">
+          <div className="lg:col-span-4 space-y-5 sm:space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+            <div className="glass rounded-2xl sm:rounded-[2rem] p-5 sm:p-8 border border-white/10 relative overflow-hidden flex flex-col items-center">
               <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-transparent to-transparent opacity-50" />
               
               <div className="relative group cursor-pointer mb-6" onClick={() => fileInputRef.current?.click()}>
-                <div className="w-32 h-32 rounded-full overflow-hidden border-4 border-white/10 shadow-2xl relative">
+                <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full overflow-hidden border-4 border-white/10 shadow-2xl relative">
                   {user?.fotoBase64 ? (
                     <img 
                       src={`data:image/png;base64,${user.fotoBase64}`} 
@@ -210,13 +210,13 @@ export function PerfilPage() {
                 className="hidden" 
               />
 
-              <h2 className="text-2xl font-black text-white text-center mb-1">{user?.nome}</h2>
+              <h2 className="text-xl sm:text-2xl font-black text-white text-center mb-1">{user?.nome}</h2>
               <p className="text-muted-foreground text-sm flex items-center gap-2 mb-6 font-medium">
                 <Mail size={14} className="text-primary" /> {user?.email}
               </p>
 
-              <div className="w-full space-y-3">
-                 <div className="flex justify-between items-center bg-white/5 rounded-2xl p-4 border border-white/5">
+                <div className="w-full space-y-3">
+                  <div className="flex justify-between items-center bg-white/5 rounded-2xl p-3 sm:p-4 border border-white/5 gap-3">
                     <span className="text-xs font-bold uppercase text-muted-foreground">{tr('Privacidade', 'Privacy')}</span>
                     <span className="text-white text-xs font-bold flex items-center gap-2">
                       <CheckCircle2 size={14} className="text-emerald-500" /> {tr('Criptografado', 'Encrypted')}
@@ -227,7 +227,7 @@ export function PerfilPage() {
 
             {/* Card de Ativação Se Pendente */}
             {!user?.isEmailVerificado && (
-              <div className="glass rounded-[2rem] p-8 border border-amber-500/20 bg-amber-500/5 animate-pulse-subtle">
+              <div className="glass rounded-2xl sm:rounded-[2rem] p-5 sm:p-8 border border-amber-500/20 bg-amber-500/5 animate-pulse-subtle">
                 <div className="flex items-center gap-3 mb-4">
                   <div className="p-2 bg-amber-500/20 rounded-lg">
                     <Send size={20} className="text-amber-500" />
@@ -266,12 +266,12 @@ export function PerfilPage() {
           </div>
 
           {/* Coluna Direita: Balanço Geral e Formulário */}
-          <div className="lg:col-span-8 space-y-8 animate-in fade-in slide-in-from-right-4 duration-700 delay-200">
+          <div className="lg:col-span-8 space-y-5 sm:space-y-8 animate-in fade-in slide-in-from-right-4 duration-700 delay-200">
             
             {/* Seção Balanço Geral (Cards Premium — clicáveis) */}
-            <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+            <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
                {/* Receitas */}
-               <Link to="/receitas" className="glass rounded-3xl p-6 border border-white/5 group hover:border-emerald-500/30 transition-all cursor-pointer">
+               <Link to="/receitas" className="glass rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-white/5 group hover:border-emerald-500/30 transition-all cursor-pointer">
                   <div className="flex items-center gap-3 mb-4">
                     <div className="p-2 bg-emerald-500/20 rounded-xl text-emerald-500">
                       <ArrowUpCircle size={20} />
@@ -284,7 +284,7 @@ export function PerfilPage() {
                </Link>
 
                {/* Despesas */}
-               <Link to="/despesas" className="glass rounded-3xl p-6 border border-white/5 group hover:border-rose-500/30 transition-all cursor-pointer">
+               <Link to="/despesas" className="glass rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-white/5 group hover:border-rose-500/30 transition-all cursor-pointer">
                   <div className="flex items-center gap-3 mb-4">
                     <div className="p-2 bg-rose-500/20 rounded-xl text-rose-500">
                       <ArrowDownCircle size={20} />
@@ -297,7 +297,7 @@ export function PerfilPage() {
                </Link>
 
                {/* Saldo Contas */}
-               <Link to="/contas" className="glass rounded-3xl p-6 border border-white/5 group hover:border-primary/30 transition-all cursor-pointer">
+               <Link to="/contas" className="glass rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-white/5 group hover:border-primary/30 transition-all cursor-pointer">
                   <div className="flex items-center gap-3 mb-4">
                     <div className="p-2 bg-primary/20 rounded-xl text-primary">
                       <Wallet size={20} />
@@ -310,7 +310,7 @@ export function PerfilPage() {
                </Link>
 
                {/* Investimentos */}
-               <Link to="/investimentos" className="glass rounded-3xl p-6 border border-white/5 group hover:border-amber-500/30 transition-all cursor-pointer">
+               <Link to="/investimentos" className="glass rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-white/5 group hover:border-amber-500/30 transition-all cursor-pointer">
                   <div className="flex items-center gap-3 mb-4">
                     <div className="p-2 bg-amber-500/20 rounded-xl text-amber-500">
                       <TrendingUp size={20} />
@@ -324,11 +324,11 @@ export function PerfilPage() {
             </section>
 
             {/* Formulário de Edição */}
-            <div className="glass rounded-[2rem] p-10 border border-white/10 relative overflow-hidden">
+            <div className="glass rounded-2xl sm:rounded-[2rem] p-5 sm:p-8 lg:p-10 border border-white/10 relative overflow-hidden">
                <div className="absolute top-0 right-0 w-80 h-80 bg-primary/5 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2" />
                
-               <form onSubmit={handleUpdatePerfil} className="relative z-10 space-y-8">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <form onSubmit={handleUpdatePerfil} className="relative z-10 space-y-6 sm:space-y-8">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-8">
                     <div className="space-y-2">
                         <label className="text-[10px] font-black uppercase text-muted-foreground tracking-[0.2em] ml-1">{tr('Nome Completo', 'Full Name')}</label>
                        <div className="relative">
@@ -357,7 +357,7 @@ export function PerfilPage() {
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-8">
                     <div className="space-y-2">
                         <label className="text-[10px] font-black uppercase text-muted-foreground tracking-[0.2em] ml-1">{tr('Sistema de Moeda', 'Currency System')}</label>
                        <div className="relative">

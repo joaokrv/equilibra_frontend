@@ -143,19 +143,19 @@ export const RecorrentesPage = () => {
 
   return (
     <MainLayout>
-      <div className="p-6 space-y-6 animate-in fade-in duration-500">
-        <div className="flex items-center justify-between">
+      <div className="p-3 sm:p-4 lg:p-6 space-y-5 sm:space-y-6 animate-in fade-in duration-500">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
           <div>
             <h1 className="text-2xl font-bold text-white">{tr('Receitas & Despesas Fixas', 'Recurring Income & Expenses')}</h1>
             <p className="text-sm text-muted-foreground mt-1">{tr('Gerencie suas transações recorrentes mensais.', 'Manage your monthly recurring transactions.')}</p>
           </div>
-          <button onClick={() => setModalAberto(true)} className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white font-bold px-4 py-2.5 rounded-xl transition-all shadow-lg shadow-primary/20 active:scale-[0.98] text-sm">
+          <button onClick={() => setModalAberto(true)} className="w-full sm:w-auto flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-white font-bold px-4 py-2.5 rounded-xl transition-all shadow-lg shadow-primary/20 active:scale-[0.98] text-sm">
             <Plus size={16} /> {tr('Nova Fixa', 'New Recurring')}
           </button>
         </div>
 
         {/* Abas */}
-        <div className="flex gap-2">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           <button onClick={() => setAba('DESPESA')} className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all ${aba === 'DESPESA' ? 'bg-rose-500/20 text-rose-400 ring-1 ring-rose-500/30' : 'bg-white/5 text-muted-foreground hover:text-white'}`}>
             <TrendingDown size={16} /> {tr('Despesas Fixas', 'Recurring Expenses')}
           </button>
@@ -183,7 +183,7 @@ export const RecorrentesPage = () => {
         {isLoading ? (
           <div className="flex items-center justify-center h-48"><Loader2 className="animate-spin text-primary" size={32} /></div>
         ) : filtradas.length === 0 ? (
-          <div className="glass rounded-2xl p-12 flex flex-col items-center justify-center gap-4 text-center">
+          <div className="glass rounded-2xl p-6 sm:p-10 lg:p-12 flex flex-col items-center justify-center gap-4 text-center">
             <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center text-primary/50"><Repeat size={32} /></div>
             <p className="text-sm text-muted-foreground font-medium max-w-xs leading-relaxed">
               {language === 'en-US'
@@ -194,7 +194,7 @@ export const RecorrentesPage = () => {
         ) : (
           <div className="glass rounded-2xl divide-y divide-white/5 overflow-hidden">
             {filtradas.map((rec) => (
-              <div key={rec.id} className="flex items-center gap-4 px-5 py-4 hover:bg-white/5 transition-all group">
+              <div key={rec.id} className="flex items-center gap-3 sm:gap-4 px-3 sm:px-5 py-4 hover:bg-white/5 transition-all group">
                 <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 ${
                   aba === 'RECEITA' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'
                 }`}>
@@ -215,7 +215,7 @@ export const RecorrentesPage = () => {
                   </p>
                   <p className="text-[10px] text-muted-foreground">{tr('/mês', '/month')}</p>
                 </div>
-                <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity flex-shrink-0">
+                <div className="flex gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity flex-shrink-0">
                   <button onClick={() => abrirEdicao(rec)} className="p-1.5 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all"><Pencil size={14} /></button>
                   <button onClick={() => handleDeletar(rec.id!, rec.descricao!)} disabled={deletandoId === rec.id} className="p-1.5 rounded-lg text-muted-foreground hover:text-rose-400 hover:bg-rose-500/10 transition-all disabled:opacity-50">
                     {deletandoId === rec.id ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}

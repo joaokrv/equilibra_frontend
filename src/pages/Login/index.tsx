@@ -82,17 +82,17 @@ export function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-background p-4 font-sans">
-      <div className="glass w-full max-w-lg p-10 rounded-3xl flex flex-col items-center">
+    <div className="min-h-screen flex items-center justify-center bg-background p-3 sm:p-4 font-sans">
+      <div className="glass w-full max-w-lg p-5 sm:p-8 lg:p-10 rounded-2xl sm:rounded-3xl flex flex-col items-center">
         <img 
           src={logo} 
           alt="Equilibra Logo" 
           id="login-logo"
-          className="w-40 h-40 mb-2 drop-shadow-[0_0_20px_rgba(124,58,237,0.6)]" 
+          className="w-28 h-28 sm:w-36 sm:h-36 lg:w-40 lg:h-40 mb-2 drop-shadow-[0_0_20px_rgba(124,58,237,0.6)]" 
         />
         
-        <h1 className="text-4xl font-bold text-gradient mb-2 tracking-tighter">Equilibra</h1>
-        <p className="text-muted-foreground mb-10 text-center text-sm font-medium">
+        <h1 className="text-3xl sm:text-4xl font-bold text-gradient mb-2 tracking-tighter">Equilibra</h1>
+        <p className="text-muted-foreground mb-6 sm:mb-10 text-center text-sm font-medium">
           {tr('Seu controle financeiro com estética e precisão.', 'Your financial control with style and precision.')}
         </p>
 
@@ -136,7 +136,7 @@ export function LoginPage() {
             type="submit"
             disabled={loginMutation.isPending}
             id="btn-login"
-            className="w-full bg-primary hover:bg-primary/90 text-white font-bold py-5 rounded-xl transition-all shadow-xl shadow-primary/25 mt-6 active:scale-[0.98] text-base tracking-widest disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-primary hover:bg-primary/90 text-white font-bold py-4 sm:py-5 rounded-xl transition-all shadow-xl shadow-primary/25 mt-6 active:scale-[0.98] text-sm sm:text-base tracking-widest disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loginMutation.isPending ? tr('AUTENTICANDO...', 'AUTHENTICATING...') : tr('ENTRAR NO FLUXO', 'SIGN IN')}
           </button>
@@ -148,7 +148,7 @@ export function LoginPage() {
           )}
         </form>
 
-        <p className="text-sm text-muted-foreground font-medium uppercase tracking-widest mt-8 px-1 text-center">
+        <p className="text-xs sm:text-sm text-muted-foreground font-medium uppercase tracking-wider sm:tracking-widest mt-6 sm:mt-8 px-1 text-center">
           {tr('Ainda não tem conta?', "Don't have an account yet?")} <Link to="/register" className="text-primary hover:underline font-bold">{tr('Criar agora', 'Create now')}</Link>
         </p>
 

@@ -116,10 +116,10 @@ export const Topbar = () => {
   };
 
   return (
-    <header className="h-16 flex items-center justify-between px-8 border-b border-white/5 bg-background/70 backdrop-blur-sm sticky top-0 z-[70]">
-      <div className="flex-1 max-w-xl" ref={containerRef}>
+    <header className="min-h-14 sm:h-16 flex items-center justify-between gap-3 px-3 sm:px-4 lg:px-8 border-b border-white/5 bg-background/70 backdrop-blur-sm sticky top-0 z-[70]">
+      <div className="flex-1 max-w-none sm:max-w-xl" ref={containerRef}>
         <div className="relative group">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors" size={18} />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-primary transition-colors" size={16} />
           <input
             ref={inputRef}
             type="text"
@@ -129,12 +129,12 @@ export const Topbar = () => {
             onKeyDown={handleKeyDown}
             placeholder={t(language, 'searchPlaceholder')}
             id="search-global"
-            className="w-full bg-secondary/30 h-10 pl-10 pr-4 rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-primary/30 transition-all border border-transparent focus:bg-secondary/50"
+            className="w-full bg-secondary/30 h-9 sm:h-10 pl-9 sm:pl-10 pr-3 sm:pr-4 rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-1 focus:ring-primary/30 transition-all border border-transparent focus:bg-secondary/50"
           />
 
           {/* Dropdown de resultados */}
           {focado && termo.length >= 2 && (
-            <div className="absolute top-12 left-0 w-full rounded-xl border border-white/10 bg-slate-950/95 backdrop-blur-xl shadow-2xl overflow-hidden z-[80] animate-in fade-in slide-in-from-top-2 duration-150">
+            <div className="absolute top-11 sm:top-12 left-0 w-full rounded-xl border border-white/10 bg-slate-950/95 backdrop-blur-xl shadow-2xl overflow-hidden z-[80] animate-in fade-in slide-in-from-top-2 duration-150">
               {resultados.length === 0 ? (
                 <div className="px-4 py-3 text-xs text-muted-foreground">{t(language, 'searchNoResults')} "{busca}"</div>
               ) : (
@@ -161,17 +161,17 @@ export const Topbar = () => {
         </div>
       </div>
 
-      <div className="flex items-center gap-6 ml-8">
-        <Link to="/perfil" className="flex items-center gap-3 pl-6 border-l border-white/5 cursor-pointer group">
-          <div className="text-right">
+      <div className="flex items-center gap-2 sm:gap-6 ml-0 sm:ml-4 lg:ml-8">
+        <Link to="/perfil" className="flex items-center gap-2 sm:gap-3 pl-0 sm:pl-4 lg:pl-6 border-l-0 sm:border-l border-white/5 cursor-pointer group min-w-0">
+          <div className="text-right hidden md:block min-w-0">
             <p className="text-sm font-semibold group-hover:text-primary transition-colors">
               {user?.nome || t(language, 'userFallback')}
             </p>
-            <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-bold">
+            <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-bold truncate max-w-[180px] lg:max-w-[260px]">
               {user?.email || ''}
             </p>
           </div>
-          <div className="w-10 h-10 rounded-full bg-secondary border border-white/10 flex items-center justify-center overflow-hidden group-hover:border-primary/50 transition-all shadow-inner">
+          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-secondary border border-white/10 flex items-center justify-center overflow-hidden group-hover:border-primary/50 transition-all shadow-inner">
             {user?.fotoBase64 ? (
               <img
                 src={`data:image/png;base64,${user.fotoBase64}`}
@@ -179,7 +179,7 @@ export const Topbar = () => {
                 className="w-full h-full object-cover transition-transform group-hover:scale-110 duration-500"
               />
             ) : (
-              <User size={20} className="text-muted-foreground group-hover:text-white transition-colors" />
+              <User size={18} className="text-muted-foreground group-hover:text-white transition-colors" />
             )}
           </div>
         </Link>

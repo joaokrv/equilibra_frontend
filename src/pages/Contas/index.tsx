@@ -130,15 +130,15 @@ export const ContasPage = () => {
 
   return (
     <MainLayout>
-      <div className="p-6 space-y-6 animate-in fade-in duration-500">
-        <div className="flex items-center justify-between">
+      <div className="p-3 sm:p-4 lg:p-6 space-y-5 sm:space-y-6 animate-in fade-in duration-500">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
           <div>
             <h1 className="text-2xl font-bold text-white">Minhas Contas</h1>
             <p className="text-sm text-muted-foreground mt-1">{tr('Gerencie suas contas bancárias e acompanhe seus saldos.', 'Manage your bank accounts and track your balances.')}</p>
           </div>
           <button
             onClick={() => setModalAberto(true)}
-            className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white font-bold px-4 py-2.5 rounded-xl transition-all shadow-lg shadow-primary/20 active:scale-[0.98] text-sm"
+            className="w-full sm:w-auto flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-white font-bold px-4 py-2.5 rounded-xl transition-all shadow-lg shadow-primary/20 active:scale-[0.98] text-sm"
           >
             <Plus size={16} /> {tr('Nova Conta', 'New Account')}
           </button>
@@ -157,7 +157,7 @@ export const ContasPage = () => {
 
         <div className="glass rounded-2xl p-6">
           <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Saldo Total (Contas + Investimentos)', 'Total Balance (Accounts + Investments)')}</p>
-          <p className={`text-3xl font-bold mt-1 ${saldoTotal >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+          <p className={`text-2xl sm:text-3xl font-bold mt-1 ${saldoTotal >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
             {formatarMoeda(saldoTotal, moeda)}
           </p>
           <p className="text-xs text-muted-foreground mt-1">{language === 'en-US' ? `${contasFiltradas.length} account${contasFiltradas.length !== 1 ? 's' : ''} shown` : `${contasFiltradas.length} conta${contasFiltradas.length !== 1 ? 's' : ''} exibida${contasFiltradas.length !== 1 ? 's' : ''}`}</p>
@@ -166,7 +166,7 @@ export const ContasPage = () => {
         {isLoading ? (
           <div className="flex items-center justify-center h-48"><Loader2 className="animate-spin text-primary" size={32} /></div>
         ) : contasFiltradas.length === 0 ? (
-          <div className="glass rounded-2xl p-12 flex flex-col items-center justify-center gap-4 text-center">
+          <div className="glass rounded-2xl p-6 sm:p-10 lg:p-12 flex flex-col items-center justify-center gap-4 text-center">
             <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center text-primary/50"><Wallet size={32} /></div>
             <p className="text-sm text-muted-foreground font-medium max-w-xs leading-relaxed">
               {busca.trim() ? tr('Nenhuma conta encontrada para esta busca.', 'No account found for this search.') : tr('Você ainda não tem contas cadastradas. Crie sua primeira conta para começar.', 'You do not have any accounts yet. Create your first account to get started.')}
@@ -192,7 +192,7 @@ export const ContasPage = () => {
                         </p>
                       </div>
                     </div>
-                    <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                    <div className="flex gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
                       <button onClick={() => abrirEdicao(conta)} className="p-1.5 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all" aria-label={tr('Editar', 'Edit')}><Pencil size={14} /></button>
                       <button onClick={() => handleDeletar(conta.id!, conta.nome!)} disabled={deletandoId === conta.id} className="p-1.5 rounded-lg text-muted-foreground hover:text-rose-400 hover:bg-rose-500/10 transition-all disabled:opacity-50" aria-label={tr('Remover', 'Remove')}>
                         {deletandoId === conta.id ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
