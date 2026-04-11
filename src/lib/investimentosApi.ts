@@ -1,5 +1,4 @@
-import axios from 'axios';
-import { useAuthStore } from '../store/useAuthStore';
+import apiClient from './axios';
 
 export type TipoInvestimento =
   | 'CDB'
@@ -43,16 +42,9 @@ interface InvestimentoAtualizacaoPayload {
   tipoPersonalizado?: string;
 }
 
-const getAuthHeaders = () => {
-  const token = useAuthStore.getState().token;
-  return token ? { Authorization: `Bearer ${token}` } : {};
-};
-
 export const investimentosApi = {
   async listar(): Promise<InvestimentoItem[]> {
-    const { data } = await axios.get<InvestimentoItem[] | { content?: InvestimentoItem[] }>('/api/investimentos', {
-      headers: getAuthHeaders(),
-    });
+    const { data } = await apiClient.get<InvestimentoItem[] | { content?: InvestimentoItem[] }>('/api/investimentos');
     if (Array.isArray(data)) return data;
     if (data && typeof data === 'object' && Array.isArray((data as any).content)) {
       return (data as any).content as InvestimentoItem[];
@@ -61,46 +53,37 @@ export const investimentosApi = {
   },
 
   async criar(payload: InvestimentoRegistroPayload): Promise<InvestimentoItem> {
-    const { data } = await axios.post<InvestimentoItem>('/api/investimentos', payload, {
-      headers: getAuthHeaders(),
-    });
+    const { data } = await apiClient.post<InvestimentoItem>('/api/investimentos', payload);
     return data;
   },
 
   async depositar(id: number, valor: number, contaId: number): Promise<InvestimentoItem> {
-    const { data } = await axios.post<InvestimentoItem>(`/api/investimentos/${id}/depositar`, null, {
+    const { data } = await apiClient.post<InvestimentoItem>(`/api/investimentos/${id}/depositar`, null, {
       params: { valor, contaId },
-      headers: getAuthHeaders(),
     });
     return data;
   },
 
   async resgatar(id: number, valor: number, contaId: number): Promise<InvestimentoItem> {
-    const { data } = await axios.post<InvestimentoItem>(`/api/investimentos/${id}/resgatar`, null, {
+    const { data } = await apiClient.post<InvestimentoItem>(`/api/investimentos/${id}/resgatar`, null, {
       params: { valor, contaId },
-      headers: getAuthHeaders(),
     });
     return data;
   },
 
   async atualizarMeta(id: number, novaMeta: number): Promise<InvestimentoItem> {
-    const { data } = await axios.put<InvestimentoItem>(`/api/investimentos/${id}/meta`, null, {
+    const { data } = await apiClient.put<InvestimentoItem>(`/api/investimentos/${id}/meta`, null, {
       params: { novaMeta },
-      headers: getAuthHeaders(),
     });
     return data;
   },
 
   async atualizar(id: number, payload: InvestimentoAtualizacaoPayload): Promise<InvestimentoItem> {
-    const { data } = await axios.put<InvestimentoItem>(`/api/investimentos/${id}`, payload, {
-      headers: getAuthHeaders(),
-    });
+    const { data } = await apiClient.put<InvestimentoItem>(`/api/investimentos/${id}`, payload);
     return data;
   },
 
   async deletar(id: number): Promise<void> {
-    await axios.delete(`/api/investimentos/${id}`, {
-      headers: getAuthHeaders(),
-    });
+    await apiClient.delete(`/api/investimentos/${id}`);
   },
 };

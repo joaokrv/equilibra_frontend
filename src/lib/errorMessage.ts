@@ -46,7 +46,6 @@ const asText = (value: unknown): string | null => {
           }
         }
       } catch {
-        // Keep original text when body is not valid JSON.
       }
     }
 

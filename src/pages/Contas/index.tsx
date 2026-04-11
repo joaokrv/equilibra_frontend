@@ -60,8 +60,6 @@ export const ContasPage = () => {
     mutationFn: () =>
       ContaControllerService.criarConta({
         nome: nome.trim(),
-        // Envia o patrimonio inicial total da conta.
-        // Em seguida, o backend debita o investimento inicial da propria conta.
         saldo: (saldo ? Number(saldo) : 0) + (investimentoInicial ? Number(investimentoInicial) : 0),
       }),
     onSuccess: async (contaCriada: any) => {
@@ -84,7 +82,6 @@ export const ContasPage = () => {
           ]);
           toast.success(tr('Conta e investimento inicial criados com sucesso.', 'Account and initial investment created successfully.'));
         } catch (error: unknown) {
-          // Compensacao: se o investimento falhar, restaura o saldo liquido informado pelo usuario.
           if (contaCriada?.id) {
             try {
               await ContaControllerService.atualizarSaldo(Number(contaCriada.id), Number(saldo || 0));
