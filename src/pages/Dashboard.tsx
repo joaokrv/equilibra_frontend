@@ -8,6 +8,8 @@ import { useDashboardData } from '../hooks/useDashboardData';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { enUS } from 'date-fns/locale';
+import { Link } from 'react-router-dom';
+import { CircleHelp } from 'lucide-react';
 import { useI18nStore } from '../store/useI18nStore';
 import { t } from '../lib/i18n';
 
@@ -46,11 +48,23 @@ export const Dashboard = () => {
   return (
     <MainLayout>
       <header className="mb-8 sm:mb-10 animate-in fade-in slide-in-from-top-4 duration-700">
-        <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white mb-2">{t(language, 'dashboardTitle')}</h2>
-        <p className="text-muted-foreground font-medium">
-          {t(language, 'dashboardSubtitle')}{' '}
-          {format(new Date(), 'MMMM', { locale: monthLocale })}.
-        </p>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+          <div>
+            <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white mb-2">{t(language, 'dashboardTitle')}</h2>
+            <p className="text-muted-foreground font-medium">
+              {t(language, 'dashboardSubtitle')}{' '}
+              {format(new Date(), 'MMMM', { locale: monthLocale })}.
+            </p>
+          </div>
+
+          <Link
+            to="/tutorial"
+            className="inline-flex items-center justify-center gap-2 rounded-xl border border-primary/35 bg-primary/10 px-4 py-2.5 text-sm font-semibold text-primary hover:bg-primary/20 transition-colors"
+          >
+            <CircleHelp size={16} />
+            {language === 'en-US' ? 'How to get started' : 'Como começar'}
+          </Link>
+        </div>
       </header>
 
       <SummaryCards

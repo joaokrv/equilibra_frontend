@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Wallet, Plus, Trash2, X, Loader2, Pencil, Search } from 'lucide-react';
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { MainLayout } from '../../components/layout/MainLayout';
 import { DeleteConfirmationModal } from '../../components/modals/DeleteConfirmationModal';
 import { ContaControllerService } from '../../api/services/ContaControllerService';
@@ -14,6 +14,7 @@ import { useAuthStore } from '../../store/useAuthStore';
 import { useI18nStore } from '../../store/useI18nStore';
 
 export const ContasPage = () => {
+  const navigate = useNavigate();
   const language = useI18nStore((s) => s.language);
   const tr = (pt: string, en: string) => (language === 'en-US' ? en : pt);
   const queryClient = useQueryClient();
@@ -25,6 +26,8 @@ export const ContasPage = () => {
   const [contaParaDeletar, setContaParaDeletar] = useState<{ id: number; nome: string } | null>(null);
   const [nome, setNome] = useState('');
   const [saldo, setSaldo] = useState('');
+  const [investimentoInicial, setInvestimentoInicial] = useState('');
+  const [maisDeUmInvestimento, setMaisDeUmInvestimento] = useState(false);
   const [deletandoId, setDeletandoId] = useState<number | null>(null);
   const [busca, setBusca] = useState(buscaParam);
 
@@ -55,10 +58,43 @@ export const ContasPage = () => {
 
   const criarMutation = useMutation({
     mutationFn: () =>
-      ContaControllerService.criarConta({ nome: nome.trim(), saldo: saldo ? Number(saldo) : 0 }),
-    onSuccess: () => {
+      ContaControllerService.criarConta({
+        nome: nome.trim(),
+        // O usuário informa saldo em conta e investimento separados.
+        // O backend recebe o saldo total inicial (soma dos dois valores).
+        saldo: (saldo ? Number(saldo) : 0) + (investimentoInicial ? Number(investimentoInicial) : 0),
+      }),
+    onSuccess: async (contaCriada: any) => {
       queryClient.invalidateQueries({ queryKey: ['contas'] });
-      toast.success(tr(`Conta "${nome.trim()}" criada com sucesso.`, `Account "${nome.trim()}" created successfully.`));
+
+      const valorInvestimentoInicial = Number(investimentoInicial || 0);
+      if (valorInvestimentoInicial > 0 && contaCriada?.id) {
+        try {
+          await investimentosApi.criar({
+            descricao: tr(`Investimento Inicial - ${nome.trim()}`, `Initial Investment - ${nome.trim()}`),
+            valorInicial: valorInvestimentoInicial,
+            meta: null,
+            contaId: Number(contaCriada.id),
+            tipoInvestimento: 'OUTRO',
+            tipoPersonalizado: tr('Investimento Inicial', 'Initial Investment'),
+          });
+          await Promise.all([
+            queryClient.invalidateQueries({ queryKey: ['contas'] }),
+            queryClient.invalidateQueries({ queryKey: ['investimentos'] }),
+          ]);
+          toast.success(tr('Conta e investimento inicial criados com sucesso.', 'Account and initial investment created successfully.'));
+        } catch (error: unknown) {
+          toast.warning(getApiErrorMessage(error, tr('Conta criada, mas não foi possível criar o investimento inicial automaticamente.', 'Account created, but initial investment could not be created automatically.')));
+        }
+      } else {
+        toast.success(tr(`Conta "${nome.trim()}" criada com sucesso.`, `Account "${nome.trim()}" created successfully.`));
+      }
+
+      if (maisDeUmInvestimento && contaCriada?.id) {
+        toast.info(tr('Conta criada. Agora adicione os demais investimentos dessa conta.', 'Account created. Now add the remaining investments for this account.'));
+        navigate(`/investimentos?contaId=${contaCriada.id}&origem=contas-iniciais`);
+      }
+
       fecharModal();
     },
     onError: (error: unknown) =>
@@ -84,8 +120,16 @@ export const ContasPage = () => {
       setDeletandoId(null);
       setContaParaDeletar(null);
     },
-    onError: () => {
-      toast.error(tr('Não é possível remover uma conta com transações vinculadas.', 'You cannot remove an account with linked transactions.'));
+    onError: (error: unknown) => {
+      toast.error(
+        getApiErrorMessage(
+          error,
+          tr(
+            'Não foi possível remover a conta. Para excluir, o saldo da conta deve estar zerado.',
+            'Could not remove account. To delete it, the account balance must be zero.'
+          )
+        )
+      );
       setDeletandoId(null);
       setContaParaDeletar(null);
     },
@@ -96,6 +140,8 @@ export const ContasPage = () => {
     setEditando(null);
     setNome('');
     setSaldo('');
+    setInvestimentoInicial('');
+    setMaisDeUmInvestimento(false);
   };
 
   const abrirEdicao = (conta: ContaResponseDTO) => {
@@ -112,6 +158,10 @@ export const ContasPage = () => {
       criarMutation.mutate();
     }
   };
+
+  const saldoInformado = Number(saldo || 0);
+  const valorInvestimentoInformado = Number(investimentoInicial || 0);
+  const saldoTotalInicial = saldoInformado + valorInvestimentoInformado;
 
   const handleDeletar = (id: number, nomeConta: string) => {
     setContaParaDeletar({ id, nome: nomeConta });
@@ -226,13 +276,38 @@ export const ContasPage = () => {
             </div>
             <div className="space-y-4">
               {!editando && (
-                <div className="space-y-1.5">
-                  <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Nome', 'Name')}</label>
-                  <input type="text" value={nome} onChange={(e) => setNome(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleSalvar()} placeholder={tr('Ex: Nubank, Itaú...', 'e.g. Nubank, Chase...')} maxLength={50} autoFocus className="w-full bg-secondary/30 border border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium placeholder:text-muted-foreground/30" />
-                </div>
+                <>
+                  <div className="space-y-1.5">
+                    <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Nome', 'Name')}</label>
+                    <input type="text" value={nome} onChange={(e) => setNome(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleSalvar()} placeholder={tr('Ex: Nubank, Itaú...', 'e.g. Nubank, Chase...')} maxLength={50} autoFocus className="w-full bg-secondary/30 border border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium placeholder:text-muted-foreground/30" />
+                  </div>
+
+                  <div className="space-y-1.5">
+                    <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Investimento Inicial (Opcional)', 'Initial Investment (Optional)')}</label>
+                    <input type="number" step="0.01" value={investimentoInicial} onChange={(e) => setInvestimentoInicial(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleSalvar()} placeholder="0.00" className="w-full bg-secondary/30 border border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium placeholder:text-muted-foreground/30" />
+                    <p className="text-[10px] text-muted-foreground/80 leading-relaxed">
+                      {tr('Não precisa somar manualmente: informe o saldo em conta e o investimento inicial separados. O sistema soma automaticamente os dois valores no cadastro.', 'No need to add manually: enter account balance and initial investment separately. The system automatically sums both values on creation.')}
+                    </p>
+                    <p className="text-[10px] text-primary leading-relaxed font-semibold">
+                      {tr('Saldo total inicial que será cadastrado:', 'Total initial balance to be created:')} {formatarMoeda(saldoTotalInicial, moeda)}
+                    </p>
+                  </div>
+
+                  <label className="flex items-start gap-2 cursor-pointer select-none">
+                    <input
+                      type="checkbox"
+                      checked={maisDeUmInvestimento}
+                      onChange={(e) => setMaisDeUmInvestimento(e.target.checked)}
+                      className="mt-0.5 rounded border-white/20 bg-secondary/30"
+                    />
+                    <span className="text-xs text-muted-foreground leading-relaxed">
+                      {tr('Tenho mais de um investimento nesta conta e quero cadastrar todos em seguida.', 'I have more than one investment in this account and want to register all of them next.')}
+                    </span>
+                  </label>
+                </>
               )}
               <div className="space-y-1.5">
-                <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">{editando ? tr('Novo Saldo', 'New Balance') : tr('Saldo Inicial', 'Initial Balance')}</label>
+                <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">{editando ? tr('Novo Saldo', 'New Balance') : tr('Saldo em Conta (sem investimentos)', 'Account Balance (without investments)')}</label>
                 <input type="number" step="0.01" value={saldo} onChange={(e) => setSaldo(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleSalvar()} placeholder="0.00" autoFocus={!!editando} className="w-full bg-secondary/30 border border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium placeholder:text-muted-foreground/30" />
               </div>
             </div>
@@ -250,7 +325,7 @@ export const ContasPage = () => {
           <>
             {tr('Você está prestes a remover', 'You are about to remove')} <span className="text-white font-semibold">"{contaParaDeletar?.nome}"</span>.
             <br />
-            {tr('Contas com transações vinculadas não podem ser removidas.', 'Accounts with linked transactions cannot be removed.')}
+            {tr('Investimentos, transações e recorrências vinculados serão desativados em cascata. A conta só pode ser removida com saldo zerado.', 'Linked investments, transactions, and recurrences will be deactivated in cascade. The account can only be removed when balance is zero.')}
           </>
         }
         confirmText="CONFIRMAR"

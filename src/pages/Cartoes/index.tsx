@@ -121,7 +121,7 @@ export const CartoesPage = () => {
       setCartaoParaDeletar(null);
     },
     onError: () => {
-      toast.error(tr('Não é possível remover um cartão com faturas pendentes.', 'A card with pending invoices cannot be removed.'));
+      toast.error(tr('Não foi possível remover o cartão. Cartões com faturas pendentes não podem ser removidos.', 'Could not remove the card. Cards with pending invoices cannot be removed.'));
       setCartaoParaDeletar(null);
     },
   });
@@ -464,7 +464,7 @@ export const CartoesPage = () => {
           <>
             {tr('Você está prestes a remover', 'You are about to remove')} <span className="text-white font-semibold">"{cartaoParaDeletar?.nome}"</span>.
             <br />
-            {tr('Cartões com faturas pendentes não podem ser removidos.', 'Cards with pending invoices cannot be removed.')}
+            {tr('Se não houver faturas pendentes, as faturas já pagas e os lançamentos vinculados serão desativados em cascata.', 'If there are no pending invoices, paid invoices and linked entries will be deactivated in cascade.')}
           </>
         }
         confirmText={tr('CONFIRMAR', 'CONFIRM')}

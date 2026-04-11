@@ -15,6 +15,7 @@ import { CategoriasPage } from './pages/Categorias';
 import { InvestimentosPage } from './pages/Investimentos';
 import { RecorrentesPage } from './pages/Recorrentes';
 import { PerfilPage } from './pages/Perfil';
+import { TutorialPage } from './pages/Tutorial';
 import { ForgotPasswordPage } from './pages/ForgotPassword';
 import { ResetPasswordPage } from './pages/ResetPassword';
 import { NotFoundPage } from './pages/NotFound';
@@ -79,6 +80,7 @@ export default function App() {
       {/* Rotas Protegidas */}
       <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
       <Route path="/perfil" element={<ProtectedRoute><PerfilPage /></ProtectedRoute>} />
+      <Route path="/tutorial" element={<ProtectedRoute><TutorialPage /></ProtectedRoute>} />
       
       {/* Rotas Protegidas e Verificadas */}
       <Route path="/contas" element={<ProtectedRoute><VerifiedRoute><ContasPage /></VerifiedRoute></ProtectedRoute>} />

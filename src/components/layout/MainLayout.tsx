@@ -70,17 +70,17 @@ export const MainLayout = ({ children }: MainLayoutProps) => {
           <button 
             onClick={() => setIsModalOpen(true)}
             className="
-              fixed bottom-4 right-4 sm:bottom-8 sm:right-8 bg-gradient-to-r from-primary to-primary-600 text-white px-3 sm:px-6 py-3 sm:py-4 rounded-xl sm:rounded-2xl 
+              fixed bottom-4 right-4 sm:bottom-8 sm:right-8 bg-primary text-white px-3 sm:px-6 py-3 sm:py-4 rounded-xl sm:rounded-2xl 
               shadow-[0_10px_40px_-10px_rgba(124,58,237,0.5)] transition-all duration-300 transform hover:scale-110 active:scale-95
               flex items-center gap-2 sm:gap-3 font-black uppercase tracking-widest text-[10px] sm:text-xs z-40 animate-in fade-in slide-in-from-bottom-8 duration-1000
-              hover:shadow-[0_20px_60px_-10px_rgba(124,58,237,0.6)] group
+              hover:bg-primary/90 hover:shadow-[0_20px_60px_-10px_rgba(124,58,237,0.6)] group
             "
           >
             <div className="bg-white/20 p-1 sm:p-1.5 rounded-lg shadow-inner group-hover:rotate-90 transition-transform duration-300">
               <Plus size={18} strokeWidth={3} />
             </div>
             <span className="hidden sm:inline drop-shadow-md">
-              {tr('Registrar Transacao', 'Add Transaction')}
+              {tr('Registrar Transação', 'Add Transaction')}
             </span>
           </button>
 

@@ -61,6 +61,7 @@ const menuItems = [
   { icon: Repeat, key: 'menuFixed', to: '/recorrentes' },
   { icon: Tag, key: 'menuCategories', to: '/categorias' },
   { icon: Target, key: 'menuInvestments', to: '/investimentos' },
+  { icon: LayoutDashboard, key: 'menuTutorial', to: '/tutorial' },
   { icon: UserCircle, key: 'menuProfile', to: '/perfil' },
 ] as const;
 
