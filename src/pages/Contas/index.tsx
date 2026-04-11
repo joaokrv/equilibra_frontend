@@ -1,0 +1,261 @@
+import { useEffect, useState } from 'react';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { Wallet, Plus, Trash2, X, Loader2, Pencil, Search } from 'lucide-react';
+import { useSearchParams } from 'react-router-dom';
+import { MainLayout } from '../../components/layout/MainLayout';
+import { DeleteConfirmationModal } from '../../components/modals/DeleteConfirmationModal';
+import { ContaControllerService } from '../../api/services/ContaControllerService';
+import { ContaResponseDTO } from '../../api/models/ContaResponseDTO';
+import { investimentosApi } from '../../lib/investimentosApi';
+import { formatarMoeda } from '../../lib/formatters';
+import { getApiErrorMessage } from '../../lib/errorMessage';
+import { toast } from '../../store/useToastStore';
+import { useAuthStore } from '../../store/useAuthStore';
+import { useI18nStore } from '../../store/useI18nStore';
+
+export const ContasPage = () => {
+  const language = useI18nStore((s) => s.language);
+  const tr = (pt: string, en: string) => (language === 'en-US' ? en : pt);
+  const queryClient = useQueryClient();
+  const [searchParams, setSearchParams] = useSearchParams();
+  const buscaParam = searchParams.get('busca') ?? '';
+  const moeda = (useAuthStore((s) => s.user?.moeda) as 'BRL' | 'USD' | 'EUR') || 'BRL';
+  const [modalAberto, setModalAberto] = useState(false);
+  const [editando, setEditando] = useState<ContaResponseDTO | null>(null);
+  const [contaParaDeletar, setContaParaDeletar] = useState<{ id: number; nome: string } | null>(null);
+  const [nome, setNome] = useState('');
+  const [saldo, setSaldo] = useState('');
+  const [deletandoId, setDeletandoId] = useState<number | null>(null);
+  const [busca, setBusca] = useState(buscaParam);
+
+  useEffect(() => {
+    setBusca(buscaParam);
+  }, [buscaParam]);
+
+  const { data: contas = [], isLoading } = useQuery({
+    queryKey: ['contas'],
+    queryFn: () => ContaControllerService.listarContas(),
+  });
+
+  const { data: investimentos = [] } = useQuery({
+    queryKey: ['investimentos'],
+    queryFn: () => investimentosApi.listar(),
+  });
+
+  const criarMutation = useMutation({
+    mutationFn: () =>
+      ContaControllerService.criarConta({ nome: nome.trim(), saldo: saldo ? Number(saldo) : 0 }),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['contas'] });
+      toast.success(tr(`Conta "${nome.trim()}" criada com sucesso.`, `Account "${nome.trim()}" created successfully.`));
+      fecharModal();
+    },
+    onError: (error: unknown) =>
+      toast.error(getApiErrorMessage(error, tr('Não foi possível criar a conta agora. Confira os dados e tente novamente.', 'Could not create account now. Please review the data and try again.'))),
+  });
+
+  const editarMutation = useMutation({
+    mutationFn: () => ContaControllerService.atualizarSaldo(editando!.id!, Number(saldo)),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['contas'] });
+      toast.success(tr('Saldo atualizado com sucesso.', 'Balance updated successfully.'));
+      fecharModal();
+    },
+    onError: (error: unknown) =>
+      toast.error(getApiErrorMessage(error, tr('Não foi possível atualizar o saldo desta conta. Tente novamente em instantes.', 'Could not update this account balance. Please try again shortly.'))),
+  });
+
+  const deletarMutation = useMutation({
+    mutationFn: (id: number) => ContaControllerService.deletarConta(id),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['contas'] });
+      toast.success(tr('Conta removida.', 'Account removed.'));
+      setDeletandoId(null);
+      setContaParaDeletar(null);
+    },
+    onError: () => {
+      toast.error(tr('Não é possível remover uma conta com transações vinculadas.', 'You cannot remove an account with linked transactions.'));
+      setDeletandoId(null);
+      setContaParaDeletar(null);
+    },
+  });
+
+  const fecharModal = () => {
+    setModalAberto(false);
+    setEditando(null);
+    setNome('');
+    setSaldo('');
+  };
+
+  const abrirEdicao = (conta: ContaResponseDTO) => {
+    setEditando(conta);
+    setNome(conta.nome || '');
+    setSaldo(String(conta.saldo ?? 0));
+    setModalAberto(true);
+  };
+
+  const handleSalvar = () => {
+    if (editando) editarMutation.mutate();
+    else {
+      if (!nome.trim()) return;
+      criarMutation.mutate();
+    }
+  };
+
+  const handleDeletar = (id: number, nomeConta: string) => {
+    setContaParaDeletar({ id, nome: nomeConta });
+  };
+
+  const saldoContas = contas.reduce((acc, c) => acc + (c.saldo ?? 0), 0);
+  const saldoInvestimentos = investimentos.reduce((acc, i) => acc + (i.valorAtual ?? 0), 0);
+  const saldoTotal = saldoContas + saldoInvestimentos;
+  const investidoPorConta = investimentos.reduce((acc, inv) => {
+    const contaOrigem = (inv.nomeContaOrigem ?? '').trim();
+    if (!contaOrigem) return acc;
+    acc[contaOrigem] = (acc[contaOrigem] ?? 0) + (inv.valorAtual ?? 0);
+    return acc;
+  }, {} as Record<string, number>);
+  const contasFiltradas = contas.filter((conta) =>
+    (conta.nome ?? '').toLowerCase().includes(busca.toLowerCase().trim())
+  );
+
+  const handleBuscaChange = (valor: string) => {
+    setBusca(valor);
+    if (valor.trim()) {
+      setSearchParams({ busca: valor });
+    } else {
+      setSearchParams({});
+    }
+  };
+
+  return (
+    <MainLayout>
+      <div className="p-6 space-y-6 animate-in fade-in duration-500">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-2xl font-bold text-white">Minhas Contas</h1>
+            <p className="text-sm text-muted-foreground mt-1">{tr('Gerencie suas contas bancárias e acompanhe seus saldos.', 'Manage your bank accounts and track your balances.')}</p>
+          </div>
+          <button
+            onClick={() => setModalAberto(true)}
+            className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white font-bold px-4 py-2.5 rounded-xl transition-all shadow-lg shadow-primary/20 active:scale-[0.98] text-sm"
+          >
+            <Plus size={16} /> {tr('Nova Conta', 'New Account')}
+          </button>
+        </div>
+
+        <div className="relative max-w-sm">
+          <Search size={14} className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
+          <input
+            type="text"
+            value={busca}
+            onChange={(e) => handleBuscaChange(e.target.value)}
+            placeholder={tr('Buscar conta...', 'Search account...')}
+            className="w-full bg-secondary/30 border border-white/5 rounded-xl pl-9 pr-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium placeholder:text-muted-foreground/30"
+          />
+        </div>
+
+        <div className="glass rounded-2xl p-6">
+          <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Saldo Total (Contas + Investimentos)', 'Total Balance (Accounts + Investments)')}</p>
+          <p className={`text-3xl font-bold mt-1 ${saldoTotal >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+            {formatarMoeda(saldoTotal, moeda)}
+          </p>
+          <p className="text-xs text-muted-foreground mt-1">{language === 'en-US' ? `${contasFiltradas.length} account${contasFiltradas.length !== 1 ? 's' : ''} shown` : `${contasFiltradas.length} conta${contasFiltradas.length !== 1 ? 's' : ''} exibida${contasFiltradas.length !== 1 ? 's' : ''}`}</p>
+        </div>
+
+        {isLoading ? (
+          <div className="flex items-center justify-center h-48"><Loader2 className="animate-spin text-primary" size={32} /></div>
+        ) : contasFiltradas.length === 0 ? (
+          <div className="glass rounded-2xl p-12 flex flex-col items-center justify-center gap-4 text-center">
+            <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center text-primary/50"><Wallet size={32} /></div>
+            <p className="text-sm text-muted-foreground font-medium max-w-xs leading-relaxed">
+              {busca.trim() ? tr('Nenhuma conta encontrada para esta busca.', 'No account found for this search.') : tr('Você ainda não tem contas cadastradas. Crie sua primeira conta para começar.', 'You do not have any accounts yet. Create your first account to get started.')}
+            </p>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+            {contasFiltradas.map((conta) => {
+              const investidoNaConta = investidoPorConta[conta.nome ?? ''] ?? 0;
+
+              return (
+                <div key={conta.id} className="glass rounded-2xl p-5 group hover:ring-1 hover:ring-primary/20 transition-all">
+                  <div className="flex items-start justify-between">
+                    <div className="flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary"><Wallet size={18} /></div>
+                      <div>
+                        <p className="text-sm font-bold text-white">{conta.nome}</p>
+                        <p className={`text-lg font-bold mt-0.5 ${(conta.saldo ?? 0) >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+                          {formatarMoeda(conta.saldo ?? 0, moeda)}
+                        </p>
+                        <p className="text-xs text-muted-foreground mt-1">
+                          {tr('Investido:', 'Invested:')} <span className="font-bold text-primary">{formatarMoeda(investidoNaConta, moeda)}</span>
+                        </p>
+                      </div>
+                    </div>
+                    <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                      <button onClick={() => abrirEdicao(conta)} className="p-1.5 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all" aria-label={tr('Editar', 'Edit')}><Pencil size={14} /></button>
+                      <button onClick={() => handleDeletar(conta.id!, conta.nome!)} disabled={deletandoId === conta.id} className="p-1.5 rounded-lg text-muted-foreground hover:text-rose-400 hover:bg-rose-500/10 transition-all disabled:opacity-50" aria-label={tr('Remover', 'Remove')}>
+                        {deletandoId === conta.id ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              );
+            })}
+          </div>
+        )}
+      </div>
+
+      {modalAberto && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
+          <div className="glass w-full max-w-sm rounded-2xl p-6 space-y-5 animate-in zoom-in-95 duration-200">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2"><Wallet size={18} className="text-primary" /><h3 className="font-bold text-white">{editando ? tr('Editar Saldo', 'Edit Balance') : tr('Nova Conta', 'New Account')}</h3></div>
+              <button onClick={fecharModal} className="text-muted-foreground hover:text-white transition-colors"><X size={18} /></button>
+            </div>
+            <div className="space-y-4">
+              {!editando && (
+                <div className="space-y-1.5">
+                  <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Nome', 'Name')}</label>
+                  <input type="text" value={nome} onChange={(e) => setNome(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleSalvar()} placeholder={tr('Ex: Nubank, Itaú...', 'e.g. Nubank, Chase...')} maxLength={50} autoFocus className="w-full bg-secondary/30 border border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium placeholder:text-muted-foreground/30" />
+                </div>
+              )}
+              <div className="space-y-1.5">
+                <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">{editando ? tr('Novo Saldo', 'New Balance') : tr('Saldo Inicial', 'Initial Balance')}</label>
+                <input type="number" step="0.01" value={saldo} onChange={(e) => setSaldo(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleSalvar()} placeholder="0.00" autoFocus={!!editando} className="w-full bg-secondary/30 border border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium placeholder:text-muted-foreground/30" />
+              </div>
+            </div>
+            <button onClick={handleSalvar} disabled={(!editando && !nome.trim()) || criarMutation.isPending || editarMutation.isPending} className="w-full bg-primary hover:bg-primary/90 text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-primary/20 active:scale-[0.98] text-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+              {(criarMutation.isPending || editarMutation.isPending) ? <><Loader2 size={16} className="animate-spin" /> {tr('Salvando...', 'Saving...')}</> : <>{editando ? <Pencil size={16} /> : <Plus size={16} />} {editando ? tr('Atualizar', 'Update') : tr('Criar Conta', 'Create Account')}</>}
+            </button>
+          </div>
+        </div>
+      )}
+
+      <DeleteConfirmationModal
+        isOpen={!!contaParaDeletar}
+        title={tr('Remover Conta?', 'Remove Account?')}
+        description={
+          <>
+            {tr('Você está prestes a remover', 'You are about to remove')} <span className="text-white font-semibold">"{contaParaDeletar?.nome}"</span>.
+            <br />
+            {tr('Contas com transações vinculadas não podem ser removidas.', 'Accounts with linked transactions cannot be removed.')}
+          </>
+        }
+        confirmText="CONFIRMAR"
+        loadingText="REMOVENDO..."
+        isLoading={deletarMutation.isPending}
+        onCancel={() => {
+          if (!deletarMutation.isPending) {
+            setContaParaDeletar(null);
+          }
+        }}
+        onConfirm={() => {
+          if (!contaParaDeletar) return;
+          setDeletandoId(contaParaDeletar.id);
+          deletarMutation.mutate(contaParaDeletar.id);
+        }}
+      />
+    </MainLayout>
+  );
+};
