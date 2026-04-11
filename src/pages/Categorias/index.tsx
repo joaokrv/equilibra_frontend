@@ -69,11 +69,11 @@ export const CategoriasPage = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['categorias'] });
       queryClient.invalidateQueries({ queryKey: ['categories'] });
-      toast.success(tr('Categoria removida.', 'Category removed.'));
+      toast.success(tr('Categoria removida. Lançamentos vinculados ficaram sem categoria.', 'Category removed. Linked entries were set as uncategorized.'));
       setCategoriaParaDeletar(undefined);
     },
     onError: () => {
-      toast.error(tr('Não é possível remover uma categoria vinculada a transações.', 'A category linked to transactions cannot be removed.'));
+      toast.error(tr('Não foi possível remover a categoria agora. Tente novamente.', 'Could not remove the category right now. Please try again.'));
       setCategoriaParaDeletar(undefined);
     },
   });
@@ -312,7 +312,7 @@ export const CategoriasPage = () => {
           <>
             {tr('Você está prestes a remover', 'You are about to remove')} <span className="text-white font-semibold">"{categoriaParaDeletar?.nome}"</span>.
             <br />
-            {tr('Transações já vinculadas a ela não serão afetadas.', 'Transactions already linked to it will not be affected.')}
+            {tr('Transações e recorrências vinculadas permanecerão ativas, mas ficarão sem categoria.', 'Linked transactions and recurrences will stay active, but will become uncategorized.')}
           </>
         }
         confirmText={tr('CONFIRMAR', 'CONFIRM')}
