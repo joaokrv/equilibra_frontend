@@ -9,8 +9,8 @@ import './index.css'
 import App from './App.tsx'
 
 // Configuração da API gerada pelo Swagger
-// Base vazia = usa proxy do Vite em dev, ou same-origin em produção
-OpenAPI.BASE = ''
+// Em produção, usa VITE_API_BASE_URL (Vercel). Em dev, cai para proxy local.
+OpenAPI.BASE = import.meta.env.VITE_API_BASE_URL || ''
 OpenAPI.WITH_CREDENTIALS = true
 OpenAPI.TOKEN = async () => {
   return useAuthStore.getState().token || '';
