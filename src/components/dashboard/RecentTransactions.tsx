@@ -1,0 +1,80 @@
+import { TrendingUp, TrendingDown } from 'lucide-react';
+import { format } from 'date-fns';
+import { ptBR } from 'date-fns/locale';
+import { enUS } from 'date-fns/locale';
+import { formatarMoeda } from '../../lib/formatters';
+import { TransacaoResponseDTO } from '../../api/models/TransacaoResponseDTO';
+import { Link } from 'react-router-dom';
+import { useI18nStore } from '../../store/useI18nStore';
+import { t as translate } from '../../lib/i18n';
+
+
+interface RecentTransactionsProps {
+  transacoesList: TransacaoResponseDTO[];
+}
+
+/**
+ * Lista dos maiores lançamentos recentes.
+ */
+export const RecentTransactions = ({ transacoesList }: RecentTransactionsProps) => {
+  const language = useI18nStore((state) => state.language);
+  const dateLocale = language === 'en-US' ? enUS : ptBR;
+
+  return (
+  <div className="animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
+    <div className="glass p-8 rounded-3xl pb-10">
+      <div className="flex items-center justify-between mb-8">
+        <h4 className="text-xl font-bold text-white">{translate(language, 'topTransactions')}</h4>
+        <Link 
+          to="/extrato" 
+          className="text-xs font-bold text-primary hover:underline uppercase tracking-widest transition-all hover:opacity-80"
+        >
+          {translate(language, 'viewAll')}
+        </Link>
+      </div>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {transacoesList.slice(0, 3).map((transacao: any) => (
+          <div
+            key={transacao.id}
+            className="flex items-center justify-between p-5 bg-secondary/20 rounded-2xl border border-white/5 hover:border-primary/30 transition-all cursor-pointer group"
+          >
+            <div className="flex items-center gap-4">
+              <div
+                className={`w-12 h-12 rounded-2xl ${
+                  transacao.tipo === TransacaoResponseDTO.tipo.RECEITA
+                    ? 'bg-emerald-500/10 text-emerald-500'
+                    : 'bg-rose-500/10 text-rose-500'
+                } flex items-center justify-center group-hover:bg-primary/10 transition-colors`}
+              >
+                {transacao.tipo === TransacaoResponseDTO.tipo.RECEITA ? <TrendingUp size={20} /> : <TrendingDown size={20} />}
+              </div>
+              <div>
+                <p className="text-sm font-bold text-white mb-0.5">{transacao.descricao}</p>
+                <p className="text-xs uppercase text-muted-foreground tracking-widest font-bold">
+                  {transacao.nomeCategoria || translate(language, 'uncategorized')} •{' '}
+                  {format(new Date(transacao.data!), 'dd MMM', { locale: dateLocale })}
+                </p>
+              </div>
+            </div>
+            <div className="text-right">
+              <p
+                className={`text-sm font-bold ${
+                  transacao.tipo === TransacaoResponseDTO.tipo.RECEITA ? 'text-emerald-500' : 'text-rose-500'
+                }`}
+              >
+                {transacao.tipo === TransacaoResponseDTO.tipo.RECEITA ? '+' : '-'} {formatarMoeda(transacao.valor!)}
+              </p>
+            </div>
+          </div>
+        ))}
+        {transacoesList.length === 0 && (
+          <div className="col-span-full text-center py-10 text-muted-foreground text-sm font-medium">
+            {translate(language, 'noTransactions')}
+          </div>
+        )}
+      </div>
+    </div>
+  </div>
+  );
+};

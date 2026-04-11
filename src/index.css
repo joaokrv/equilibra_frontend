@@ -1,0 +1,90 @@
+@import "tailwindcss";
+
+@theme {
+  --color-background: #050505;
+  --color-foreground: #ffffff;
+  
+  --color-card: #0f0f0f;
+  --color-card-foreground: #fafafa;
+  
+  --color-popover: #050505;
+  --color-popover-foreground: #ffffff;
+  
+  --color-primary: #7c3aed;
+  --color-primary-foreground: #ffffff;
+  
+  --color-secondary: #1a1a1a;
+  --color-secondary-foreground: #ffffff;
+  
+  --color-muted: #1a1a1a;
+  --color-muted-foreground: #a1a1aa;
+  
+  --color-accent: #1a1a1a;
+  --color-accent-foreground: #ffffff;
+  
+  --color-destructive: #ef4444;
+  --color-destructive-foreground: #fafafa;
+  
+  --color-border: #1a1a1a;
+  --color-input: #1a1a1a;
+  --color-ring: #7c3aed;
+
+  --font-sans: "Outfit", "system-ui", "-apple-system", "sans-serif";
+  --font-mono: "JetBrains Mono", "monospace";
+
+  --radius-lg: 1rem;
+  --radius-md: 0.75rem;
+  --radius-sm: 0.5rem;
+
+  --animate-accordion-down: accordion-down 0.2s ease-out;
+  --animate-accordion-up: accordion-up 0.2s ease-out;
+
+  @keyframes accordion-down {
+    from { height: 0; }
+    to { height: var(--radix-accordion-content-height); }
+  }
+  @keyframes accordion-up {
+    from { height: var(--radix-accordion-content-height); }
+    to { height: 0; }
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-size: 16px;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+@layer utilities {
+  .glass {
+    @apply bg-card/50 backdrop-blur-md border border-white/5;
+  }
+  
+  .glass-hover {
+    @apply hover:bg-white/10 transition-colors duration-200;
+  }
+  
+  .text-gradient {
+    @apply bg-clip-text text-transparent bg-gradient-to-br from-white to-white/50;
+  }
+
+  /* Custom Scrollbar for Obsidian Style */
+  ::-webkit-scrollbar {
+    width: 6px;
+  }
+  ::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  ::-webkit-scrollbar-thumb {
+    background: #1a1a1a;
+    border-radius: 10px;
+  }
+  ::-webkit-scrollbar-thumb:hover {
+    background: #2a2a2a;
+  }
+}
