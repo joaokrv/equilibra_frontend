@@ -60,8 +60,8 @@ export const ContasPage = () => {
     mutationFn: () =>
       ContaControllerService.criarConta({
         nome: nome.trim(),
-        // O usuário informa saldo em conta e investimento separados.
-        // O backend recebe o saldo total inicial (soma dos dois valores).
+        // Envia o patrimonio inicial total da conta.
+        // Em seguida, o backend debita o investimento inicial da propria conta.
         saldo: (saldo ? Number(saldo) : 0) + (investimentoInicial ? Number(investimentoInicial) : 0),
       }),
     onSuccess: async (contaCriada: any) => {
@@ -84,7 +84,25 @@ export const ContasPage = () => {
           ]);
           toast.success(tr('Conta e investimento inicial criados com sucesso.', 'Account and initial investment created successfully.'));
         } catch (error: unknown) {
-          toast.warning(getApiErrorMessage(error, tr('Conta criada, mas não foi possível criar o investimento inicial automaticamente.', 'Account created, but initial investment could not be created automatically.')));
+          // Compensacao: se o investimento falhar, restaura o saldo liquido informado pelo usuario.
+          if (contaCriada?.id) {
+            try {
+              await ContaControllerService.atualizarSaldo(Number(contaCriada.id), Number(saldo || 0));
+              await queryClient.invalidateQueries({ queryKey: ['contas'] });
+              toast.warning(getApiErrorMessage(
+                error,
+                tr(
+                  'Conta criada, mas o investimento inicial falhou. O saldo da conta foi restaurado automaticamente.',
+                  'Account created, but initial investment failed. The account balance was automatically restored.'
+                )
+              ));
+            } catch {
+              toast.error(tr(
+                'Conta criada, mas o investimento inicial falhou e nao foi possivel restaurar o saldo automaticamente. Ajuste o saldo manualmente.',
+                'Account created, but initial investment failed and balance could not be restored automatically. Please adjust the balance manually.'
+              ));
+            }
+          }
         }
       } else {
         toast.success(tr(`Conta "${nome.trim()}" criada com sucesso.`, `Account "${nome.trim()}" created successfully.`));
@@ -286,10 +304,10 @@ export const ContasPage = () => {
                     <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Investimento Inicial (Opcional)', 'Initial Investment (Optional)')}</label>
                     <input type="number" step="0.01" value={investimentoInicial} onChange={(e) => setInvestimentoInicial(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleSalvar()} placeholder="0.00" className="w-full bg-secondary/30 border border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium placeholder:text-muted-foreground/30" />
                     <p className="text-[10px] text-muted-foreground/80 leading-relaxed">
-                      {tr('Não precisa somar manualmente: informe o saldo em conta e o investimento inicial separados. O sistema soma automaticamente os dois valores no cadastro.', 'No need to add manually: enter account balance and initial investment separately. The system automatically sums both values on creation.')}
+                      {tr('Não precisa somar manualmente: informe o saldo em conta e o investimento inicial separados. O sistema envia o total e debita automaticamente o valor investido da conta.', 'No need to add manually: enter account balance and initial investment separately. The system sends the total and automatically debits the invested amount from the account.')}
                     </p>
                     <p className="text-[10px] text-primary leading-relaxed font-semibold">
-                      {tr('Saldo total inicial que será cadastrado:', 'Total initial balance to be created:')} {formatarMoeda(saldoTotalInicial, moeda)}
+                      {tr('Patrimônio inicial esperado (conta + investimento):', 'Expected initial net worth (account + investment):')} {formatarMoeda(saldoTotalInicial, moeda)}
                     </p>
                   </div>
 

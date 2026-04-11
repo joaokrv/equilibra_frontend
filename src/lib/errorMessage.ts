@@ -24,6 +24,14 @@ const getFriendlyRateLimitMessage = (fallback: string): string => {
   return 'Voce fez muitas tentativas em pouco tempo. Aguarde cerca de 1 minuto e tente novamente.';
 };
 
+const getFriendlyMethodNotAllowedMessage = (fallback: string): string => {
+  if (isEnglishFallback(fallback)) {
+    return 'This action is temporarily unavailable. Please try again in a moment.';
+  }
+
+  return 'Esta acao esta temporariamente indisponivel. Tente novamente em instantes.';
+};
+
 const asText = (value: unknown): string | null => {
   if (typeof value === 'string' && value.trim()) {
     const trimmed = value.trim();
@@ -121,6 +129,10 @@ export const getApiErrorMessage = (error: unknown, fallback: string): string => 
 
   if (statusCode === 429) {
     return getFriendlyRateLimitMessage(fallback);
+  }
+
+  if (statusCode === 405) {
+    return getFriendlyMethodNotAllowedMessage(fallback);
   }
 
   return fallback;
