@@ -89,6 +89,12 @@ Durante desenvolvimento, o Vite faz proxy para o backend local:
 
 > Importante: utilizar `127.0.0.1` para manter compatibilidade do fluxo de geracao de cliente OpenAPI.
 
+### Producao (Vercel)
+
+- Defina `VITE_API_BASE_URL` com a URL publica do backend (ex: Render/Railway).
+- Nao use URL do proprio frontend nessa variavel.
+- Sem essa variavel, chamadas da API podem cair em rotas relativas (`/api/*`) do frontend e falhar (ex: 405).
+
 ---
 
 ## Scripts

@@ -1,6 +1,7 @@
 const normalizeBaseUrl = (url: string): string => url.replace(/\/+$/, '');
 
 const apiBaseUrlFromEnv = (import.meta.env.VITE_API_BASE_URL || '').trim();
+const frontendOrigin = (import.meta.env.VITE_FRONTEND_ORIGIN || '').trim();
 
 if (import.meta.env.PROD && !apiBaseUrlFromEnv) {
   throw new Error(
@@ -8,6 +9,27 @@ if (import.meta.env.PROD && !apiBaseUrlFromEnv) {
   );
 }
 
-export const API_BASE_URL = apiBaseUrlFromEnv
+const normalizedApiBaseUrl = apiBaseUrlFromEnv
   ? normalizeBaseUrl(apiBaseUrlFromEnv)
   : '';
+
+if (import.meta.env.PROD && normalizedApiBaseUrl) {
+  const normalizedFrontendOrigin = frontendOrigin
+    ? normalizeBaseUrl(frontendOrigin)
+    : '';
+
+  // Evita configuracao invalida que dispara 405 no frontend (POST /api/* no proprio dominio web).
+  if (normalizedFrontendOrigin && normalizedApiBaseUrl === normalizedFrontendOrigin) {
+    throw new Error(
+      'Configuracao invalida: VITE_API_BASE_URL aponta para o mesmo dominio do frontend. Defina a URL do backend (ex: Render).',
+    );
+  }
+
+  if (normalizedApiBaseUrl.includes('equilibra-frontend.vercel.app')) {
+    throw new Error(
+      'Configuracao invalida: VITE_API_BASE_URL nao pode apontar para equilibra-frontend.vercel.app. Use a URL publica do backend.',
+    );
+  }
+}
+
+export const API_BASE_URL = normalizedApiBaseUrl;
