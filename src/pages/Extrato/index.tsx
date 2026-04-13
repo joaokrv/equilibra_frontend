@@ -9,6 +9,7 @@ import { TransactionModal } from '../../components/modals/TransactionModal';
 import { DeleteConfirmationModal } from '../../components/modals/DeleteConfirmationModal';
 import { formatarMoeda } from '../../lib/formatters';
 import { METODO_PAGAMENTO_LABELS, STATUS_TRANSACAO_LABELS } from '../../lib/constants';
+import { getApiErrorMessage } from '../../lib/errorMessage';
 import { useAuthStore } from '../../store/useAuthStore';
 import { toast } from '../../store/useToastStore';
 import { useI18nStore } from '../../store/useI18nStore';
@@ -77,8 +78,8 @@ export const ExtratoPage = ({ filtroTipo, titulo, descricao }: ExtratoPageProps)
       toast.success(tr('Transação excluída com sucesso.', 'Transaction deleted successfully.'));
       setTransacaoParaDeletar(undefined);
     },
-    onError: () => {
-      toast.error(tr('Erro ao excluir a transação.', 'Error deleting transaction.'));
+    onError: (error: unknown) => {
+      toast.error(getApiErrorMessage(error, tr('Erro ao excluir a transação.', 'Error deleting transaction.')));
     },
   });
 

@@ -12,6 +12,7 @@ import { Input } from '../../components/ui/Input';
 import { toast } from '../../store/useToastStore';
 import logo from '../../assets/logo-equilibra.png';
 import { useI18nStore } from '../../store/useI18nStore';
+import { getApiErrorMessage } from '../../lib/errorMessage';
 type LoginFormValues = {
   email: string;
   senha: string;
@@ -62,8 +63,15 @@ export function LoginPage() {
         });
       }
     },
-    onError: (error: any) => {
-      const code = error?.body?.code;
+    onError: (error: unknown) => {
+      let code: string | undefined;
+      if (typeof error === 'object' && error !== null) {
+        const typedError = error as {
+          body?: { code?: string };
+          response?: { data?: { code?: string } };
+        };
+        code = typedError.body?.code ?? typedError.response?.data?.code;
+      }
 
       if (code === 'EMAIL_NAO_VERIFICADO') {
         toast.warning(tr('Seu e-mail ainda não foi verificado. Ative sua conta para continuar.', 'Your email has not been verified yet. Verify your account to continue.'), 8000);
@@ -72,7 +80,10 @@ export function LoginPage() {
       }
 
       setError('root', {
-        message: tr('E-mail ou senha incorretos. Verifique seus dados e tente novamente.', 'Invalid email or password. Check your data and try again.'),
+        message: getApiErrorMessage(
+          error,
+          tr('E-mail ou senha incorretos. Verifique seus dados e tente novamente.', 'Invalid email or password. Check your data and try again.')
+        ),
       });
     }
   });

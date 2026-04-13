@@ -133,8 +133,8 @@ export const InvestimentosPage = () => {
       setDeletandoId(null);
       setInvestimentoParaDeletar(null);
     },
-    onError: () => {
-      toast.error(tr('So e possivel remover investimentos com saldo zerado.', 'Only investments with zero balance can be removed.'));
+    onError: (error: unknown) => {
+      toast.error(getApiErrorMessage(error, tr('So e possivel remover investimentos com saldo zerado.', 'Only investments with zero balance can be removed.')));
       setDeletandoId(null);
       setInvestimentoParaDeletar(null);
     },

@@ -10,6 +10,7 @@ import { toast } from '../../store/useToastStore';
 import logo from '../../assets/logo-equilibra.png';
 import { Check, X, Eye, EyeOff } from 'lucide-react';
 import { useI18nStore } from '../../store/useI18nStore';
+import { getApiErrorMessage } from '../../lib/errorMessage';
 type RegisterFormValues = {
   nome: string;
   email: string;
@@ -75,9 +76,9 @@ export function RegisterPage() {
       toast.info(tr('Enviamos um código de verificação para o seu e-mail.', 'We sent a verification code to your email.'), 8000);
       navigate('/login');
     },
-    onError: (error: any) => {
+    onError: (error: unknown) => {
       setError('root', { 
-        message: error?.body?.message || tr('Erro ao registrar usuário. Tente outro e-mail.', 'Error creating user. Try another email.') 
+        message: getApiErrorMessage(error, tr('Erro ao registrar usuário. Tente outro e-mail.', 'Error creating user. Try another email.'))
       });
     }
   });

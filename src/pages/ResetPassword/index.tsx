@@ -10,6 +10,7 @@ import { ArrowLeft, ShieldCheck, Loader2 } from 'lucide-react';
 import logo from '../../assets/logo-equilibra.png';
 import { AutenticaOService } from '../../api';
 import { useI18nStore } from '../../store/useI18nStore';
+import { getApiErrorMessage } from '../../lib/errorMessage';
 type ResetFormValues = { novaSenha: string; confirmarSenha: string };
 
 /**
@@ -67,9 +68,9 @@ export function ResetPasswordPage() {
         setEmail(data.email as string);
         setTokenValido(true);
       })
-      .catch((error) => {
+      .catch((error: unknown) => {
         setTokenValido(false);
-        setErroToken(error?.body?.message || tr('Token inválido ou expirado.', 'Invalid or expired token.'));
+        setErroToken(getApiErrorMessage(error, tr('Token inválido ou expirado.', 'Invalid or expired token.')));
       });
   }, [token]);
 
@@ -83,8 +84,8 @@ export function ResetPasswordPage() {
       toast.success(tr('Senha redefinida com sucesso! Faça login com sua nova senha.', 'Password reset successfully! Sign in with your new password.'), 6000);
       navigate('/login');
     },
-    onError: (error: any) => {
-      const mensagem = error?.response?.data?.message || tr('Erro ao redefinir a senha. Tente solicitar uma nova recuperação.', 'Error resetting password. Try requesting a new recovery link.');
+    onError: (error: unknown) => {
+      const mensagem = getApiErrorMessage(error, tr('Erro ao redefinir a senha. Tente solicitar uma nova recuperação.', 'Error resetting password. Try requesting a new recovery link.'));
       toast.error(mensagem);
     },
   });

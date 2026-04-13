@@ -116,7 +116,18 @@ export function PerfilPage() {
   const handleUpdatePerfil = (e: React.FormEvent) => {
     e.preventDefault();
     setLanguage(idioma);
-    updatePerfilMutation.mutate({ nome, celular, moeda: moeda as 'BRL' | 'USD' | 'EUR' });
+
+    const celularSanitizado = celular.trim();
+    if (celularSanitizado && !/^\d{10,11}$/.test(celularSanitizado)) {
+      toast.error(tr('Informe um celular valido com 10 ou 11 digitos.', 'Enter a valid mobile phone with 10 or 11 digits.'));
+      return;
+    }
+
+    updatePerfilMutation.mutate({
+      nome,
+      celular: celularSanitizado || undefined,
+      moeda: moeda as 'BRL' | 'USD' | 'EUR'
+    });
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {

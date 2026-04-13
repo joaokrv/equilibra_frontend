@@ -120,8 +120,8 @@ export const CartoesPage = () => {
       toast.success(tr('Cartão removido.', 'Card removed.'));
       setCartaoParaDeletar(null);
     },
-    onError: () => {
-      toast.error(tr('Não foi possível remover o cartão. Cartões com faturas pendentes não podem ser removidos.', 'Could not remove the card. Cards with pending invoices cannot be removed.'));
+    onError: (error: unknown) => {
+      toast.error(getApiErrorMessage(error, tr('Não foi possível remover o cartão. Cartões com faturas pendentes não podem ser removidos.', 'Could not remove the card. Cards with pending invoices cannot be removed.')));
       setCartaoParaDeletar(null);
     },
   });
