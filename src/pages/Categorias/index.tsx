@@ -72,8 +72,8 @@ export const CategoriasPage = () => {
       toast.success(tr('Categoria removida. Lançamentos vinculados ficaram sem categoria.', 'Category removed. Linked entries were set as uncategorized.'));
       setCategoriaParaDeletar(undefined);
     },
-    onError: () => {
-      toast.error(tr('Não foi possível remover a categoria agora. Tente novamente.', 'Could not remove the category right now. Please try again.'));
+    onError: (error: unknown) => {
+      toast.error(getApiErrorMessage(error, tr('Não foi possível remover a categoria agora. Tente novamente.', 'Could not remove the category right now. Please try again.')));
       setCategoriaParaDeletar(undefined);
     },
   });

@@ -45,7 +45,8 @@ const asText = (value: unknown): string | null => {
             return parsedMessage;
           }
         }
-      } catch {
+      } catch (parseError) {
+        void parseError;
       }
     }
 
@@ -63,12 +64,35 @@ const asText = (value: unknown): string | null => {
   return null;
 };
 
+const pickValidationDetail = (record: MaybeRecord): string | null => {
+  const code = asText(record.code)?.toUpperCase();
+  if (code !== 'VALIDATION_ERROR') {
+    return null;
+  }
+
+  const detailCandidates = [record.detalhes, record.details, record.detail];
+  for (const candidate of detailCandidates) {
+    const text = asText(candidate);
+    if (text && !isTechnicalMessage(text)) {
+      return text;
+    }
+  }
+
+  return null;
+};
+
 const pickMessageFromRecord = (record: MaybeRecord): string | null => {
+  const validationDetail = pickValidationDetail(record);
+  if (validationDetail) {
+    return validationDetail;
+  }
+
   const directCandidates = [
     record.message,
     record.mensagem,
     record.erro,
     record.error,
+    record.detalhes,
     record.detail,
     record.details,
     record.title,

@@ -9,6 +9,7 @@ import { ArrowLeft, Send } from 'lucide-react';
 import logo from '../../assets/logo-equilibra.png';
 import { AutenticaOService } from '../../api';
 import { useI18nStore } from '../../store/useI18nStore';
+import { getApiErrorMessage } from '../../lib/errorMessage';
 type ForgotFormValues = { email: string };
 
 /**
@@ -41,8 +42,8 @@ export function ForgotPasswordPage() {
         8000
       );
     },
-    onError: () => {
-      toast.error(tr('Ocorreu um erro ao processar sua solicitação. Tente novamente.', 'An error occurred while processing your request. Please try again.'));
+    onError: (error: unknown) => {
+      toast.error(getApiErrorMessage(error, tr('Ocorreu um erro ao processar sua solicitação. Tente novamente.', 'An error occurred while processing your request. Please try again.')));
     },
   });
 
