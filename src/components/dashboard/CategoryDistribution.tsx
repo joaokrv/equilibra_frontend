@@ -37,6 +37,12 @@ export const CategoryDistribution = ({
 }: CategoryDistributionProps) => {
   const language = useI18nStore((state) => state.language);
   const [filtro, setFiltro] = useState<'DESPESA' | 'RECEITA' | 'AMBOS'>('DESPESA');
+  const parseTooltipValue = (value: unknown): number => {
+    if (Array.isArray(value)) {
+      return Number(value[0] || 0);
+    }
+    return Number(value || 0);
+  };
 
   const dadosFiltrados = useMemo(() => {
     if (filtro === 'RECEITA') {
@@ -64,7 +70,7 @@ export const CategoryDistribution = ({
         {t(language, 'byCategory')}
       </p>
 
-      <div className="mt-4 inline-flex flex-wrap justify-center gap-1 rounded-2xl sm:rounded-full bg-secondary/50 p-1 border border-white/10">
+      <div className="mt-4 inline-flex flex-wrap justify-center gap-1 rounded-xl bg-secondary/50 p-1 border border-white/10">
         {[
           { id: 'DESPESA', label: t(language, 'filterExpenses') },
           { id: 'RECEITA', label: t(language, 'filterIncome') },
@@ -74,7 +80,7 @@ export const CategoryDistribution = ({
             key={item.id}
             type="button"
             onClick={() => setFiltro(item.id as 'DESPESA' | 'RECEITA' | 'AMBOS')}
-            className={`px-3 py-1.5 text-[11px] sm:text-xs font-bold uppercase tracking-wider rounded-full transition-all ${
+            className={`px-3 py-1.5 text-[11px] sm:text-xs font-bold uppercase tracking-wider rounded-md transition-all ${
               filtro === item.id
                 ? 'bg-primary text-primary-foreground'
                 : 'text-muted-foreground hover:text-white'
@@ -104,7 +110,22 @@ export const CategoryDistribution = ({
                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                 ))}
               </Pie>
-              <Tooltip formatter={(value: any) => formatarMoeda(Number(value || 0), moeda)} />
+              <Tooltip
+                cursor={false}
+                formatter={(value, name) => [
+                  formatarMoeda(parseTooltipValue(value), moeda),
+                  String(name || t(language, 'chartTotalValue')),
+                ]}
+                contentStyle={{
+                  backgroundColor: 'rgba(2, 6, 23, 0.96)',
+                  border: '1px solid rgba(124, 58, 237, 0.35)',
+                  borderRadius: '12px',
+                  color: '#fff',
+                }}
+                itemStyle={{ color: '#fff', textTransform: 'none' }}
+                labelStyle={{ color: '#cbd5e1', marginBottom: '4px' }}
+                wrapperStyle={{ outline: 'none', pointerEvents: 'none', zIndex: 20 }}
+              />
             </PieChart>
           </ResponsiveContainer>
           <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center pointer-events-none">

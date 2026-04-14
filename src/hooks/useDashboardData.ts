@@ -1,97 +1,128 @@
 import { useQuery } from '@tanstack/react-query';
-import {
-  TransaEsService,
-  ContaControllerService,
-  InvestimentosService,
-} from '../api';
 import { TransacaoResponseDTO } from '../api/models/TransacaoResponseDTO';
 import { useMarket } from './useMarket';
 import { useAuthStore } from '../store/useAuthStore';
 import { useMemo } from 'react';
-import { patrimonioApi } from '../lib/patrimonioApi';
+import { patrimonioApi, type PatrimonioEvolucaoItem } from '../lib/patrimonioApi';
+import {
+  dashboardApi,
+  type DashboardPeriodo,
+  type DashboardResumoPeriodoResponse,
+} from '../lib/dashboardApi';
+
+const PERIODO_DIAS_EVOLUCAO: Record<DashboardPeriodo, number> = {
+  '1M': 30,
+  '3M': 90,
+  '6M': 180,
+  '1A': 365,
+};
+
+const calcularIntervalo = (periodo: DashboardPeriodo): { dataInicio: string; dataFim: string } => {
+  const now = new Date();
+  const mesAtual = now.getMonth();
+  const anoAtual = now.getFullYear();
+  const meses = { '1M': 1, '3M': 3, '6M': 6, '1A': 12 }[periodo];
+
+  const inicioDate = new Date(anoAtual, mesAtual - (meses - 1), 1);
+  const fimDate = new Date(anoAtual, mesAtual + 1, 0);
+
+  const pad = (n: number) => String(n).padStart(2, '0');
+  const formatDate = (d: Date) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+
+  return { dataInicio: formatDate(inicioDate), dataFim: formatDate(fimDate) };
+};
+
+const ensureArray = <T,>(value: unknown): T[] => {
+  if (Array.isArray(value)) return value as T[];
+  if (value && typeof value === 'object') {
+    const maybeWithContent = value as { content?: unknown };
+    if (Array.isArray(maybeWithContent.content)) {
+      return maybeWithContent.content as T[];
+    }
+  }
+  return [];
+};
+
+const toNumber = (value: number | null | undefined): number => Number(value || 0);
 
 /**
  * Hook customizado que centraliza todas as queries e cálculos do Dashboard.
  *
  * Responsabilidades:
- * - Buscar transações, contas e investimentos do mês atual
+ * - Buscar resumo consolidado por período
+ * - Buscar transações do período para gráficos e lançamentos recentes
  * - Calcular totais de receitas, gastos, saldo e investimentos
  * - Agrupar despesas por categoria para o gráfico de distribuição
  *
  * @returns Dados computados e estados de loading
  */
-export const useDashboardData = () => {
+export const useDashboardData = (
+  periodo: DashboardPeriodo = '1M',
+  periodoPatrimonio: DashboardPeriodo = '6M',
+) => {
+
   const user = useAuthStore(state => state.user);
   const { exchange, eurExchange } = useMarket();
   
   const now = new Date();
   const currentMonth = now.getMonth() + 1;
   const currentYear = now.getFullYear();
+  const diasEvolucao = PERIODO_DIAS_EVOLUCAO[periodoPatrimonio];
+  const intervaloTransacoes = useMemo(() => calcularIntervalo(periodo), [periodo]);
 
-  // Transações do mês
+  // Resumo consolidado de cards para o período selecionado
   const {
-    data: transacoes = [],
-    isLoading: isLoadingTransactions,
-    isError: isErrorTransactions,
+    data: resumoPeriodo,
+    isLoading: isLoadingResumo,
+    isError: isErrorResumo,
   } = useQuery({
-    queryKey: ['transactions', currentYear, currentMonth],
+    queryKey: ['dashboard-summary', periodo],
+    queryFn: () => dashboardApi.obterResumoPorPeriodo(periodo),
+  });
+
+  // Transações do período para distribuição por categoria e lançamentos recentes
+  const {
+    data: transacoesPeriodoResponse = [],
+    isLoading: isLoadingTransactionsPeriodo,
+    isError: isErrorTransactionsPeriodo,
+  } = useQuery({
+    queryKey: ['transactions-period', periodo, intervaloTransacoes.dataInicio, intervaloTransacoes.dataFim],
     queryFn: () =>
-      TransaEsService.listarPaginado({}, currentYear, currentMonth) as Promise<any>,
-  });
-
-  // Contas (saldo total)
-  const { data: contas = [] } = useQuery({
-    queryKey: ['accounts'],
-    queryFn: () => ContaControllerService.listarContas(),
-  });
-
-  // Investimentos
-  const { data: investimentos = [] } = useQuery({
-    queryKey: ['investments'],
-    queryFn: () => InvestimentosService.listarInvestimentos(),
+      dashboardApi.listarPorIntervalo(intervaloTransacoes.dataInicio, intervaloTransacoes.dataFim),
   });
 
   // Evolução patrimonial (snapshots diários)
   const { data: evolucaoPatrimonioBruta = [] } = useQuery({
-    queryKey: ['patrimony-evolution', 180],
-    queryFn: () => patrimonioApi.listarEvolucao(180),
+    queryKey: ['patrimony-evolution', diasEvolucao],
+    queryFn: () => patrimonioApi.listarEvolucao(diasEvolucao),
   });
 
-  const ensureArray = <T,>(value: unknown): T[] => {
-    if (Array.isArray(value)) return value as T[];
-    if (value && typeof value === 'object' && Array.isArray((value as any).content)) {
-      return (value as any).content as T[];
-    }
-    return [];
-  };
-
   // Normalizar lista (paginação ou array direto)
-  const transacoesList: TransacaoResponseDTO[] = ensureArray<TransacaoResponseDTO>(transacoes);
-  const contasList = ensureArray<any>(contas);
-  const investimentosList = ensureArray<any>(investimentos);
-  const evolucaoPatrimonioList = ensureArray<any>(evolucaoPatrimonioBruta);
+  const transacoesPeriodoList = (Array.isArray(transacoesPeriodoResponse)
+    ? transacoesPeriodoResponse
+    : [])
+    .sort((a, b) => {
+      const dataA = new Date(a.data || 0).getTime();
+      const dataB = new Date(b.data || 0).getTime();
+      return dataB - dataA;
+    });
+  const evolucaoPatrimonioList = ensureArray<PatrimonioEvolucaoItem>(evolucaoPatrimonioBruta);
 
-  // Cálculos de resumo
-  const totalReceitas = transacoesList
-    .filter((t) => t.tipo === TransacaoResponseDTO.tipo.RECEITA)
-    .reduce((acc, t) => acc + (t.valor || 0), 0);
+  const resumo = resumoPeriodo as DashboardResumoPeriodoResponse | undefined;
 
-  const totalGastos = transacoesList
-    .filter((t) => t.tipo === TransacaoResponseDTO.tipo.DESPESA)
-    .reduce((acc, t) => acc + (t.valor || 0), 0);
-
-  const saldoTotalContas = contasList.reduce(
-    (acc: number, c: any) => acc + (c.saldo || 0),
-    0,
-  );
-
-  const totalInvestido = investimentosList.reduce(
-    (acc: number, i: any) => acc + (i.valorAtual || 0),
-    0,
-  );
+  const totalReceitas = toNumber(resumo?.totalReceitasAtual);
+  const totalGastos = toNumber(resumo?.totalDespesasAtual);
+  const totalReceitasPendentes = toNumber(resumo?.totalReceitasPendentesAtual);
+  const totalGastosPendentes = toNumber(resumo?.totalDespesasPendentesAtual);
+  const variacaoReceitasPercent = resumo?.variacaoReceitasPercentual ?? null;
+  const variacaoGastosPercent = resumo?.variacaoDespesasPercentual ?? null;
+  const saldoTotalContas = toNumber(resumo?.saldoContasAtual);
+  const totalInvestido = toNumber(resumo?.totalInvestidoAtual);
+  const variacaoSaldoContasPercent = resumo?.variacaoSaldoContasPercentual ?? null;
+  const variacaoInvestimentosPercent = resumo?.variacaoInvestimentosPercentual ?? null;
 
   // Agrupamento por Categoria para o Gráfico de Pizza
-  const categoriasMap = transacoesList.reduce((acc, t) => {
+  const categoriasMap = transacoesPeriodoList.reduce((acc, t) => {
     const catName = t.nomeCategoria || 'Outros';
     if (t.tipo === TransacaoResponseDTO.tipo.DESPESA) {
       acc[catName] = (acc[catName] || 0) + (t.valor || 0);
@@ -103,7 +134,7 @@ export const useDashboardData = () => {
     .map((name) => ({ name, value: categoriasMap[name] }))
     .sort((a, b) => b.value - a.value);
 
-  const receitasMap = transacoesList.reduce((acc, t) => {
+  const receitasMap = transacoesPeriodoList.reduce((acc, t) => {
     const catName = t.nomeCategoria || 'Outros';
     if (t.tipo === TransacaoResponseDTO.tipo.RECEITA) {
       acc[catName] = (acc[catName] || 0) + (t.valor || 0);
@@ -129,10 +160,31 @@ export const useDashboardData = () => {
     return 1; // BRL ou fallback
   }, [user?.moeda, exchange, eurExchange]);
 
+  const isLoadingTransactions = isLoadingTransactionsPeriodo || isLoadingResumo;
+  const isErrorTransactions = isErrorTransactionsPeriodo || isErrorResumo;
+
+  const intervaloAtual = {
+    inicio: resumo?.inicioPeriodoAtual || null,
+    fim: resumo?.fimPeriodoAtual || null,
+  };
+
+  const intervaloAnterior = {
+    inicio: resumo?.inicioPeriodoAnterior || null,
+    fim: resumo?.fimPeriodoAnterior || null,
+  };
+
   return {
-    transacoesList,
+    periodo,
+    periodoPatrimonio,
+    transacoesList: transacoesPeriodoList,
     totalReceitas: totalReceitas * conversionRate,
     totalGastos: totalGastos * conversionRate,
+    totalReceitasPendentes: totalReceitasPendentes * conversionRate,
+    totalGastosPendentes: totalGastosPendentes * conversionRate,
+    variacaoReceitasPercent,
+    variacaoGastosPercent,
+    variacaoInvestimentosPercent,
+    variacaoSaldoContasPercent,
     saldoTotalContas: saldoTotalContas * conversionRate,
     totalInvestido: totalInvestido * conversionRate,
     despesasPorCategoria: despesasPorCategoria.map(d => ({ ...d, value: d.value * conversionRate })),
@@ -143,6 +195,9 @@ export const useDashboardData = () => {
     })),
     isLoadingTransactions,
     isError: isErrorTransactions,
+    intervaloAtual,
+    intervaloAnterior,
+    diasEvolucao,
     currentMonth,
     currentYear,
     moeda: user?.moeda || 'BRL'
