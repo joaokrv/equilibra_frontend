@@ -20,10 +20,10 @@ const TIPOS_INVESTIMENTO: Array<{ value: TipoInvestimento; labelPt: string; labe
   { value: 'CDI', labelPt: 'CDI', labelEn: 'CDI' },
   { value: 'LCI', labelPt: 'LCI', labelEn: 'LCI' },
   { value: 'LCA', labelPt: 'LCA', labelEn: 'LCA' },
-  { value: 'POUPANCA', labelPt: 'Poupanca', labelEn: 'Savings' },
+  { value: 'POUPANCA', labelPt: 'Poupança', labelEn: 'Savings' },
   { value: 'TESOURO_DIRETO', labelPt: 'Tesouro Direto', labelEn: 'Treasury Bonds' },
   { value: 'FUNDO_DI', labelPt: 'Fundo DI', labelEn: 'DI Fund' },
-  { value: 'ACAO', labelPt: 'Acao', labelEn: 'Stock' },
+  { value: 'ACAO', labelPt: 'Ação', labelEn: 'Stock' },
   { value: 'FII', labelPt: 'FII', labelEn: 'REIT' },
   { value: 'CRIPTO', labelPt: 'Cripto', labelEn: 'Crypto' },
   { value: 'OUTRO', labelPt: 'Personalizado', labelEn: 'Custom' },
@@ -82,6 +82,10 @@ export const InvestimentosPage = () => {
   const invalidar = () => {
     queryClient.invalidateQueries({ queryKey: ['investimentos'] });
     queryClient.invalidateQueries({ queryKey: ['contas'] });
+    queryClient.invalidateQueries({ queryKey: ['transacoes'] });
+    queryClient.invalidateQueries({ queryKey: ['transactions'] });
+    queryClient.invalidateQueries({ queryKey: ['patrimony-evolution'] });
+    queryClient.invalidateQueries({ queryKey: ['dashboard-summary'] });
   };
 
   const criarMutation = useMutation({
@@ -101,7 +105,7 @@ export const InvestimentosPage = () => {
 
   const depositarMutation = useMutation({
     mutationFn: () => investimentosApi.depositar(investimentoSelecionado!.id!, Number(valor), Number(contaId)),
-    onSuccess: () => { invalidar(); toast.success(tr('Deposito realizado.', 'Deposit completed.')); fecharModal(); },
+    onSuccess: () => { invalidar(); toast.success(tr('Depósito realizado.', 'Deposit completed.')); fecharModal(); },
     onError: (error: unknown) =>
       toast.error(getApiErrorMessage(error, tr('Não foi possível concluir o depósito. Verifique o saldo da conta de origem.', 'Could not complete deposit. Check source account balance.'))),
   });
@@ -134,7 +138,7 @@ export const InvestimentosPage = () => {
       setInvestimentoParaDeletar(null);
     },
     onError: (error: unknown) => {
-      toast.error(getApiErrorMessage(error, tr('So e possivel remover investimentos com saldo zerado.', 'Only investments with zero balance can be removed.')));
+      toast.error(getApiErrorMessage(error, tr('Só é possível remover investimentos com saldo zerado.', 'Only investments with zero balance can be removed.')));
       setDeletandoId(null);
       setInvestimentoParaDeletar(null);
     },
@@ -186,7 +190,7 @@ export const InvestimentosPage = () => {
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
           <div>
             <h1 className="text-2xl font-bold text-white">{tr('Investimentos', 'Investments')}</h1>
-            <p className="text-sm text-muted-foreground mt-1">{tr('Acompanhe suas metas e faca aportes ou resgates.', 'Track your goals and make deposits or withdrawals.')}</p>
+            <p className="text-sm text-muted-foreground mt-1">{tr('Acompanhe suas metas e faça aportes ou resgates.', 'Track your goals and make deposits or withdrawals.')}</p>
           </div>
           <button onClick={() => setModal('criar')} className="w-full sm:w-auto flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-white font-bold px-4 py-2.5 rounded-xl transition-all shadow-lg shadow-primary/20 active:scale-[0.98] text-sm">
             <Plus size={16} /> {tr('Novo Investimento', 'New Investment')}
@@ -259,7 +263,7 @@ export const InvestimentosPage = () => {
                       <div className={`h-full rounded-full transition-all ${(possuiMeta && atingiu) ? 'bg-emerald-400' : 'bg-primary'}`} style={{ width: `${possuiMeta ? progresso : 0}%` }} />
                     </div>
                     <p className={`text-[10px] font-bold mt-1 ${(possuiMeta && atingiu) ? 'text-emerald-400' : 'text-muted-foreground'}`}>
-                      {possuiMeta ? (atingiu ? tr('Meta atingida!', 'Goal achieved!') : `${progresso.toFixed(1)}% ${tr('concluido', 'completed')}`) : tr('Sem meta definida', 'No goal defined')}
+                      {possuiMeta ? (atingiu ? tr('Meta atingida!', 'Goal achieved!') : `${progresso.toFixed(1)}% ${tr('concluído', 'completed')}`) : tr('Sem meta definida', 'No goal defined')}
                     </p>
                   </div>
 
@@ -288,7 +292,7 @@ export const InvestimentosPage = () => {
             <div className="space-y-4">
               <div className="space-y-1.5">
                 <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Nome da Meta', 'Goal Name')}</label>
-                <input type="text" value={descricao} onChange={(e) => setDescricao(e.target.value)} placeholder="Ex: Reserva de emergencia" maxLength={100} autoFocus className="w-full bg-secondary/30 border border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium placeholder:text-muted-foreground/30" />
+                <input type="text" value={descricao} onChange={(e) => setDescricao(e.target.value)} placeholder="Ex: Reserva de emergência" maxLength={100} autoFocus className="w-full bg-secondary/30 border border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium placeholder:text-muted-foreground/30" />
               </div>
               <div className="space-y-1.5">
                 <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Tipo de Investimento', 'Investment Type')}</label>

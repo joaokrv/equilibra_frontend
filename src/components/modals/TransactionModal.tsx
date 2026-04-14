@@ -23,12 +23,12 @@ const tr = (language: 'pt-BR' | 'en-US', pt: string, en: string) =>
 
 const buildTransactionSchema = (language: 'pt-BR' | 'en-US') =>
   z.object({
-    descricao: z.string().min(3, tr(language, 'Descricao muito curta', 'Description is too short')),
+    descricao: z.string().min(3, tr(language, 'Descrição muito curta', 'Description is too short')),
     valor: z
       .string()
-      .min(1, tr(language, 'Valor e obrigatorio', 'Amount is required'))
+      .min(1, tr(language, 'Valor é obrigatório', 'Amount is required'))
       .refine((v) => !isNaN(Number(v)) && Number(v) > 0, tr(language, 'Valor deve ser positivo', 'Amount must be positive')),
-    data: z.string().min(1, tr(language, 'Data e obrigatoria', 'Date is required')),
+    data: z.string().min(1, tr(language, 'Data é obrigatória', 'Date is required')),
     tipo: z.enum(['RECEITA', 'DESPESA']),
     status: z.enum(['PAGO', 'PENDENTE']),
     metodoPagamento: z.enum([
@@ -139,10 +139,10 @@ export const TransactionModal = ({ isOpen, onClose, onSuccess, transacaoParaEdit
         : undefined;
       const message = getApiErrorMessage(
         error,
-        tr(language, 'Nao foi possivel registrar a transacao. Revise os dados e tente novamente.', 'Could not save the transaction. Review the data and try again.'),
+        tr(language, 'Não foi possível registrar a transação. Revise os dados e tente novamente.', 'Could not save the transaction. Review the data and try again.'),
       );
       if (errorStatus === 409) {
-        toast.warning(tr(language, 'Esta transacao ja foi processada.', 'This transaction has already been processed.'));
+        toast.warning(tr(language, 'Esta transação já foi processada.', 'This transaction has already been processed.'));
       } else {
         toast.error(message);
       }
@@ -156,7 +156,7 @@ export const TransactionModal = ({ isOpen, onClose, onSuccess, transacaoParaEdit
       queryClient.invalidateQueries({ queryKey: ['transactions'] });
       queryClient.invalidateQueries({ queryKey: ['accounts'] });
       queryClient.invalidateQueries({ queryKey: ['transacoes'] });
-      toast.success(tr(language, 'Transacao atualizada com sucesso!', 'Transaction updated successfully!'));
+      toast.success(tr(language, 'Transação atualizada com sucesso!', 'Transaction updated successfully!'));
       onSuccess?.();
       reset();
       onClose();
@@ -167,7 +167,7 @@ export const TransactionModal = ({ isOpen, onClose, onSuccess, transacaoParaEdit
           error,
           tr(
             language,
-            'Nao foi possivel salvar a edicao da transacao. Revise os dados e tente novamente.',
+            'Não foi possível salvar a edição da transação. Revise os dados e tente novamente.',
             'Could not save transaction changes. Review the data and try again.',
           ),
         ),
@@ -205,7 +205,7 @@ export const TransactionModal = ({ isOpen, onClose, onSuccess, transacaoParaEdit
   ];
 
   const cartaoOptions = [
-    { label: tr(language, 'Selecione o Cartao', 'Select Card'), value: '' },
+    { label: tr(language, 'Selecione o Cartão', 'Select Card'), value: '' },
     ...(cartoes as any[]).map((c: any) => ({
       label: c.nome,
       value: String(c.id),
@@ -232,12 +232,12 @@ export const TransactionModal = ({ isOpen, onClose, onSuccess, transacaoParaEdit
               </div>
               <div>
                 <h3 className="text-lg sm:text-xl font-bold text-white leading-tight">
-                  {isEditMode ? tr(language, 'Editar Transacao', 'Edit Transaction') : tr(language, 'Nova Transacao', 'New Transaction')}
+                  {isEditMode ? tr(language, 'Editar Transação', 'Edit Transaction') : tr(language, 'Nova Transação', 'New Transaction')}
                 </h3>
                 <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-widest">
                   {isEditMode
-                    ? tr(language, 'Atualize os dados da transacao', 'Update transaction data')
-                    : tr(language, 'Controle sua saude financeira', 'Track your financial health')}
+                    ? tr(language, 'Atualize os dados da transação', 'Update transaction data')
+                    : tr(language, 'Controle sua saúde financeira', 'Track your financial health')}
                 </p>
               </div>
             </div>
@@ -271,7 +271,7 @@ export const TransactionModal = ({ isOpen, onClose, onSuccess, transacaoParaEdit
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               <Input
                 {...register('descricao')}
-                label={tr(language, 'Descricao', 'Description')}
+                label={tr(language, 'Descrição', 'Description')}
                 id="desc-trans"
                 placeholder={tr(language, 'Ex: Assinatura Netflix', 'Ex: Netflix subscription')}
                 error={errors.descricao?.message}
@@ -297,16 +297,16 @@ export const TransactionModal = ({ isOpen, onClose, onSuccess, transacaoParaEdit
               />
               <Select
                 {...register('metodoPagamento')}
-                label={tr(language, 'Metodo', 'Method')}
+                label={tr(language, 'Método', 'Method')}
                 id="metodo-trans"
                 options={[
                   { label: 'PIX', value: 'PIX' },
-                  { label: tr(language, 'Cartao de Credito', 'Credit Card'), value: 'CARTAO_CREDITO' },
-                  { label: tr(language, 'Cartao de Debito', 'Debit Card'), value: 'CARTAO_DEBITO' },
+                  { label: tr(language, 'Cartão de Crédito', 'Credit Card'), value: 'CARTAO_CREDITO' },
+                  { label: tr(language, 'Cartão de Débito', 'Debit Card'), value: 'CARTAO_DEBITO' },
                   { label: tr(language, 'Boleto', 'Bank Slip'), value: 'BOLETO' },
-                  { label: tr(language, 'Transferencia', 'Transfer'), value: 'TRANSFERENCIA' },
+                  { label: tr(language, 'Transferência', 'Transfer'), value: 'TRANSFERENCIA' },
                   { label: tr(language, 'Dinheiro', 'Cash'), value: 'DINHEIRO' },
-                  { label: tr(language, 'Vale Alimentacao', 'Meal Voucher'), value: 'VALE_ALIMENTACAO' },
+                  { label: tr(language, 'Vale Alimentação', 'Meal Voucher'), value: 'VALE_ALIMENTACAO' },
                 ]}
                 error={errors.metodoPagamento?.message}
               />
@@ -316,7 +316,7 @@ export const TransactionModal = ({ isOpen, onClose, onSuccess, transacaoParaEdit
               {metodo === 'CARTAO_CREDITO' ? (
                 <Select
                   {...register('cartaoId')}
-                  label={tr(language, 'Cartao', 'Card')}
+                  label={tr(language, 'Cartão', 'Card')}
                   id="cartao-trans"
                   options={cartaoOptions}
                   error={errors.cartaoId?.message}

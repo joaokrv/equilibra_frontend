@@ -43,7 +43,7 @@ export const MainLayout = ({ children }: MainLayoutProps) => {
               <AlertTriangle size={18} className="text-amber-500 shrink-0 mt-0.5 sm:mt-0" />
               <p className="text-xs sm:text-sm font-medium text-amber-500/90">
                 {tr(
-                  'Sua conta ainda nao foi ativada. Verifique seu e-mail para desbloquear todas as funcionalidades.',
+                  'Sua conta ainda não foi ativada. Verifique seu e-mail para desbloquear todas as funcionalidades.',
                   'Your account is not activated yet. Check your email to unlock all features.',
                 )}
               </p>
@@ -57,7 +57,7 @@ export const MainLayout = ({ children }: MainLayoutProps) => {
           </div>
         )}
 
-        <main className="flex-1 overflow-y-auto p-3 sm:p-4 lg:p-8 custom-scrollbar">
+        <main className="flex-1 overflow-y-auto p-3 sm:p-4 lg:p-8 pb-24 sm:pb-28 custom-scrollbar">
           <div className="max-w-7xl mx-auto h-full">
             {children}
           </div>
