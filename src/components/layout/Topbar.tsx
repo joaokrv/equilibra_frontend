@@ -1,5 +1,5 @@
 import { useState, useRef, useEffect } from 'react';
-import { Search, User } from 'lucide-react';
+import { Search, User, Eye, EyeOff } from 'lucide-react';
 import { useAuthStore } from '../../store/useAuthStore';
 import { Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
@@ -9,6 +9,7 @@ import { TransaEsService } from '../../api/services/TransaEsService';
 import { formatarMoeda } from '../../lib/formatters';
 import { useI18nStore } from '../../store/useI18nStore';
 import { t } from '../../lib/i18n';
+import { usePrivacyStore } from '../../store/usePrivacyStore';
 
 interface ResultadoBusca {
   tipo: 'conta' | 'categoria' | 'transacao';
@@ -20,6 +21,8 @@ interface ResultadoBusca {
 export const Topbar = () => {
   const user = useAuthStore((state) => state.user);
   const language = useI18nStore((state) => state.language);
+  const hideValues = usePrivacyStore((state) => state.hideValues);
+  const toggleHideValues = usePrivacyStore((state) => state.toggleHideValues);
   const moeda = (user?.moeda as 'BRL' | 'USD' | 'EUR') || 'BRL';
   const navigate = useNavigate();
   const [busca, setBusca] = useState('');
@@ -161,7 +164,17 @@ export const Topbar = () => {
         </div>
       </div>
 
-      <div className="flex items-center gap-2 sm:gap-6 ml-0 sm:ml-4 lg:ml-8">
+      <div className="flex items-center gap-2 sm:gap-3 ml-0 sm:ml-4 lg:ml-8">
+        <button
+          type="button"
+          onClick={toggleHideValues}
+          aria-label={hideValues ? t(language, 'privacyShowValues') : t(language, 'privacyHideValues')}
+          title={hideValues ? t(language, 'privacyShowValues') : t(language, 'privacyHideValues')}
+          className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-secondary/50 border border-white/10 hover:border-primary/50 text-muted-foreground hover:text-white transition-all flex items-center justify-center"
+        >
+          {hideValues ? <EyeOff size={17} /> : <Eye size={17} />}
+        </button>
+
         <Link to="/perfil" className="flex items-center gap-2 sm:gap-3 pl-0 sm:pl-4 lg:pl-6 border-l-0 sm:border-l border-white/5 cursor-pointer group min-w-0">
           <div className="text-right hidden md:block min-w-0">
             <p className="text-sm font-semibold group-hover:text-primary transition-colors">

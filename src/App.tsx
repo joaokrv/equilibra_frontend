@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuthStore } from './store/useAuthStore';
+import { usePrivacyStore } from './store/usePrivacyStore';
 import { toast } from './store/useToastStore';
 import { PerfilService } from './api';
 import { Dashboard } from './pages/Dashboard';
@@ -60,6 +61,7 @@ const PublicRoute = ({ children }: { children: React.ReactNode }) => {
 
 export default function App() {
   const { isAuthenticated, updateProfile } = useAuthStore();
+  const hideValues = usePrivacyStore((state) => state.hideValues);
 
   useEffect(() => {
     if (isAuthenticated) {
@@ -68,6 +70,10 @@ export default function App() {
         .catch(() => {});
     }
   }, [isAuthenticated]);
+
+  useEffect(() => {
+    document.documentElement.dataset.privacyValues = hideValues ? 'hidden' : 'visible';
+  }, [hideValues]);
 
   return (
     <Routes>

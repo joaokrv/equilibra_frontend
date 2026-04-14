@@ -1,4 +1,5 @@
 import type { AppLanguage } from '../store/useI18nStore';
+import { usePrivacyStore } from '../store/usePrivacyStore';
 
 /**
  * Módulo centralizado de formatação para toda a aplicação.
@@ -13,11 +14,24 @@ import type { AppLanguage } from '../store/useI18nStore';
  * @param moeda - Código da moeda (BRL, USD, EUR)
  * @returns String formatada (ex: "R$ 1.234,56")
  */
-export const formatarMoeda = (valor: number, moeda: 'BRL' | 'USD' | 'EUR' = 'BRL'): string =>
-  new Intl.NumberFormat(moeda === 'BRL' ? 'pt-BR' : 'en-US', {
+const currencySymbols: Record<'BRL' | 'USD' | 'EUR', string> = {
+  BRL: 'R$',
+  USD: '$',
+  EUR: '€',
+};
+
+const privacyMask = '******';
+
+export const formatarMoeda = (valor: number, moeda: 'BRL' | 'USD' | 'EUR' = 'BRL'): string => {
+  if (usePrivacyStore.getState().hideValues) {
+    return `${currencySymbols[moeda]} ${privacyMask}`;
+  }
+
+  return new Intl.NumberFormat(moeda === 'BRL' ? 'pt-BR' : 'en-US', {
     style: 'currency',
     currency: moeda,
   }).format(valor);
+};
 
 export const getDateLocale = (language: AppLanguage): string =>
   language === 'en-US' ? 'en-US' : 'pt-BR';

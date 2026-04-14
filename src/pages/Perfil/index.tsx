@@ -23,6 +23,7 @@ import { Input } from '../../components/ui/Input';
 import { MainLayout } from '../../components/layout/MainLayout';
 import { getApiErrorMessage } from '../../lib/errorMessage';
 import { useI18nStore, type AppLanguage } from '../../store/useI18nStore';
+import { formatarMoeda } from '../../lib/formatters';
 
 export function PerfilPage() {
   const { user, updateProfile, updateIsEmailVerificado } = useAuthStore();
@@ -145,13 +146,6 @@ export function PerfilPage() {
     const novoIdioma = e.target.value as AppLanguage;
     setIdioma(novoIdioma);
     setLanguage(novoIdioma);
-  };
-
-  const formatCurrency = (value: number) => {
-    return new Intl.NumberFormat(idioma === 'en-US' ? 'en-US' : 'pt-BR', {
-      style: 'currency',
-      currency: moeda,
-    }).format(value);
   };
 
   return (
@@ -290,7 +284,7 @@ export function PerfilPage() {
                     <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">{tr('Receitas', 'Income')}</span>
                   </div>
                   <p className="text-xl font-bold text-white">
-                    {isLoadingResumo ? '---' : formatCurrency(resumo?.totalReceitas || 0)}
+                    {isLoadingResumo ? '---' : formatarMoeda(resumo?.totalReceitas || 0, moeda as 'BRL' | 'USD' | 'EUR')}
                   </p>
                </Link>
 
@@ -303,7 +297,7 @@ export function PerfilPage() {
                     <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">{tr('Despesas', 'Expenses')}</span>
                   </div>
                   <p className="text-xl font-bold text-white">
-                    {isLoadingResumo ? '---' : formatCurrency(resumo?.totalDespesas || 0)}
+                    {isLoadingResumo ? '---' : formatarMoeda(resumo?.totalDespesas || 0, moeda as 'BRL' | 'USD' | 'EUR')}
                   </p>
                </Link>
 
@@ -316,7 +310,7 @@ export function PerfilPage() {
                     <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">{tr('Saldo Atual', 'Current Balance')}</span>
                   </div>
                   <p className="text-xl font-bold text-white">
-                    {isLoadingResumo ? '---' : formatCurrency(resumo?.saldoContas || 0)}
+                    {isLoadingResumo ? '---' : formatarMoeda(resumo?.saldoContas || 0, moeda as 'BRL' | 'USD' | 'EUR')}
                   </p>
                </Link>
 
@@ -329,7 +323,7 @@ export function PerfilPage() {
                     <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">{tr('Investido', 'Invested')}</span>
                   </div>
                   <p className="text-xl font-bold text-white">
-                    {isLoadingResumo ? '---' : formatCurrency(resumo?.totalInvestido || 0)}
+                    {isLoadingResumo ? '---' : formatarMoeda(resumo?.totalInvestido || 0, moeda as 'BRL' | 'USD' | 'EUR')}
                   </p>
                </Link>
             </section>
