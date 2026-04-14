@@ -80,6 +80,9 @@ export const PatrimonyChart = ({ dados, moeda, periodo, onPeriodoChange }: Patri
     return [dominioMin, dominioMax];
   }, [dadosGrafico]);
 
+  const possuiDados = dadosGrafico.length > 0;
+  const possuiApenasUmSnapshot = dadosGrafico.length === 1;
+
   return (
   <div className="lg:col-span-2 glass p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl min-h-[290px] sm:min-h-[380px] lg:min-h-[420px] flex flex-col">
     <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 sm:gap-3 mb-4 sm:mb-8">
@@ -107,7 +110,7 @@ export const PatrimonyChart = ({ dados, moeda, periodo, onPeriodoChange }: Patri
       </div>
     </div>
 
-    {dadosGrafico.length > 1 ? (
+    {possuiDados ? (
       <div className="flex-1 min-h-[185px] sm:min-h-[280px] lg:min-h-[300px]">
         <ResponsiveContainer width="100%" height="100%">
           <LineChart data={dadosGrafico} margin={{ top: 8, right: 8, left: 0, bottom: 8 }}>
@@ -155,19 +158,26 @@ export const PatrimonyChart = ({ dados, moeda, periodo, onPeriodoChange }: Patri
               name={t(language, 'chartTotalValue')}
               stroke="#7c3aed"
               strokeWidth={3}
-              dot={{ r: 2.5 }}
+              dot={{ r: possuiApenasUmSnapshot ? 5 : 2.5 }}
               activeDot={{ r: 5 }}
               connectNulls
             />
           </LineChart>
         </ResponsiveContainer>
+        {possuiApenasUmSnapshot && (
+          <p className="mt-2 text-center text-xs text-muted-foreground font-medium">
+            {language === 'en-US'
+              ? 'Only one daily snapshot is available in this range for now. New days will complete the trend line.'
+              : 'Há apenas um snapshot diário neste período por enquanto. Novos dias completarão a linha de tendência.'}
+          </p>
+        )}
       </div>
     ) : (
       <div className="flex-1 flex flex-col items-center justify-center gap-4 text-center">
         <p className="text-sm text-muted-foreground font-medium max-w-xs leading-relaxed">
           {language === 'en-US'
-            ? 'As soon as there is more than one daily snapshot, the evolution will appear here.'
-            : 'Assim que houver mais de um snapshot diário, a evolução aparecerá aqui.'}
+            ? 'As soon as the first daily snapshot is generated, the evolution will appear here.'
+            : 'Assim que o primeiro snapshot diário for gerado, a evolução aparecerá aqui.'}
         </p>
       </div>
     )}
