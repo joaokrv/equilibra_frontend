@@ -30,7 +30,7 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
 
   const { data: perfil } = useQuery({
     queryKey: ['auth-session-check'],
-    queryFn: () => PerfilService.getPerfil(),
+    queryFn: () => PerfilService.obterPerfil(),
     enabled: isAuthenticated,
     staleTime: 30_000,
     refetchInterval: 30_000,
