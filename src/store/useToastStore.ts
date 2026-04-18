@@ -15,10 +15,6 @@ interface ToastState {
   removeToast: (id: string) => void;
 }
 
-/**
- * Store global de toasts.
- * API simplificada: useToastStore.getState().addToast('msg', 'success')
- */
 export const useToastStore = create<ToastState>((set) => ({
   toasts: [],
   addToast: (message, variant, duration = 5000) => {
@@ -42,10 +38,6 @@ export const useToastStore = create<ToastState>((set) => ({
     })),
 }));
 
-/**
- * Helper de acesso direto (fora de componentes React).
- * Uso: toast.success('Conta criada!'), toast.warning('Ative sua conta')
- */
 export const toast = {
   success: (message: string, duration?: number) =>
     useToastStore.getState().addToast(message, 'success', duration),

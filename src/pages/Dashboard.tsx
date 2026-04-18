@@ -12,12 +12,6 @@ import { useI18nStore } from '../store/useI18nStore';
 import { t } from '../lib/i18n';
 import type { DashboardPeriodo } from '../lib/dashboardApi';
 
-/**
- * Página principal do Dashboard.
- *
- * Compõe sub-componentes independentes (SRP) e delega
- * toda a lógica de dados para o hook useDashboardData.
- */
 export const Dashboard = () => {
   const [periodoSelecionado, setPeriodoSelecionado] = useState<DashboardPeriodo>('1M');
   const [periodoPatrimonio, setPeriodoPatrimonio] = useState<DashboardPeriodo>('6M');

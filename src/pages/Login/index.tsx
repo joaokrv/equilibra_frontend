@@ -47,7 +47,7 @@ export function LoginPage() {
       const user = response.user as User | undefined;
 
       if (response.accessToken && user?.id && user?.nome && user?.email) {
-        setAuth(user, response.accessToken, response.refreshToken || '');
+        setAuth(user, response.accessToken);
 
         if (!user.isEmailVerificado) {
           toast.warning(

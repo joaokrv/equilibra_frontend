@@ -30,6 +30,13 @@ if (import.meta.env.PROD && normalizedApiBaseUrl) {
       'Configuracao invalida: VITE_API_BASE_URL nao pode apontar para equilibra-frontend.vercel.app. Use a URL publica do backend.',
     );
   }
+
+  // Exige HTTPS em producao — previne MITM e redirect para servidor do atacante (F5-A3)
+  if (!normalizedApiBaseUrl.startsWith('https://')) {
+    throw new Error(
+      'Configuracao invalida: VITE_API_BASE_URL deve usar HTTPS em producao. URL atual: ' + normalizedApiBaseUrl,
+    );
+  }
 }
 
 export const API_BASE_URL = normalizedApiBaseUrl;

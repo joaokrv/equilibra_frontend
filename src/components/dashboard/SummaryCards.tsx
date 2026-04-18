@@ -85,9 +85,6 @@ interface SummaryCardsProps {
   moeda: 'BRL' | 'USD' | 'EUR';
 }
 
-/**
- * Componente dos 4 cards de resumo financeiro do Dashboard.
- */
 export const SummaryCards = ({
   totalReceitas,
   totalGastos,

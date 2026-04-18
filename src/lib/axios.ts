@@ -16,6 +16,8 @@ const apiClient = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
+  // Necessário para enviar/receber o cookie HttpOnly do refresh token (G5-A1)
+  withCredentials: true,
 });
 
 // ─── Flag para evitar múltiplos refreshes simultâneos ────────────────
@@ -66,7 +68,7 @@ apiClient.interceptors.response.use(
 
     // Ignorar refresh para rotas de autenticação (evita loop infinito)
     const url = originalRequest.url || '';
-    if (url.includes('/api/auth/login') || url.includes('/api/auth/refresh')) {
+    if (url.includes('/api/auth/login') || url.includes('/api/auth/refresh') || url.includes('/api/auth/logout')) {
       return Promise.reject(error);
     }
 
@@ -83,33 +85,20 @@ apiClient.interceptors.response.use(
     originalRequest._retry = true;
     isRefreshing = true;
 
-    const refreshToken = useAuthStore.getState().refreshToken;
-
-    if (!refreshToken) {
-      // Sem refresh token, fazer logout direto
-      isRefreshing = false;
-      useAuthStore.getState().logout();
-      window.location.href = '/login';
-      return Promise.reject(error);
-    }
-
     try {
-      // Chamar endpoint de refresh do backend
-      const { data } = await axios.post(`${API_BASE_URL}/api/auth/refresh`, {
-        refreshToken,
-      });
+      // RT enviado automaticamente via cookie HttpOnly (withCredentials=true)
+      const { data } = await axios.post(
+        `${API_BASE_URL}/api/auth/refresh`,
+        {},
+        { withCredentials: true },
+      );
 
       const newAccessToken = data.accessToken;
-      const newRefreshToken = data.refreshToken;
 
-      // Atualizar store com novos tokens
+      // Atualizar store com novo access token
       const currentUser = useAuthStore.getState().user;
       if (currentUser && newAccessToken) {
-        useAuthStore.getState().setAuth(
-          currentUser,
-          newAccessToken,
-          newRefreshToken || refreshToken,
-        );
+        useAuthStore.getState().setAuth(currentUser, newAccessToken);
       }
 
       // Processar fila de requests pendentes com o novo token
@@ -119,10 +108,9 @@ apiClient.interceptors.response.use(
       originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
       return apiClient(originalRequest);
     } catch (refreshError) {
-      // Refresh falhou — sessão expirada, fazer logout
+      // Refresh falhou — sessão expirada; CustomEvent desacopla do router (G10.1)
       processQueue(refreshError, null);
-      useAuthStore.getState().logout();
-      window.location.href = '/login';
+      window.dispatchEvent(new CustomEvent('auth:force-logout'));
       return Promise.reject(refreshError);
     } finally {
       isRefreshing = false;

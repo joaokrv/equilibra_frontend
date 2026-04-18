@@ -68,7 +68,7 @@ export const Topbar = () => {
       .map((c): ResultadoBusca => ({
         tipo: 'conta',
         label: c.nome || '',
-        detalhe: formatarMoeda(c.saldo ?? 0, moeda),
+        detalhe: hideValues ? '• • • • • •' : formatarMoeda(c.saldo ?? 0, moeda),
         rota: `/contas?busca=${encodeURIComponent(busca.trim())}`,
       })),
     ...categorias
@@ -90,7 +90,7 @@ export const Topbar = () => {
       .map((t: any): ResultadoBusca => ({
         tipo: 'transacao',
         label: t.descricao || '',
-        detalhe: `${t.tipo === 'RECEITA' ? '+' : '-'} ${formatarMoeda(t.valor ?? 0, moeda)}${t.nomeCategoria ? ` • ${t.nomeCategoria}` : ''}`,
+        detalhe: hideValues ? '• • • • • •' : `${t.tipo === 'RECEITA' ? '+' : '-'} ${formatarMoeda(t.valor ?? 0, moeda)}${t.nomeCategoria ? ` • ${t.nomeCategoria}` : ''}`,
         rota: `/extrato?busca=${encodeURIComponent(busca.trim())}`,
       })),
   ].slice(0, 8);

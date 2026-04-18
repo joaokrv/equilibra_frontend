@@ -17,9 +17,6 @@ interface PatrimonyChartProps {
   onPeriodoChange: (periodo: DashboardPeriodo) => void;
 }
 
-/**
- * Gráfico de evolução patrimonial baseado em snapshots diários.
- */
 export const PatrimonyChart = ({ dados, moeda, periodo, onPeriodoChange }: PatrimonyChartProps) => {
   const language = useI18nStore((state) => state.language);
   const periodOptions: Array<{ value: DashboardPeriodo; label: string }> = [

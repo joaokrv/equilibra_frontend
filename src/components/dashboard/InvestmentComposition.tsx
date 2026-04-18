@@ -11,9 +11,6 @@ interface InvestmentCompositionProps {
 
 const COLORS = ['#14b8a6', '#7c3aed'];
 
-/**
- * Mostra a composição do patrimônio atual entre contas e investimentos.
- */
 export const InvestmentComposition = ({
   saldoTotalContas,
   totalInvestido,

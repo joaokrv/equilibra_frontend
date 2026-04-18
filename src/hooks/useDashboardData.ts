@@ -45,17 +45,6 @@ const ensureArray = <T,>(value: unknown): T[] => {
 
 const toNumber = (value: number | null | undefined): number => Number(value || 0);
 
-/**
- * Hook customizado que centraliza todas as queries e cálculos do Dashboard.
- *
- * Responsabilidades:
- * - Buscar resumo consolidado por período
- * - Buscar transações do período para gráficos e lançamentos recentes
- * - Calcular totais de receitas, gastos, saldo e investimentos
- * - Agrupar despesas por categoria para o gráfico de distribuição
- *
- * @returns Dados computados e estados de loading
- */
 export const useDashboardData = (
   periodo: DashboardPeriodo = '1M',
   periodoPatrimonio: DashboardPeriodo = '6M',
