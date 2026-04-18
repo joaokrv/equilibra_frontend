@@ -2,16 +2,13 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type InvestimentoRegistroRequestDTO = {
+export type InvestimentoAtualizacaoRequestDTO = {
     descricao: string;
-    valorInicial: number;
     meta?: number;
-    contaId: number;
-    contaDestinoId?: number;
-    tipoInvestimento: InvestimentoRegistroRequestDTO.tipoInvestimento;
+    tipoInvestimento: InvestimentoAtualizacaoRequestDTO.tipoInvestimento;
     tipoPersonalizado?: string;
 };
-export namespace InvestimentoRegistroRequestDTO {
+export namespace InvestimentoAtualizacaoRequestDTO {
     export enum tipoInvestimento {
         CDB = 'CDB',
         CDI = 'CDI',

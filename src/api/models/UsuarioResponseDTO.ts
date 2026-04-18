@@ -3,12 +3,18 @@
 /* tslint:disable */
 /* eslint-disable */
 export type UsuarioResponseDTO = {
-    id: number;
-    nome: string;
-    email: string;
-    isEmailVerificado: boolean;
+    id?: number;
+    nome?: string;
+    email?: string;
+    isEmailVerificado?: boolean;
     celular?: string;
-    moeda?: 'BRL' | 'USD' | 'EUR';
     fotoBase64?: string;
+    moeda?: UsuarioResponseDTO.moeda;
 };
+export namespace UsuarioResponseDTO {
+    export enum moeda {
+        BRL = 'BRL',
+        USD = 'USD',
+    }
+}
 

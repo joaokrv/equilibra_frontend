@@ -2,12 +2,53 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import type { InvestimentoAtualizacaoRequestDTO } from '../models/InvestimentoAtualizacaoRequestDTO';
 import type { InvestimentoRegistroRequestDTO } from '../models/InvestimentoRegistroRequestDTO';
 import type { InvestimentoResponseDTO } from '../models/InvestimentoResponseDTO';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 export class InvestimentosService {
+    /**
+     * Atualizar investimento
+     * Edita nome, meta e tipo do investimento, incluindo tipo personalizado.
+     * @param id
+     * @param requestBody
+     * @returns InvestimentoResponseDTO OK
+     * @throws ApiError
+     */
+    public static atualizarInvestimento(
+        id: number,
+        requestBody: InvestimentoAtualizacaoRequestDTO,
+    ): CancelablePromise<InvestimentoResponseDTO> {
+        return __request(OpenAPI, {
+            method: 'PUT',
+            url: '/api/investimentos/{id}',
+            path: {
+                'id': id,
+            },
+            body: requestBody,
+            mediaType: 'application/json',
+        });
+    }
+    /**
+     * Excluir investimento
+     * Realiza o soft delete do investimento. Só é permitido se o saldo estiver zerado.
+     * @param id
+     * @returns any OK
+     * @throws ApiError
+     */
+    public static deletarInvestimento(
+        id: number,
+    ): CancelablePromise<any> {
+        return __request(OpenAPI, {
+            method: 'DELETE',
+            url: '/api/investimentos/{id}',
+            path: {
+                'id': id,
+            },
+        });
+    }
     /**
      * Atualizar meta
      * Altera o valor do objetivo (meta final) de um investimento.
@@ -109,24 +150,6 @@ export class InvestimentosService {
             query: {
                 'valor': valor,
                 'contaId': contaId,
-            },
-        });
-    }
-    /**
-     * Excluir investimento
-     * Realiza o soft delete do investimento. Só é permitido se o saldo estiver zerado.
-     * @param id
-     * @returns any OK
-     * @throws ApiError
-     */
-    public static deletarInvestimento(
-        id: number,
-    ): CancelablePromise<any> {
-        return __request(OpenAPI, {
-            method: 'DELETE',
-            url: '/api/investimentos/{id}',
-            path: {
-                'id': id,
             },
         });
     }

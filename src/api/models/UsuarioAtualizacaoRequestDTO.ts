@@ -5,5 +5,12 @@
 export type UsuarioAtualizacaoRequestDTO = {
     nome: string;
     celular?: string;
-    moeda: 'BRL' | 'USD' | 'EUR';
+    moeda: UsuarioAtualizacaoRequestDTO.moeda;
 };
+export namespace UsuarioAtualizacaoRequestDTO {
+    export enum moeda {
+        BRL = 'BRL',
+        USD = 'USD',
+    }
+}
+

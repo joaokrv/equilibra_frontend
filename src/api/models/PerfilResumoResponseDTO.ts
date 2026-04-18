@@ -3,9 +3,10 @@
 /* tslint:disable */
 /* eslint-disable */
 export type PerfilResumoResponseDTO = {
-    totalReceitas: number;
-    totalDespesas: number;
-    saldoContas: number;
-    totalInvestido: number;
-    progressoMetas: number;
+    totalReceitas?: number;
+    totalDespesas?: number;
+    saldoContas?: number;
+    totalInvestido?: number;
+    progressoMetas?: number;
 };
+
