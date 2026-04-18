@@ -35,6 +35,7 @@ export const BANDEIRA_CARTAO_LABELS: Record<CartaoResponseDTO.bandeira, string> 
   [CartaoResponseDTO.bandeira.HIPERCARD]: 'Hipercard',
   [CartaoResponseDTO.bandeira.NUBANK]: 'Nubank',
   [CartaoResponseDTO.bandeira.INTER]: 'Inter',
+  [CartaoResponseDTO.bandeira.SICREDI]: 'Sicredi',
   [CartaoResponseDTO.bandeira.OUROCARD]: 'Ourocard',
   [CartaoResponseDTO.bandeira.DIGIO]: 'Digio',
   [CartaoResponseDTO.bandeira.C6_BANK]: 'C6 Bank',

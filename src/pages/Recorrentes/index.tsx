@@ -5,7 +5,7 @@ import {
 } from 'lucide-react';
 import { MainLayout } from '../../components/layout/MainLayout';
 import { DeleteConfirmationModal } from '../../components/modals/DeleteConfirmationModal';
-import { TransaEsRecorrentesService, ContaControllerService, CartaoControllerService, CategoriaControllerService, TransacaoRecorrenteResponseDTO } from '../../api';
+import { TransaEsRecorrentesService, ContaControllerService, CartaoControllerService, CategoriaControllerService, TransacaoRecorrenteResponseDTO, TransacaoRecorrenteRequestDTO } from '../../api';
 import { formatarMoeda } from '../../lib/formatters';
 import { METODO_PAGAMENTO_LABELS } from '../../lib/constants';
 import { getApiErrorMessage } from '../../lib/errorMessage';
@@ -29,7 +29,7 @@ export const RecorrentesPage = () => {
   // Form
   const [descricao, setDescricao] = useState('');
   const [valor, setValor] = useState('');
-  const [metodoPagamento, setMetodoPagamento] = useState('');
+  const [metodoPagamento, setMetodoPagamento] = useState<TransacaoRecorrenteRequestDTO.metodoPagamento | ''>('');
   const [contaId, setContaId] = useState('');
   const [cartaoId, setCartaoId] = useState('');
   const [categoriaId, setCategoriaId] = useState('');
@@ -54,7 +54,7 @@ export const RecorrentesPage = () => {
     mutationFn: () => TransaEsRecorrentesService.criar({
       descricao: descricao.trim(),
       valor: Number(valor),
-      tipo: aba,
+      tipo: aba as TransacaoRecorrenteRequestDTO.tipo,
       metodoPagamento: metodoPagamento || undefined,
       contaId: Number(contaId),
       cartaoId: cartaoId ? Number(cartaoId) : undefined,
@@ -72,7 +72,7 @@ export const RecorrentesPage = () => {
     mutationFn: () => TransaEsRecorrentesService.atualizar(editando!.id!, {
       descricao: descricao.trim(),
       valor: Number(valor),
-      tipo: aba,
+      tipo: aba as TransacaoRecorrenteRequestDTO.tipo,
       metodoPagamento: metodoPagamento || undefined,
       contaId: Number(contaId),
       cartaoId: cartaoId ? Number(cartaoId) : undefined,
@@ -122,6 +122,7 @@ export const RecorrentesPage = () => {
     setDiaLancamento(String(rec.diaLancamento ?? 1));
     setDataInicio(rec.dataInicio || '');
     setDataFim(rec.dataFim || '');
+    setMetodoPagamento((rec.metodoPagamento as unknown as TransacaoRecorrenteRequestDTO.metodoPagamento | '') || '');
     setModalAberto(true);
   };
 
@@ -262,7 +263,7 @@ export const RecorrentesPage = () => {
               </div>
               <div className="space-y-1.5">
                 <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Método de Pagamento', 'Payment Method')}</label>
-                <select value={metodoPagamento} onChange={(e) => setMetodoPagamento(e.target.value)} className="w-full bg-secondary/30 border border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium appearance-none">
+                <select value={metodoPagamento} onChange={(e) => setMetodoPagamento(e.target.value as TransacaoRecorrenteRequestDTO.metodoPagamento | '')} className="w-full bg-secondary/30 border border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium appearance-none">
                   <option value="" className="bg-card text-white">{tr('Nenhum', 'None')}</option>
                   {Object.entries(METODO_PAGAMENTO_LABELS).map(([val, label]) => <option key={val} value={val} className="bg-card text-white">{label}</option>)}
                 </select>
