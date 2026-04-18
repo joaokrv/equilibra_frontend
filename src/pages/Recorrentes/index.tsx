@@ -5,11 +5,7 @@ import {
 } from 'lucide-react';
 import { MainLayout } from '../../components/layout/MainLayout';
 import { DeleteConfirmationModal } from '../../components/modals/DeleteConfirmationModal';
-import { RecorrenteService } from '../../api/services/RecorrenteService';
-import { ContaControllerService } from '../../api/services/ContaControllerService';
-import { CartaoControllerService } from '../../api/services/CartaoControllerService';
-import { CategoriaControllerService } from '../../api/services/CategoriaControllerService';
-import { TransacaoRecorrenteResponseDTO } from '../../api/models/TransacaoRecorrenteResponseDTO';
+import { TransaEsRecorrentesService, ContaControllerService, CartaoControllerService, CategoriaControllerService, TransacaoRecorrenteResponseDTO } from '../../api';
 import { formatarMoeda } from '../../lib/formatters';
 import { METODO_PAGAMENTO_LABELS } from '../../lib/constants';
 import { getApiErrorMessage } from '../../lib/errorMessage';
@@ -43,7 +39,7 @@ export const RecorrentesPage = () => {
 
   const { data: recorrentes = [], isLoading } = useQuery({
     queryKey: ['recorrentes'],
-    queryFn: () => RecorrenteService.listar(),
+    queryFn: () => TransaEsRecorrentesService.listar(),
   });
 
   const { data: contas = [] } = useQuery({ queryKey: ['contas'], queryFn: () => ContaControllerService.listarContas() });
@@ -55,7 +51,7 @@ export const RecorrentesPage = () => {
   const invalidar = () => queryClient.invalidateQueries({ queryKey: ['recorrentes'] });
 
   const criarMutation = useMutation({
-    mutationFn: () => RecorrenteService.criar({
+    mutationFn: () => TransaEsRecorrentesService.criar({
       descricao: descricao.trim(),
       valor: Number(valor),
       tipo: aba,
@@ -73,7 +69,7 @@ export const RecorrentesPage = () => {
   });
 
   const editarMutation = useMutation({
-    mutationFn: () => RecorrenteService.atualizar(editando!.id!, {
+    mutationFn: () => TransaEsRecorrentesService.atualizar(editando!.id!, {
       descricao: descricao.trim(),
       valor: Number(valor),
       tipo: aba,
@@ -91,7 +87,7 @@ export const RecorrentesPage = () => {
   });
 
   const deletarMutation = useMutation({
-    mutationFn: (id: number) => RecorrenteService.deletar(id),
+    mutationFn: (id: number) => TransaEsRecorrentesService.deletar(id),
     onSuccess: () => {
       invalidar();
       toast.success(tr('Recorrência desativada.', 'Recurring transaction disabled.'));

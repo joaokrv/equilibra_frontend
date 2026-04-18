@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuthStore } from '../../store/useAuthStore';
 import { toast } from '../../store/useToastStore';
-import { PerfilService, AutenticaOService } from '../../api';
+import { PerfilService, AutenticaOService, UsuarioAtualizacaoRequestDTO } from '../../api';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { 
   CheckCircle2, 
@@ -53,13 +53,13 @@ export function PerfilPage() {
   // Query para buscar Balanço Geral
   const { data: resumo, isLoading: isLoadingResumo } = useQuery({
     queryKey: ['perfil-resumo'],
-    queryFn: () => PerfilService.obterResumo(),
+    queryFn: () => PerfilService.obterResumoFinanceiro(),
     enabled: !!user,
   });
 
   // Mutação para atualizar perfil (Texto)
   const updatePerfilMutation = useMutation({
-    mutationFn: (data: { nome: string; celular?: string; moeda: 'BRL' | 'USD' | 'EUR' }) => 
+    mutationFn: (data: UsuarioAtualizacaoRequestDTO) =>
       PerfilService.atualizarPerfil(data),
     onSuccess: (updatedUser) => {
       updateProfile(updatedUser);
@@ -72,10 +72,10 @@ export function PerfilPage() {
 
   // Mutação para upload de foto
   const uploadFotoMutation = useMutation({
-    mutationFn: (file: Blob) => PerfilService.atualizarFoto(file),
+    mutationFn: (file: Blob) => PerfilService.atualizarFoto({ file }),
     onSuccess: () => {
       // Recarregar dados do perfil para pegar a nova fotoBase64
-      PerfilService.getPerfil().then(updatedUser => {
+      PerfilService.obterPerfil().then(updatedUser => {
         updateProfile(updatedUser);
         toast.success(tr('Foto de perfil atualizada!', 'Profile photo updated!'), 3000);
       });
@@ -127,7 +127,7 @@ export function PerfilPage() {
     updatePerfilMutation.mutate({
       nome,
       celular: celularSanitizado || undefined,
-      moeda: moeda as 'BRL' | 'USD' | 'EUR'
+      moeda: moeda as UsuarioAtualizacaoRequestDTO.moeda
     });
   };
 
@@ -169,7 +169,6 @@ export function PerfilPage() {
               <p className="text-sm font-bold text-white">
                 {moeda === 'BRL' && tr('Real (R$)', 'Brazilian Real (R$)')}
                 {moeda === 'USD' && tr('Dolar (USD)', 'US Dollar (USD)')}
-                {moeda === 'EUR' && 'Euro (€)'}
               </p>
             </div>
           </div>
@@ -284,7 +283,7 @@ export function PerfilPage() {
                     <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">{tr('Receitas', 'Income')}</span>
                   </div>
                   <p className="text-xl font-bold text-white">
-                    {isLoadingResumo ? '---' : formatarMoeda(resumo?.totalReceitas || 0, moeda as 'BRL' | 'USD' | 'EUR')}
+                    {isLoadingResumo ? '---' : formatarMoeda(resumo?.totalReceitas || 0, moeda as UsuarioAtualizacaoRequestDTO.moeda)}
                   </p>
                </Link>
 
@@ -297,7 +296,7 @@ export function PerfilPage() {
                     <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">{tr('Despesas', 'Expenses')}</span>
                   </div>
                   <p className="text-xl font-bold text-white">
-                    {isLoadingResumo ? '---' : formatarMoeda(resumo?.totalDespesas || 0, moeda as 'BRL' | 'USD' | 'EUR')}
+                    {isLoadingResumo ? '---' : formatarMoeda(resumo?.totalDespesas || 0, moeda as UsuarioAtualizacaoRequestDTO.moeda)}
                   </p>
                </Link>
 
@@ -310,7 +309,7 @@ export function PerfilPage() {
                     <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">{tr('Saldo Atual', 'Current Balance')}</span>
                   </div>
                   <p className="text-xl font-bold text-white">
-                    {isLoadingResumo ? '---' : formatarMoeda(resumo?.saldoContas || 0, moeda as 'BRL' | 'USD' | 'EUR')}
+                    {isLoadingResumo ? '---' : formatarMoeda(resumo?.saldoContas || 0, moeda as UsuarioAtualizacaoRequestDTO.moeda)}
                   </p>
                </Link>
 
@@ -323,7 +322,7 @@ export function PerfilPage() {
                     <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">{tr('Investido', 'Invested')}</span>
                   </div>
                   <p className="text-xl font-bold text-white">
-                    {isLoadingResumo ? '---' : formatarMoeda(resumo?.totalInvestido || 0, moeda as 'BRL' | 'USD' | 'EUR')}
+                    {isLoadingResumo ? '---' : formatarMoeda(resumo?.totalInvestido || 0, moeda as UsuarioAtualizacaoRequestDTO.moeda)}
                   </p>
                </Link>
             </section>
@@ -369,12 +368,11 @@ export function PerfilPage() {
                           <Coins size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
                           <select
                              value={moeda}
-                             onChange={(e) => setMoeda(e.target.value as 'BRL' | 'USD' | 'EUR')}
+                             onChange={(e) => setMoeda(e.target.value as UsuarioAtualizacaoRequestDTO.moeda)}
                              className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white font-bold focus:border-primary/50 outline-none transition-all appearance-none"
                           >
                               <option value="BRL" className="bg-slate-900">{tr('Real Brasileiro (R$)', 'Brazilian Real (R$)')}</option>
                               <option value="USD" className="bg-slate-900">{tr('Dolar Americano (US$)', 'US Dollar (US$)')}</option>
-                             <option value="EUR" className="bg-slate-900">Euro (€)</option>
                           </select>
                        </div>
                     </div>
