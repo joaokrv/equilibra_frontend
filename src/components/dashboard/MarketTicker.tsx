@@ -45,7 +45,7 @@ export const MarketTicker: React.FC = () => {
   // Montar lista de itens do ticker
   const items: TickerItem[] = [];
 
-  if (ibov) {
+  if (ibov?.valor != null && ibov.variacao != null) {
     const pos = Number(ibov.variacao) >= 0;
     items.push({
       key: 'ibov', label: 'IBOV',
@@ -58,7 +58,7 @@ export const MarketTicker: React.FC = () => {
     });
   }
 
-  if (ifix) {
+  if (ifix?.valor != null && ifix.variacao != null) {
     const pos = Number(ifix.variacao) >= 0;
     items.push({
       key: 'ifix', label: 'FIIs',
@@ -107,7 +107,7 @@ export const MarketTicker: React.FC = () => {
     });
   }
 
-  if (nasdaq) {
+  if (nasdaq?.valor != null) {
     const pos = Number(nasdaq.variacao) >= 0;
     items.push({
       key: 'nasdaq', label: 'NASDAQ',
@@ -120,7 +120,7 @@ export const MarketTicker: React.FC = () => {
     });
   }
 
-  if (dowjones) {
+  if (dowjones?.valor != null) {
     const pos = Number(dowjones.variacao) >= 0;
     items.push({
       key: 'dowjones', label: 'DOW',
@@ -133,7 +133,7 @@ export const MarketTicker: React.FC = () => {
     });
   }
 
-  if (exchange) {
+  if (exchange?.bid && exchange.pctChange) {
     const pos = parseFloat(exchange.pctChange) >= 0;
     items.push({
       key: 'usd', label: 'USD', value: `R$ ${parseFloat(exchange.bid).toFixed(2)}`,
@@ -143,7 +143,7 @@ export const MarketTicker: React.FC = () => {
     });
   }
 
-  if (eurExchange) {
+  if (eurExchange?.bid && eurExchange.pctChange) {
     const pos = parseFloat(eurExchange.pctChange) >= 0;
     items.push({
       key: 'eur', label: 'EUR', value: `R$ ${parseFloat(eurExchange.bid).toFixed(2)}`,
@@ -153,7 +153,7 @@ export const MarketTicker: React.FC = () => {
     });
   }
 
-  if (btc) {
+  if (btc?.valor != null) {
     const pos = Number(btc.variacao) >= 0;
     items.push({
       key: 'btc', label: 'BTC',

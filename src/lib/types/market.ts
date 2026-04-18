@@ -22,12 +22,6 @@ export interface ExchangeRate {
 }
 
 export interface MoedaInfoDTO {
-  valor: number;
-  variacao: number;
-}
-
-export interface MercadoIndicadoresResponse {
-  taxas: Record<string, number>;
-  moedas: Record<string, MoedaInfoDTO>;
-  indices: Record<string, MoedaInfoDTO>;
+  valor?: number;
+  variacao?: number;
 }
