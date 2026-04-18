@@ -11,6 +11,7 @@ import logo from '../../assets/logo-equilibra.png';
 import { AutenticaOService } from '../../api';
 import { useI18nStore } from '../../store/useI18nStore';
 import { getApiErrorMessage } from '../../lib/errorMessage';
+import { createPasswordSchema } from '../../lib/passwordValidation';
 type ResetFormValues = { novaSenha: string; confirmarSenha: string };
 
 /**
@@ -34,12 +35,7 @@ export function ResetPasswordPage() {
   const [tokenValido, setTokenValido] = useState<boolean | null>(null);
   const [erroToken, setErroToken] = useState<string | null>(null);
   const resetSchema = z.object({
-    novaSenha: z.string()
-      .min(8, tr('A senha deve ter no mínimo 8 caracteres', 'Password must be at least 8 characters'))
-      .regex(
-        /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/,
-        tr('A senha deve conter pelo menos uma letra maiúscula, uma minúscula, um número e um caractere especial (@$!%*?&)', 'Password must contain at least one uppercase letter, one lowercase letter, one number, and one special character (@$!%*?&)')
-      ),
+    novaSenha: createPasswordSchema(tr),
     confirmarSenha: z.string(),
   }).refine((data) => data.novaSenha === data.confirmarSenha, {
     message: tr('As senhas não coincidem', 'Passwords do not match'),

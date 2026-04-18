@@ -25,9 +25,6 @@ interface CategoryDistributionProps {
   moeda: 'BRL' | 'USD' | 'EUR';
 }
 
-/**
- * Gráfico Donut + legenda de distribuição com filtro por tipo.
- */
 export const CategoryDistribution = ({
   despesasPorCategoria,
   receitasPorCategoria,

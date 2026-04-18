@@ -1,5 +1,6 @@
 import { useEffect } from 'react';
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAuthStore } from './store/useAuthStore';
 import { usePrivacyStore } from './store/usePrivacyStore';
 import { toast } from './store/useToastStore';
@@ -21,18 +22,29 @@ import { ForgotPasswordPage } from './pages/ForgotPassword';
 import { ResetPasswordPage } from './pages/ResetPassword';
 import { NotFoundPage } from './pages/NotFound';
 
-/**
- * Componente de guarda para rotas autenticadas.
- */
+// Renderiza imediatamente com estado local; session-check hidrata o perfil e detecta
+// sessão revogada em até 30s via refetchInterval. Proteção real via interceptor 401 (G10.1).
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const { isAuthenticated } = useAuthStore();
+  const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
+  const updateProfile = useAuthStore((s) => s.updateProfile);
+
+  const { data: perfil } = useQuery({
+    queryKey: ['auth-session-check'],
+    queryFn: () => PerfilService.getPerfil(),
+    enabled: isAuthenticated,
+    staleTime: 30_000,
+    refetchInterval: 30_000,
+    retry: false,
+  });
+
+  useEffect(() => {
+    if (perfil) updateProfile(perfil);
+  }, [perfil, updateProfile]);
+
   return isAuthenticated ? <>{children}</> : <Navigate to="/login" replace />;
 };
 
-/**
- * Componente de guarda para rotas que exigem e-mail verificado.
- * Permite renderizar a rota se verificado, senão volta pro Dashboard com aviso.
- */
+// Bloqueia acesso a rotas financeiras até e-mail verificado; redireciona com toast.
 const VerifiedRoute = ({ children }: { children: React.ReactNode }) => {
   const user = useAuthStore(state => state.user);
   const isUnverified = user !== null && !user.isEmailVerificado;
@@ -50,26 +62,26 @@ const VerifiedRoute = ({ children }: { children: React.ReactNode }) => {
   return <>{children}</>;
 };
 
-/**
- * Componente de guarda para rotas públicas (login/register).
- * Redireciona para dashboard se já autenticado.
- */
 const PublicRoute = ({ children }: { children: React.ReactNode }) => {
   const { isAuthenticated } = useAuthStore();
   return !isAuthenticated ? <>{children}</> : <Navigate to="/dashboard" replace />;
 };
 
 export default function App() {
-  const { isAuthenticated, updateProfile } = useAuthStore();
   const hideValues = usePrivacyStore((state) => state.hideValues);
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
 
+  // Listener para logout forçado via interceptor 401 (G10.1 — F1-A3)
   useEffect(() => {
-    if (isAuthenticated) {
-      PerfilService.getPerfil()
-        .then((perfil) => updateProfile(perfil))
-        .catch(() => {});
-    }
-  }, [isAuthenticated]);
+    const handleForceLogout = () => {
+      queryClient.clear();
+      useAuthStore.getState().logout();
+      navigate('/login', { replace: true });
+    };
+    window.addEventListener('auth:force-logout', handleForceLogout);
+    return () => window.removeEventListener('auth:force-logout', handleForceLogout);
+  }, [navigate, queryClient]);
 
   useEffect(() => {
     document.documentElement.dataset.privacyValues = hideValues ? 'hidden' : 'visible';

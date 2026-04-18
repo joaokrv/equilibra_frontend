@@ -21,9 +21,8 @@ export interface User {
 interface AuthState {
   user: User | null;
   token: string | null;
-  refreshToken: string | null;
   isAuthenticated: boolean;
-  setAuth: (user: User, token: string, refreshToken: string) => void;
+  setAuth: (user: User, token: string) => void;
   updateIsEmailVerificado: (verificado: boolean) => void;
   updateProfile: (profileData: Partial<User>) => void;
   logout: () => void;
@@ -34,10 +33,9 @@ export const useAuthStore = create<AuthState>()(
     (set) => ({
       user: null,
       token: null,
-      refreshToken: null,
       isAuthenticated: false,
-      setAuth: (user, token, refreshToken) =>
-        set({ user, token, refreshToken, isAuthenticated: true }),
+      setAuth: (user, token) =>
+        set({ user, token, isAuthenticated: true }),
       updateIsEmailVerificado: (verificado) =>
         set((state) => ({
           user: state.user ? { ...state.user, isEmailVerificado: verificado } : null,
@@ -50,7 +48,6 @@ export const useAuthStore = create<AuthState>()(
         set({
           user: null,
           token: null,
-          refreshToken: null,
           isAuthenticated: false,
         }),
     }),
@@ -59,8 +56,9 @@ export const useAuthStore = create<AuthState>()(
       storage: createJSONStorage(() => sessionStorage),
       partialize: (state) => ({
         user: state.user,
-        token: state.token,
         isAuthenticated: state.isAuthenticated,
+        // AT não persiste — reload dispara refresh silencioso via cookie HttpOnly (AR-02)
+        // RT nunca persiste — vive apenas no cookie HttpOnly (G5-A1)
       }),
     },
   ),

@@ -17,8 +17,10 @@ import {
 } from 'lucide-react';
 import { useAuthStore } from '../../store/useAuthStore';
 import { useI18nStore } from '../../store/useI18nStore';
+import { useQueryClient } from '@tanstack/react-query';
 import { t } from '../../lib/i18n';
 import logo from '../../assets/logo-equilibra.png';
+import apiClient from '../../lib/axios';
 
 interface SidebarItemProps {
   icon: React.ElementType;
@@ -28,10 +30,6 @@ interface SidebarItemProps {
   onClick?: () => void;
 }
 
-/**
- * Item individual da Sidebar com navegação real via NavLink.
- * O estado `active` é controlado automaticamente pelo react-router.
- */
 const SidebarItem = ({ icon: Icon, label, to, isOpen, onClick }: SidebarItemProps) => (
   <NavLink
     to={to}
@@ -65,12 +63,6 @@ const menuItems = [
   { icon: UserCircle, key: 'menuProfile', to: '/perfil' },
 ] as const;
 
-/**
- * Barra lateral com navegação principal da aplicação.
- *
- * Usa NavLink do react-router para navegação real e
- * estado ativo automático baseado na rota atual.
- */
 export const Sidebar = () => {
   const language = useI18nStore((state) => state.language);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
@@ -86,6 +78,17 @@ export const Sidebar = () => {
     });
   };
   const logout = useAuthStore(state => state.logout);
+  const queryClient = useQueryClient();
+
+  const handleLogout = () => {
+    // UI responde imediato — logout local primeiro (P1-6)
+    queryClient.clear();
+    logout();
+    // Backend fire-and-forget: invalida sessão + limpa cookie HttpOnly (G5-A1)
+    apiClient.post('/api/auth/logout').catch(() => {
+      // Silencioso — sessão local já encerrada
+    });
+  };
 
   const closeMobileSidebar = () => setIsMobileOpen(false);
 
@@ -133,7 +136,8 @@ export const Sidebar = () => {
 
         <div className="p-3 border-t border-white/5">
           <div
-            onClick={logout}
+            onClick={handleLogout}
+            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') handleLogout(); }}
             className={`
               flex items-center p-3 rounded-lg cursor-pointer text-destructive/80 hover:bg-destructive/10 hover:text-destructive transition-all
               ${isOpen ? 'justify-start gap-4 px-4' : 'justify-center'}
@@ -189,8 +193,9 @@ export const Sidebar = () => {
             <div
               onClick={() => {
                 closeMobileSidebar();
-                logout();
+                handleLogout();
               }}
+              onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { closeMobileSidebar(); handleLogout(); } }}
               className="flex items-center gap-4 px-4 p-3 rounded-lg cursor-pointer text-destructive/80 hover:bg-destructive/10 hover:text-destructive transition-all"
               role="button"
               tabIndex={0}

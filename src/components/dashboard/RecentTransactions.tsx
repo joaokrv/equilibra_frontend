@@ -13,9 +13,6 @@ interface RecentTransactionsProps {
   transacoesList: TransacaoResponseDTO[];
 }
 
-/**
- * Lista dos maiores lançamentos recentes.
- */
 export const RecentTransactions = ({ transacoesList }: RecentTransactionsProps) => {
   const language = useI18nStore((state) => state.language);
   const dateLocale = language === 'en-US' ? enUS : ptBR;

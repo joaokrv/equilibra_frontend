@@ -11,6 +11,7 @@ import logo from '../../assets/logo-equilibra.png';
 import { Check, X, Eye, EyeOff } from 'lucide-react';
 import { useI18nStore } from '../../store/useI18nStore';
 import { getApiErrorMessage } from '../../lib/errorMessage';
+import { createPasswordSchema } from '../../lib/passwordValidation';
 type RegisterFormValues = {
   nome: string;
   email: string;
@@ -29,12 +30,7 @@ export function RegisterPage() {
     nome: z.string().min(3, tr('O nome deve ter no mínimo 3 caracteres', 'Name must be at least 3 characters')),
     email: z.string().email(tr('Insira um e-mail válido', 'Enter a valid email')),
     confirmEmail: z.string().email(tr('Insira um e-mail válido', 'Enter a valid email')),
-    senha: z.string()
-      .min(8, tr('A senha deve ter no mínimo 8 caracteres', 'Password must be at least 8 characters'))
-      .regex(/[A-Z]/, tr('Deve conter pelo menos uma letra maiúscula', 'Must include at least one uppercase letter'))
-      .regex(/[a-z]/, tr('Deve conter pelo menos uma letra minúscula', 'Must include at least one lowercase letter'))
-      .regex(/[0-9]/, tr('Deve conter pelo menos um número', 'Must include at least one number'))
-      .regex(/[@$!%*?&]/, tr('Deve conter pelo menos um caractere especial (@$!%*?&)', 'Must include at least one special character (@$!%*?&)')),
+    senha: createPasswordSchema(tr),
     confirmSenha: z.string(),
   }).refine((data) => data.email === data.confirmEmail, {
     message: tr('Os e-mails não coincidem', 'Emails do not match'),

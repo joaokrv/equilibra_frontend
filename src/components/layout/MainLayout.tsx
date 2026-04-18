@@ -13,12 +13,6 @@ interface MainLayoutProps {
   children: React.ReactNode;
 }
 
-/**
- * Layout principal da aplicação autenticada.
- *
- * Provê a estrutura base com Sidebar, Topbar e área de conteúdo.
- * Também gerencia o FAB (Floating Action Button) de nova transação.
- */
 export const MainLayout = ({ children }: MainLayoutProps) => {
   const tr = (pt: string, en: string) => (language === 'en-US' ? en : pt);
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -27,7 +21,7 @@ export const MainLayout = ({ children }: MainLayoutProps) => {
   const language = useI18nStore((state) => state.language);
   const navigate = useNavigate();
 
-  const isVerified = user?.isEmailVerificado ?? true;
+  const isVerified = user?.isEmailVerificado ?? false;
 
   return (
     <div className="flex h-dvh bg-background overflow-hidden relative">
