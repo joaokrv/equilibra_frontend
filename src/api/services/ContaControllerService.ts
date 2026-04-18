@@ -59,7 +59,7 @@ export class ContaControllerService {
      * @returns ContaResponseDTO OK
      * @throws ApiError
      */
-    public static buscarPorId(
+    public static buscarPorId1(
         id: number,
     ): CancelablePromise<ContaResponseDTO> {
         return __request(OpenAPI, {

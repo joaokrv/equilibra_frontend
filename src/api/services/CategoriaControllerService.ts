@@ -9,37 +9,6 @@ import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 export class CategoriaControllerService {
     /**
-     * @param tipo
-     * @returns CategoriaResponseDTO OK
-     * @throws ApiError
-     */
-    public static listarCategorias(
-        tipo?: 'RECEITA' | 'DESPESA',
-    ): CancelablePromise<Array<CategoriaResponseDTO>> {
-        return __request(OpenAPI, {
-            method: 'GET',
-            url: '/api/categorias',
-            query: {
-                'tipo': tipo,
-            },
-        });
-    }
-    /**
-     * @param requestBody
-     * @returns CategoriaResponseDTO OK
-     * @throws ApiError
-     */
-    public static criarCategoria(
-        requestBody: CategoriaRegistroRequestDTO,
-    ): CancelablePromise<CategoriaResponseDTO> {
-        return __request(OpenAPI, {
-            method: 'POST',
-            url: '/api/categorias',
-            body: requestBody,
-            mediaType: 'application/json',
-        });
-    }
-    /**
      * @param id
      * @param requestBody
      * @returns CategoriaResponseDTO OK
@@ -73,6 +42,37 @@ export class CategoriaControllerService {
             path: {
                 'id': id,
             },
+        });
+    }
+    /**
+     * @param tipo
+     * @returns CategoriaResponseDTO OK
+     * @throws ApiError
+     */
+    public static listarCategorias(
+        tipo?: 'RECEITA' | 'DESPESA',
+    ): CancelablePromise<Array<CategoriaResponseDTO>> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/categorias',
+            query: {
+                'tipo': tipo,
+            },
+        });
+    }
+    /**
+     * @param requestBody
+     * @returns CategoriaResponseDTO OK
+     * @throws ApiError
+     */
+    public static criarCategoria(
+        requestBody: CategoriaRegistroRequestDTO,
+    ): CancelablePromise<CategoriaResponseDTO> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/categorias',
+            body: requestBody,
+            mediaType: 'application/json',
         });
     }
 }

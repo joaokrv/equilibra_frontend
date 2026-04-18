@@ -23,6 +23,7 @@ export namespace CartaoResponseDTO {
         HIPERCARD = 'HIPERCARD',
         NUBANK = 'NUBANK',
         INTER = 'INTER',
+        SICREDI = 'SICREDI',
         OUROCARD = 'OUROCARD',
         DIGIO = 'DIGIO',
         C6_BANK = 'C6_BANK',

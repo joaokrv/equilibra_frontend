@@ -91,4 +91,25 @@ export class TransaEsService {
             mediaType: 'application/json',
         });
     }
+    /**
+     * Listar transacoes por intervalo
+     * Retorna transacoes entre dataInicio e dataFim. Intervalo maximo de 12 meses.
+     * @param dataInicio
+     * @param dataFim
+     * @returns TransacaoResponseDTO OK
+     * @throws ApiError
+     */
+    public static listarPorIntervalo(
+        dataInicio: string,
+        dataFim: string,
+    ): CancelablePromise<Array<TransacaoResponseDTO>> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/transacoes/intervalo',
+            query: {
+                'dataInicio': dataInicio,
+                'dataFim': dataFim,
+            },
+        });
+    }
 }

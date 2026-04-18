@@ -9,7 +9,6 @@ import type { ResetarSenhaRequestDTO } from '../models/ResetarSenhaRequestDTO';
 import type { SolicitarRecuperacaoSenhaRequestDTO } from '../models/SolicitarRecuperacaoSenhaRequestDTO';
 import type { UsuarioLoginRequestDTO } from '../models/UsuarioLoginRequestDTO';
 import type { UsuarioRegistroRequestDTO } from '../models/UsuarioRegistroRequestDTO';
-import type { UsuarioResponseDTO } from '../models/UsuarioResponseDTO';
 import type { VerificarEmailRequestDTO } from '../models/VerificarEmailRequestDTO';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
@@ -70,12 +69,12 @@ export class AutenticaOService {
      * Registrar novo usuário
      * Cria uma conta pendente de verificação.
      * @param requestBody
-     * @returns UsuarioResponseDTO OK
+     * @returns string OK
      * @throws ApiError
      */
     public static registrar(
         requestBody: UsuarioRegistroRequestDTO,
-    ): CancelablePromise<UsuarioResponseDTO> {
+    ): CancelablePromise<string> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/auth/registrar',
@@ -85,19 +84,20 @@ export class AutenticaOService {
     }
     /**
      * Renovar token
-     * Gera um novo access token a partir de um refresh token válido.
-     * @param requestBody
+     * Gera novo access token + rotaciona refresh token via cookie HttpOnly.
+     * @param refreshToken
      * @returns AuthResponseDTO OK
      * @throws ApiError
      */
     public static refresh(
-        requestBody: Record<string, string>,
+        refreshToken?: string,
     ): CancelablePromise<AuthResponseDTO> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/auth/refresh',
-            body: requestBody,
-            mediaType: 'application/json',
+            cookies: {
+                'refreshToken': refreshToken,
+            },
         });
     }
     /**
@@ -135,8 +135,26 @@ export class AutenticaOService {
         });
     }
     /**
+     * Logout
+     * Invalida a sessão do usuário e remove o cookie de refresh token.
+     * @param refreshToken
+     * @returns any OK
+     * @throws ApiError
+     */
+    public static logout(
+        refreshToken?: string,
+    ): CancelablePromise<any> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/auth/logout',
+            cookies: {
+                'refreshToken': refreshToken,
+            },
+        });
+    }
+    /**
      * Login de usuário
-     * Autentica o usuário e retorna os tokens de acesso e renovação.
+     * Autentica o usuário, seta refresh token em cookie HttpOnly e retorna access token.
      * @param requestBody
      * @returns AuthResponseDTO OK
      * @throws ApiError
