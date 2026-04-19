@@ -4,9 +4,8 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useMutation } from '@tanstack/react-query';
 import { Link, useSearchParams, useNavigate } from 'react-router-dom';
-import { Input } from '../../components/ui/Input';
 import { toast } from '../../store/useToastStore';
-import { ArrowLeft, ShieldCheck, Loader2 } from 'lucide-react';
+import { ArrowLeft, ShieldCheck, Loader2, Eye, EyeOff } from 'lucide-react';
 import logo from '../../assets/logo-equilibra.png';
 import { AutenticaOService } from '../../api';
 import { useI18nStore } from '../../store/useI18nStore';
@@ -34,6 +33,8 @@ export function ResetPasswordPage() {
   const [email, setEmail] = useState<string | null>(null);
   const [tokenValido, setTokenValido] = useState<boolean | null>(null);
   const [erroToken, setErroToken] = useState<string | null>(null);
+  const [showPassword, setShowPassword] = useState(false);
+  const [showConfirmPassword, setShowConfirmPassword] = useState(false);
   const resetSchema = z.object({
     novaSenha: createPasswordSchema(tr),
     confirmarSenha: z.string(),
@@ -154,23 +155,61 @@ export function ResetPasswordPage() {
         <p className="text-primary font-bold text-sm mb-8">{email}</p>
 
         <form onSubmit={handleSubmit(onSubmit)} className="w-full space-y-5">
-          <Input
-            {...register('novaSenha')}
-            type="password"
-            id="nova-senha"
-            label={tr('Nova Senha', 'New Password')}
-            placeholder="••••••••"
-            error={errors.novaSenha?.message}
-          />
+          <div className="space-y-1.5">
+            <label htmlFor="nova-senha" className="block text-[10px] font-bold text-muted-foreground ml-1 uppercase tracking-[0.2em]">
+              {tr('Nova Senha', 'New Password')}
+            </label>
+            <div className="relative">
+              <input
+                {...register('novaSenha')}
+                type={showPassword ? 'text' : 'password'}
+                id="nova-senha"
+                placeholder="••••••••"
+                className={`w-full bg-secondary/30 border ${errors.novaSenha ? 'border-destructive/50' : 'border-white/5'} rounded-xl px-4 py-3.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 focus:bg-secondary/60 transition-all font-medium placeholder:text-muted-foreground/30`}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-white transition-colors"
+                aria-label={showPassword ? tr('Ocultar senha', 'Hide password') : tr('Mostrar senha', 'Show password')}
+              >
+                {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
+            {errors.novaSenha && (
+              <span className="text-[10px] text-destructive font-bold ml-1 uppercase animate-in fade-in slide-in-from-top-1">
+                {errors.novaSenha.message}
+              </span>
+            )}
+          </div>
 
-          <Input
-            {...register('confirmarSenha')}
-            type="password"
-            id="confirmar-senha"
-            label={tr('Confirmar Nova Senha', 'Confirm New Password')}
-            placeholder="••••••••"
-            error={errors.confirmarSenha?.message}
-          />
+          <div className="space-y-1.5">
+            <label htmlFor="confirmar-senha" className="block text-[10px] font-bold text-muted-foreground ml-1 uppercase tracking-[0.2em]">
+              {tr('Confirmar Nova Senha', 'Confirm New Password')}
+            </label>
+            <div className="relative">
+              <input
+                {...register('confirmarSenha')}
+                type={showConfirmPassword ? 'text' : 'password'}
+                id="confirmar-senha"
+                placeholder="••••••••"
+                className={`w-full bg-secondary/30 border ${errors.confirmarSenha ? 'border-destructive/50' : 'border-white/5'} rounded-xl px-4 py-3.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 focus:bg-secondary/60 transition-all font-medium placeholder:text-muted-foreground/30`}
+              />
+              <button
+                type="button"
+                onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-white transition-colors"
+                aria-label={showConfirmPassword ? tr('Ocultar senha', 'Hide password') : tr('Mostrar senha', 'Show password')}
+              >
+                {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
+              </button>
+            </div>
+            {errors.confirmarSenha && (
+              <span className="text-[10px] text-destructive font-bold ml-1 uppercase animate-in fade-in slide-in-from-top-1">
+                {errors.confirmarSenha.message}
+              </span>
+            )}
+          </div>
 
           <div className="bg-secondary/30 rounded-xl p-4 text-xs text-muted-foreground leading-relaxed">
             <p className="font-bold uppercase tracking-widest mb-2 text-white/70">{tr('Requisitos da senha:', 'Password requirements:')}</p>
