@@ -72,7 +72,9 @@ export const ReportModal = ({ isOpen, onClose, tipoContextoFixo }: ReportModalPr
       setIsSubmittingManual(true);
       
       // Resgata dinamicamente o Token Bearer JWT do escopo da API
-      const token = await (typeof OpenAPI.TOKEN === 'function' ? OpenAPI.TOKEN() : OpenAPI.TOKEN);
+      const token = typeof OpenAPI.TOKEN === 'function'
+        ? await OpenAPI.TOKEN({ method: 'POST', url: '/api/v1/relatorios/exportar' })
+        : OpenAPI.TOKEN;
       
       const payload = {
           dataInicio: data.dataInicio,
