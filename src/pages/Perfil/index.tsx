@@ -37,6 +37,7 @@ export function PerfilPage() {
   const [moeda, setMoeda] = useState(user?.moeda || 'BRL');
   const [idioma, setIdioma] = useState<AppLanguage>(language);
   const [codigo, setCodigo] = useState('');
+  const [cooldown, setCooldown] = useState(0);
 
   useEffect(() => {
     if (user) {
@@ -49,6 +50,15 @@ export function PerfilPage() {
   useEffect(() => {
     setIdioma(language);
   }, [language]);
+
+  // Countdown de reenvio de código
+  useEffect(() => {
+    if (cooldown <= 0) return;
+    const timer = setInterval(() => {
+      setCooldown(prev => Math.max(0, prev - 1));
+    }, 1000);
+    return () => clearInterval(timer);
+  }, [cooldown]);
 
   // Query para buscar Balanço Geral
   const { data: resumo, isLoading: isLoadingResumo } = useQuery({
@@ -103,10 +113,11 @@ export function PerfilPage() {
 
   // Mutação para reenvio de código
   const reenviarCodigoMutation = useMutation({
-    mutationFn: () => AutenticaOService.reenviarCodigo({ 
-      email: user?.email || '' 
+    mutationFn: () => AutenticaOService.reenviarCodigo({
+      email: user?.email || ''
     }),
     onSuccess: () => {
+      setCooldown(60);
       toast.success(tr('Novo codigo enviado para seu e-mail!', 'A new code was sent to your email!'), 5000);
     },
     onError: (error: unknown) => {
@@ -256,13 +267,13 @@ export function PerfilPage() {
                     {ativarContaMutation.isPending ? tr('Validando...', 'Validating...') : tr('Finalizar Ativacao', 'Finish Activation')}
                   </button>
 
-                  <button 
+                  <button
                     type="button"
                     onClick={() => reenviarCodigoMutation.mutate()}
-                    disabled={reenviarCodigoMutation.isPending}
+                    disabled={reenviarCodigoMutation.isPending || cooldown > 0}
                     className="w-full text-[10px] font-bold uppercase tracking-widest text-amber-500/60 hover:text-amber-500 transition-colors disabled:opacity-50"
                   >
-                    {reenviarCodigoMutation.isPending ? tr('Enviando...', 'Sending...') : tr('Nao recebeu o codigo? Reenviar', 'Did not receive the code? Resend')}
+                    {reenviarCodigoMutation.isPending ? tr('Enviando...', 'Sending...') : cooldown > 0 ? tr(`Aguarde ${cooldown}s`, `Wait ${cooldown}s`) : tr('Nao recebeu o codigo? Reenviar', 'Did not receive the code? Resend')}
                   </button>
                 </form>
               </div>
