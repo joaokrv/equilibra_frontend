@@ -161,7 +161,7 @@ export function PerfilPage() {
 
   return (
     <MainLayout>
-      <div className="max-w-6xl mx-auto space-y-6 sm:space-y-10 animate-fade-in pb-8 sm:pb-12 px-1 sm:px-0">
+      <div className="max-w-6xl mx-auto space-y-6 sm:space-y-10 animate-fade-in pb-8 sm:pb-12 px-2 sm:px-0">
         {/* Header Seção */}
         <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 sm:gap-6">
           <div className="animate-in fade-in slide-in-from-left-4 duration-700">
@@ -226,8 +226,8 @@ export function PerfilPage() {
               />
 
               <h2 className="text-xl sm:text-2xl font-black text-white text-center mb-1">{user?.nome}</h2>
-              <p className="text-muted-foreground text-sm flex items-center gap-2 mb-6 font-medium">
-                <Mail size={14} className="text-primary" /> {user?.email}
+              <p className="text-muted-foreground text-xs sm:text-sm flex items-center gap-2 mb-6 font-medium text-center break-all">
+                <Mail size={14} className="text-primary shrink-0" /> <span className="break-all">{user?.email}</span>
               </p>
 
                 <div className="w-full space-y-3">
@@ -284,55 +284,59 @@ export function PerfilPage() {
           <div className="lg:col-span-8 space-y-5 sm:space-y-8 animate-in fade-in slide-in-from-right-4 duration-700 delay-200">
             
             {/* Seção Balanço Geral (Cards Premium — clicáveis) */}
-            <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+            <section className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
                {/* Receitas */}
-               <Link to="/receitas" className="glass rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-white/5 group hover:border-emerald-500/30 transition-all cursor-pointer">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="p-2 bg-emerald-500/20 rounded-xl text-emerald-500">
-                      <ArrowUpCircle size={20} />
+               <Link to="/receitas" className="glass rounded-2xl sm:rounded-3xl p-3 sm:p-5 border border-white/5 group hover:border-emerald-500/30 transition-all cursor-pointer min-w-0">
+                  <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-4">
+                    <div className="p-1.5 sm:p-2 bg-emerald-500/20 rounded-lg sm:rounded-xl text-emerald-500 shrink-0">
+                      <ArrowUpCircle size={16} className="sm:hidden" />
+                      <ArrowUpCircle size={20} className="hidden sm:block" />
                     </div>
-                    <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">{tr('Receitas', 'Income')}</span>
+                    <span className="text-[9px] sm:text-[10px] font-black uppercase text-muted-foreground tracking-wider sm:tracking-widest leading-tight">{tr('Receitas', 'Income')}</span>
                   </div>
-                  <p className="text-xl font-bold text-white">
+                  <p className="text-sm sm:text-lg lg:text-xl font-bold text-white truncate">
                     {isLoadingResumo ? '---' : formatarMoeda(resumo?.totalReceitas || 0, moeda as UsuarioAtualizacaoRequestDTO.moeda)}
                   </p>
                </Link>
 
                {/* Despesas */}
-               <Link to="/despesas" className="glass rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-white/5 group hover:border-rose-500/30 transition-all cursor-pointer">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="p-2 bg-rose-500/20 rounded-xl text-rose-500">
-                      <ArrowDownCircle size={20} />
+               <Link to="/despesas" className="glass rounded-2xl sm:rounded-3xl p-3 sm:p-5 border border-white/5 group hover:border-rose-500/30 transition-all cursor-pointer min-w-0">
+                  <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-4">
+                    <div className="p-1.5 sm:p-2 bg-rose-500/20 rounded-lg sm:rounded-xl text-rose-500 shrink-0">
+                      <ArrowDownCircle size={16} className="sm:hidden" />
+                      <ArrowDownCircle size={20} className="hidden sm:block" />
                     </div>
-                    <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">{tr('Despesas', 'Expenses')}</span>
+                    <span className="text-[9px] sm:text-[10px] font-black uppercase text-muted-foreground tracking-wider sm:tracking-widest leading-tight">{tr('Despesas', 'Expenses')}</span>
                   </div>
-                  <p className="text-xl font-bold text-white">
+                  <p className="text-sm sm:text-lg lg:text-xl font-bold text-white truncate">
                     {isLoadingResumo ? '---' : formatarMoeda(resumo?.totalDespesas || 0, moeda as UsuarioAtualizacaoRequestDTO.moeda)}
                   </p>
                </Link>
 
                {/* Saldo Contas */}
-               <Link to="/contas" className="glass rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-white/5 group hover:border-primary/30 transition-all cursor-pointer">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="p-2 bg-primary/20 rounded-xl text-primary">
-                      <Wallet size={20} />
+               <Link to="/contas" className="glass rounded-2xl sm:rounded-3xl p-3 sm:p-5 border border-white/5 group hover:border-primary/30 transition-all cursor-pointer min-w-0">
+                  <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-4">
+                    <div className="p-1.5 sm:p-2 bg-primary/20 rounded-lg sm:rounded-xl text-primary shrink-0">
+                      <Wallet size={16} className="sm:hidden" />
+                      <Wallet size={20} className="hidden sm:block" />
                     </div>
-                    <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">{tr('Saldo Atual', 'Current Balance')}</span>
+                    <span className="text-[9px] sm:text-[10px] font-black uppercase text-muted-foreground tracking-wider sm:tracking-widest leading-tight">{tr('Saldo Atual', 'Balance')}</span>
                   </div>
-                  <p className="text-xl font-bold text-white">
+                  <p className="text-sm sm:text-lg lg:text-xl font-bold text-white truncate">
                     {isLoadingResumo ? '---' : formatarMoeda(resumo?.saldoContas || 0, moeda as UsuarioAtualizacaoRequestDTO.moeda)}
                   </p>
                </Link>
 
                {/* Investimentos */}
-               <Link to="/investimentos" className="glass rounded-2xl sm:rounded-3xl p-4 sm:p-6 border border-white/5 group hover:border-amber-500/30 transition-all cursor-pointer">
-                  <div className="flex items-center gap-3 mb-4">
-                    <div className="p-2 bg-amber-500/20 rounded-xl text-amber-500">
-                      <TrendingUp size={20} />
+               <Link to="/investimentos" className="glass rounded-2xl sm:rounded-3xl p-3 sm:p-5 border border-white/5 group hover:border-amber-500/30 transition-all cursor-pointer min-w-0">
+                  <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-4">
+                    <div className="p-1.5 sm:p-2 bg-amber-500/20 rounded-lg sm:rounded-xl text-amber-500 shrink-0">
+                      <TrendingUp size={16} className="sm:hidden" />
+                      <TrendingUp size={20} className="hidden sm:block" />
                     </div>
-                    <span className="text-[10px] font-black uppercase text-muted-foreground tracking-widest">{tr('Investido', 'Invested')}</span>
+                    <span className="text-[9px] sm:text-[10px] font-black uppercase text-muted-foreground tracking-wider sm:tracking-widest leading-tight">{tr('Investido', 'Invested')}</span>
                   </div>
-                  <p className="text-xl font-bold text-white">
+                  <p className="text-sm sm:text-lg lg:text-xl font-bold text-white truncate">
                     {isLoadingResumo ? '---' : formatarMoeda(resumo?.totalInvestido || 0, moeda as UsuarioAtualizacaoRequestDTO.moeda)}
                   </p>
                </Link>

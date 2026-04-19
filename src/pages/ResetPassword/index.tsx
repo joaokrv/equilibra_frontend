@@ -5,7 +5,7 @@ import * as z from 'zod';
 import { useMutation } from '@tanstack/react-query';
 import { Link, useSearchParams, useNavigate } from 'react-router-dom';
 import { toast } from '../../store/useToastStore';
-import { ArrowLeft, ShieldCheck, Loader2, Eye, EyeOff } from 'lucide-react';
+import { ArrowLeft, ShieldCheck, Loader2, Eye, EyeOff, Check, X } from 'lucide-react';
 import logo from '../../assets/logo-equilibra.png';
 import { AutenticaOService } from '../../api';
 import { useI18nStore } from '../../store/useI18nStore';
@@ -46,11 +46,22 @@ export function ResetPasswordPage() {
   const {
     register,
     handleSubmit,
+    watch,
     formState: { errors },
   } = useForm<ResetFormValues>({
     resolver: zodResolver(resetSchema),
     mode: 'onChange',
   });
+
+  const senhaValue = watch('novaSenha', '');
+
+  const passwordRequirements = [
+    { label: tr('8+ caracteres', '8+ characters'), met: senhaValue.length >= 8 },
+    { label: tr('Maiúscula', 'Uppercase'), met: /[A-Z]/.test(senhaValue) },
+    { label: tr('Minúscula', 'Lowercase'), met: /[a-z]/.test(senhaValue) },
+    { label: tr('Número', 'Number'), met: /[0-9]/.test(senhaValue) },
+    { label: tr('Especial (@$!%*)', 'Special (@$!%*)'), met: /[@$!%*?&]/.test(senhaValue) },
+  ];
 
   // Valida o token ao carregar a página
   useEffect(() => {
@@ -211,15 +222,19 @@ export function ResetPasswordPage() {
             )}
           </div>
 
-          <div className="bg-secondary/30 rounded-xl p-4 text-xs text-muted-foreground leading-relaxed">
-            <p className="font-bold uppercase tracking-widest mb-2 text-white/70">{tr('Requisitos da senha:', 'Password requirements:')}</p>
-            <ul className="space-y-1 list-disc list-inside">
-              <li>{tr('Mínimo de 8 caracteres', 'Minimum 8 characters')}</li>
-              <li>{tr('Pelo menos uma letra maiúscula', 'At least one uppercase letter')}</li>
-              <li>{tr('Pelo menos uma letra minúscula', 'At least one lowercase letter')}</li>
-              <li>{tr('Pelo menos um número', 'At least one number')}</li>
-              <li>{tr('Pelo menos um caractere especial (@$!%*?&)', 'At least one special character (@$!%*?&)')}</li>
-            </ul>
+          <div className="bg-secondary/20 p-3 sm:p-4 rounded-xl border border-white/5 grid grid-cols-1 sm:grid-cols-2 gap-y-2 gap-x-4">
+            {passwordRequirements.map((req, idx) => (
+              <div key={idx} className="flex items-center gap-2">
+                {req.met ? (
+                  <Check size={12} className="text-emerald-500" />
+                ) : (
+                  <X size={12} className="text-muted-foreground/30" />
+                )}
+                <span className={`text-[10px] font-bold uppercase tracking-tight ${req.met ? 'text-emerald-500/80' : 'text-muted-foreground/50'}`}>
+                  {req.label}
+                </span>
+              </div>
+            ))}
           </div>
 
           <button
