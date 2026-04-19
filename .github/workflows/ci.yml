@@ -1,0 +1,36 @@
+name: Frontend CI (Equilibra)
+
+# Gatilhos: roda em push e PR na branch main
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+  lint-and-build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: 'npm'
+
+      # Instala dependências de forma limpa e reprodutível
+      - name: Instalar dependências
+        run: npm ci
+
+      # Valida regras de lint (ESLint 9)
+      - name: Lint
+        run: npm run lint
+
+      # Compila TypeScript e gera bundle de produção
+      # Garante que nenhum erro de tipo ou import quebrado entre na main
+      - name: Build de produção
+        run: npm run build
+        env:
+          VITE_API_BASE_URL: https://placeholder.railway.app

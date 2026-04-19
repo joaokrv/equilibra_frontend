@@ -80,20 +80,21 @@ O roteamento possui tres guardas:
 
 ---
 
-## Integracao com Backend
+## Integração com Backend
 
-Durante desenvolvimento, o Vite faz proxy para o backend local:
+### Desenvolvimento local
 
-- `/api` -> `http://127.0.0.1:8080`
-- `/api-docs` -> `http://127.0.0.1:8080`
+O Vite faz proxy automático para o backend local:
 
-> Importante: utilizar `127.0.0.1` para manter compatibilidade do fluxo de geracao de cliente OpenAPI.
+- `/api` → `http://127.0.0.1:8080`
+- `/api-docs` → `http://127.0.0.1:8080`
 
-### Producao (Vercel)
+> Importante: utilizar `127.0.0.1` (e não `localhost`) para compatibilidade com o fluxo de geração do cliente OpenAPI.
 
-- Defina `VITE_API_BASE_URL` com a URL publica do backend (ex: Render/Railway).
-- Nao use URL do proprio frontend nessa variavel.
-- Sem essa variavel, chamadas da API podem cair em rotas relativas (`/api/*`) do frontend e falhar (ex: 405).
+### Produção
+
+- Defina a variável `VITE_API_BASE_URL` com a URL pública do backend.
+- Sem essa variável, chamadas da API caem em rotas relativas (`/api/*`) do próprio frontend e falham.
 
 ---
 
@@ -118,25 +119,31 @@ Descricao:
 
 ---
 
-## Como Executar
+## Como Executar Localmente
 
 ### Requisitos
 
-- Node.js 18+
-- npm 9+
-- Backend Equilibra rodando em `http://127.0.0.1:8080`
+| Ferramenta | Versão Mínima |
+|---|---|
+| Node.js | 18+ |
+| npm | 9+ |
+| Backend Equilibra | Rodando em `http://127.0.0.1:8080` |
 
-### Passo a passo
+### Início rápido
 
 ```bash
-# 1) Instalar dependencias
+# 1. Clonar o repositório
+git clone <url-do-repositorio>
+cd frontend
+
+# 2. Instalar dependências
 npm install
 
-# 2) Rodar em modo desenvolvimento
+# 3. Rodar em modo desenvolvimento
 npm run dev
 ```
 
-Aplicacao disponivel em:
+Aplicação disponível em:
 
 - `http://localhost:5173`
 
@@ -157,48 +164,65 @@ Boas praticas:
 ---
 
 ## Seguranca
+ 
+ - Nao armazenar secrets no frontend
+ - Tokens de autenticacao devem ser tratados somente pelo fluxo de auth
+ - Nunca commitar arquivos `.env` locais
+ 
+ O `.gitignore` ja cobre:
+ 
+ - `node_modules/`
+ - `dist/`
+ - `.env` e `.env.*`
+ 
+ ### Hardening e Prevenções Aplicadas
+ 
+ - **CSP Rígido (Content-Security-Policy)**: Diretiva `unsafe-inline` removida estritamente de `script-src` via `vercel.json` visando bloqueio de injeção cross-site-scripting.
+ - **Rate Limit UI (Cooldowns)**: Formulários sensíveis como de `reenviar-código` e OTP travam em um cronômetro stateful e visual de 60 segundos após envios validados, mitigando spam por triggers legítimos de clientes antes mesmo de tocar os Limiters do Backend.
+ - **Proteções de Depreciação**: Remoção preventiva do cabeçalho datado `X-XSS-Protection`, delegando total proteção aos browsers modernos via CSP.
+ 
+ ---
 
-- Nao armazenar secrets no frontend
-- Tokens de autenticacao devem ser tratados somente pelo fluxo de auth
-- Nunca commitar arquivos `.env` locais
+## Deploy
 
-O `.gitignore` ja cobre:
+A aplicação está em produção utilizando plataforma de hospedagem estática com CDN:
 
-- `node_modules/`
-- `dist/`
-- `.env` e `.env.*`
+| Componente | Detalhes |
+|---|---|
+| Hospedagem | Plataforma de deploy automático via branch `main` |
+| CDN | Distribuição global com cache otimizado |
+| Headers de Segurança | CSP, HSTS, X-Content-Type-Options, Referrer-Policy |
+
+### Variáveis de ambiente em produção
+
+| Variável | Descrição |
+|---|---|
+| `VITE_API_BASE_URL` | URL pública da API REST do backend |
+
+> Configurada diretamente no painel da plataforma de hospedagem. Nenhum segredo é armazenado no código.
 
 ---
 
 ## Status do Projeto
 
-### Progresso geral: ~95%
+### Progresso geral: ~98%
 
-Implementado:
+| Módulo | Status | Detalhes |
+|---|---|---|
+| Telas financeiras | ✅ Completo | Dashboard, Contas, Cartões, Faturas, Transações, Investimentos |
+| Autenticação | ✅ Completo | Login, Cadastro, Recuperação de Senha, Verificação OTP |
+| Internacionalização | ✅ Completo | pt-BR e en-US com persistência |
+| Perfil do usuário | ✅ Completo | Foto, dados, alteração de e-mail e senha |
+| CI (GitHub Actions) | ✅ Completo | Workflow lint + build a cada push/PR |
+| Hardening de Segurança | ✅ Completo | CSP rígido, cooldowns UI, headers modernos |
+| Deploy produção | ✅ Completo | Hospedagem estática com CDN |
 
-- Modulos centrais de gestao financeira
-- Dashboard com indicadores e graficos
-- Fluxos de autenticacao e recuperacao de senha
-- Internacionalizacao de interface
-- Integracao completa com backend
+### Checklist (auditoria)
 
-Em evolucao:
-
-- Refinamentos de UX/UI
-- Otimizacao de chunking do bundle para producao
-
-### Checklist objetivo (auditoria)
-
-- Build de producao: ✅ OK
-- Lint: ✅ Sem erros bloqueadores (warnings ainda existentes)
-- CI do frontend: ⚠️ Nao ha workflow versionado em `.github/workflows`
+- Build de produção: ✅ OK
+- Lint: ✅ Sem erros bloqueadores
+- CI: ✅ Workflow `ci.yml` (lint + build a cada push/PR na main)
 - I18n da interface: ✅ Implementado (pt-BR e en-US)
-- Integracao com backend local via proxy Vite: ✅ OK
-- Seguranca de arquivos locais (`.env`): ✅ Coberto no `.gitignore`
-
----
-
-## Observacoes
-
-- Este repositório representa o **frontend** da aplicacao.
-- O backend possui repositório e ciclo de deploy independentes.
+- Integração com backend via proxy Vite: ✅ OK
+- Segurança de arquivos locais (`.env`): ✅ Coberto no `.gitignore`
+- Deploy produção: ✅ Ativo e funcional
