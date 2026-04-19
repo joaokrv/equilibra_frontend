@@ -185,10 +185,10 @@ export function PerfilPage() {
           </div>
         </header>
 
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-5 sm:gap-8">
+        <div className="grid grid-cols-1 xl:grid-cols-12 gap-5 sm:gap-8">
           
           {/* Coluna Central: Dados do Usuário e Foto */}
-          <div className="lg:col-span-4 space-y-5 sm:space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+          <div className="xl:col-span-4 space-y-5 sm:space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
             <div className="glass rounded-2xl sm:rounded-[2rem] p-5 sm:p-8 border border-white/10 relative overflow-hidden flex flex-col items-center">
               <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-transparent to-transparent opacity-50" />
               
@@ -231,10 +231,10 @@ export function PerfilPage() {
               </p>
 
                 <div className="w-full space-y-3">
-                  <div className="flex justify-between items-center bg-white/5 rounded-2xl p-3 sm:p-4 border border-white/5 gap-3">
+                  <div className="flex flex-wrap justify-between items-center bg-white/5 rounded-2xl p-3 sm:p-4 border border-white/5 gap-2">
                     <span className="text-xs font-bold uppercase text-muted-foreground">{tr('Privacidade', 'Privacy')}</span>
                     <span className="text-white text-xs font-bold flex items-center gap-2">
-                      <CheckCircle2 size={14} className="text-emerald-500" /> {tr('Criptografado', 'Encrypted')}
+                      <CheckCircle2 size={14} className="text-emerald-500 shrink-0" /> {tr('Criptografado', 'Encrypted')}
                     </span>
                  </div>
               </div>
@@ -281,20 +281,20 @@ export function PerfilPage() {
           </div>
 
           {/* Coluna Direita: Balanço Geral e Formulário */}
-          <div className="lg:col-span-8 space-y-5 sm:space-y-8 animate-in fade-in slide-in-from-right-4 duration-700 delay-200">
+          <div className="xl:col-span-8 space-y-5 sm:space-y-8 animate-in fade-in slide-in-from-right-4 duration-700 delay-200">
             
             {/* Seção Balanço Geral (Cards Premium — clicáveis) */}
-            <section className="grid grid-cols-2 lg:grid-cols-4 gap-2.5 sm:gap-4">
+            <section className="grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-4">
                {/* Receitas */}
                <Link to="/receitas" className="glass rounded-2xl sm:rounded-3xl p-3 sm:p-5 border border-white/5 group hover:border-emerald-500/30 transition-all cursor-pointer min-w-0">
                   <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-4">
                     <div className="p-1.5 sm:p-2 bg-emerald-500/20 rounded-lg sm:rounded-xl text-emerald-500 shrink-0">
-                      <ArrowUpCircle size={16} className="sm:hidden" />
-                      <ArrowUpCircle size={20} className="hidden sm:block" />
+                      <ArrowUpCircle size={16} className="md:hidden" />
+                      <ArrowUpCircle size={20} className="hidden md:block" />
                     </div>
-                    <span className="text-[9px] sm:text-[10px] font-black uppercase text-muted-foreground tracking-wider sm:tracking-widest leading-tight">{tr('Receitas', 'Income')}</span>
+                    <span className="text-[9px] sm:text-[10px] font-black uppercase text-muted-foreground tracking-wider sm:tracking-widest leading-tight truncate">{tr('Receitas', 'Income')}</span>
                   </div>
-                  <p className="text-sm sm:text-lg lg:text-xl font-bold text-white truncate">
+                  <p className="text-sm sm:text-lg xl:text-xl font-bold text-white truncate">
                     {isLoadingResumo ? '---' : formatarMoeda(resumo?.totalReceitas || 0, moeda as UsuarioAtualizacaoRequestDTO.moeda)}
                   </p>
                </Link>
@@ -303,12 +303,12 @@ export function PerfilPage() {
                <Link to="/despesas" className="glass rounded-2xl sm:rounded-3xl p-3 sm:p-5 border border-white/5 group hover:border-rose-500/30 transition-all cursor-pointer min-w-0">
                   <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-4">
                     <div className="p-1.5 sm:p-2 bg-rose-500/20 rounded-lg sm:rounded-xl text-rose-500 shrink-0">
-                      <ArrowDownCircle size={16} className="sm:hidden" />
-                      <ArrowDownCircle size={20} className="hidden sm:block" />
+                      <ArrowDownCircle size={16} className="md:hidden" />
+                      <ArrowDownCircle size={20} className="hidden md:block" />
                     </div>
-                    <span className="text-[9px] sm:text-[10px] font-black uppercase text-muted-foreground tracking-wider sm:tracking-widest leading-tight">{tr('Despesas', 'Expenses')}</span>
+                    <span className="text-[9px] sm:text-[10px] font-black uppercase text-muted-foreground tracking-wider sm:tracking-widest leading-tight truncate">{tr('Despesas', 'Expenses')}</span>
                   </div>
-                  <p className="text-sm sm:text-lg lg:text-xl font-bold text-white truncate">
+                  <p className="text-sm sm:text-lg xl:text-xl font-bold text-white truncate">
                     {isLoadingResumo ? '---' : formatarMoeda(resumo?.totalDespesas || 0, moeda as UsuarioAtualizacaoRequestDTO.moeda)}
                   </p>
                </Link>
@@ -317,12 +317,12 @@ export function PerfilPage() {
                <Link to="/contas" className="glass rounded-2xl sm:rounded-3xl p-3 sm:p-5 border border-white/5 group hover:border-primary/30 transition-all cursor-pointer min-w-0">
                   <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-4">
                     <div className="p-1.5 sm:p-2 bg-primary/20 rounded-lg sm:rounded-xl text-primary shrink-0">
-                      <Wallet size={16} className="sm:hidden" />
-                      <Wallet size={20} className="hidden sm:block" />
+                      <Wallet size={16} className="md:hidden" />
+                      <Wallet size={20} className="hidden md:block" />
                     </div>
-                    <span className="text-[9px] sm:text-[10px] font-black uppercase text-muted-foreground tracking-wider sm:tracking-widest leading-tight">{tr('Saldo Atual', 'Balance')}</span>
+                    <span className="text-[9px] sm:text-[10px] font-black uppercase text-muted-foreground tracking-wider sm:tracking-widest leading-tight truncate">{tr('Saldo Atual', 'Balance')}</span>
                   </div>
-                  <p className="text-sm sm:text-lg lg:text-xl font-bold text-white truncate">
+                  <p className="text-sm sm:text-lg xl:text-xl font-bold text-white truncate">
                     {isLoadingResumo ? '---' : formatarMoeda(resumo?.saldoContas || 0, moeda as UsuarioAtualizacaoRequestDTO.moeda)}
                   </p>
                </Link>
@@ -331,12 +331,12 @@ export function PerfilPage() {
                <Link to="/investimentos" className="glass rounded-2xl sm:rounded-3xl p-3 sm:p-5 border border-white/5 group hover:border-amber-500/30 transition-all cursor-pointer min-w-0">
                   <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-4">
                     <div className="p-1.5 sm:p-2 bg-amber-500/20 rounded-lg sm:rounded-xl text-amber-500 shrink-0">
-                      <TrendingUp size={16} className="sm:hidden" />
-                      <TrendingUp size={20} className="hidden sm:block" />
+                      <TrendingUp size={16} className="md:hidden" />
+                      <TrendingUp size={20} className="hidden md:block" />
                     </div>
-                    <span className="text-[9px] sm:text-[10px] font-black uppercase text-muted-foreground tracking-wider sm:tracking-widest leading-tight">{tr('Investido', 'Invested')}</span>
+                    <span className="text-[9px] sm:text-[10px] font-black uppercase text-muted-foreground tracking-wider sm:tracking-widest leading-tight truncate">{tr('Investido', 'Invested')}</span>
                   </div>
-                  <p className="text-sm sm:text-lg lg:text-xl font-bold text-white truncate">
+                  <p className="text-sm sm:text-lg xl:text-xl font-bold text-white truncate">
                     {isLoadingResumo ? '---' : formatarMoeda(resumo?.totalInvestido || 0, moeda as UsuarioAtualizacaoRequestDTO.moeda)}
                   </p>
                </Link>
