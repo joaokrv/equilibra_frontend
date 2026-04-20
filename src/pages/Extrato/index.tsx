@@ -164,6 +164,9 @@ export const ExtratoPage = ({ filtroTipo, titulo, descricao }: ExtratoPageProps)
   const totalReceitas = filtradas.filter((t: TransacaoResponseDTO) => t.tipo === TransacaoResponseDTO.tipo.RECEITA).reduce((s: number, t: TransacaoResponseDTO) => s + (t.valor ?? 0), 0);
   const totalDespesas = filtradas.filter((t: TransacaoResponseDTO) => t.tipo === TransacaoResponseDTO.tipo.DESPESA).reduce((s: number, t: TransacaoResponseDTO) => s + (t.valor ?? 0), 0);
 
+  const totalPendentes = filtradas.filter((t: TransacaoResponseDTO) => t.status === TransacaoResponseDTO.status.PENDENTE).reduce((s: number, t: TransacaoResponseDTO) => s + (t.valor ?? 0), 0);
+  const totalPagos = filtradas.filter((t: TransacaoResponseDTO) => t.status === TransacaoResponseDTO.status.PAGO).reduce((s: number, t: TransacaoResponseDTO) => s + (t.valor ?? 0), 0);
+
   const navMes = (dir: -1 | 1) => {
     let m = mes + dir;
     let a = ano;
@@ -255,18 +258,36 @@ export const ExtratoPage = ({ filtroTipo, titulo, descricao }: ExtratoPageProps)
         )}
 
         {filtroTipo && (
-          <div className="glass rounded-2xl p-4">
-            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">
-              {tr('Total de', 'Total')} {filtroTipo === TransacaoResponseDTO.tipo.RECEITA ? tr('Receitas', 'Income') : tr('Despesas', 'Expenses')}
-            </p>
-            <p className={`text-2xl font-bold mt-1 ${filtroTipo === TransacaoResponseDTO.tipo.RECEITA ? 'text-emerald-400' : 'text-rose-400'}`}>
-              {formatarMoeda(filtroTipo === TransacaoResponseDTO.tipo.RECEITA ? totalReceitas : totalDespesas, moeda)}
-            </p>
-            <p className="text-xs text-muted-foreground mt-1">
-              {language === 'en-US'
-                ? `${filtradas.length} transaction${filtradas.length !== 1 ? 's' : ''} in month`
-                : `${filtradas.length} transaç${filtradas.length !== 1 ? 'ões' : 'ão'} no mês`}
-            </p>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+            <div className="glass rounded-2xl p-4">
+              <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">
+                {tr('Total de', 'Total')} {filtroTipo === TransacaoResponseDTO.tipo.RECEITA ? tr('Receitas', 'Income') : tr('Despesas', 'Expenses')}
+              </p>
+              <p className={`text-xl sm:text-2xl font-bold mt-1 ${filtroTipo === TransacaoResponseDTO.tipo.RECEITA ? 'text-emerald-400' : 'text-rose-400'}`}>
+                {formatarMoeda(filtroTipo === TransacaoResponseDTO.tipo.RECEITA ? totalReceitas : totalDespesas, moeda)}
+              </p>
+              <p className="text-xs text-muted-foreground mt-1">
+                {language === 'en-US'
+                  ? `${filtradas.length} transaction${filtradas.length !== 1 ? 's' : ''} in month`
+                  : `${filtradas.length} transaç${filtradas.length !== 1 ? 'ões' : 'ão'} no mês`}
+              </p>
+            </div>
+            
+            <div className="glass rounded-2xl p-4">
+              <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">
+                {filtroTipo === TransacaoResponseDTO.tipo.RECEITA ? tr('Recebido', 'Received') : tr('Pago', 'Paid')}
+              </p>
+              <p className={`text-xl sm:text-2xl font-bold mt-1 ${filtroTipo === TransacaoResponseDTO.tipo.RECEITA ? 'text-emerald-400' : 'text-rose-400'}`}>
+                {formatarMoeda(totalPagos, moeda)}
+              </p>
+            </div>
+            
+            <div className="glass rounded-2xl p-4">
+              <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Pendente', 'Pending')}</p>
+              <p className="text-xl sm:text-2xl font-bold mt-1 text-amber-400">
+                {formatarMoeda(totalPendentes, moeda)}
+              </p>
+            </div>
           </div>
         )}
 
@@ -284,10 +305,10 @@ export const ExtratoPage = ({ filtroTipo, titulo, descricao }: ExtratoPageProps)
           <div className="glass flex flex-col rounded-2xl shadow-xl border border-white/5 relative bg-background/40">
             {/* Wrapper de Overflow Horizontal para Telas Médias (iPads/Laptops menores) */}
             <div className="w-full overflow-x-auto">
-              <div className="w-full min-w-max">
+              <div className="w-full xl:min-w-max">
                 
                 {/* Cabeçalho de Organização Expandida com Ações no Fim (Grid limpo e dividido com exatidão) */}
-                <div className="hidden sm:grid grid-cols-[40px_minmax(120px,1fr)_90px_100px_80px_70px_100px_70px] items-center gap-3 xl:gap-4 px-4 sm:px-6 py-4 bg-white/5 border-b border-white/5 select-none font-bold text-[10px] uppercase text-muted-foreground tracking-widest z-10 w-full">
+                <div className="hidden xl:grid xl:grid-cols-[40px_minmax(120px,1fr)_90px_100px_80px_70px_100px_70px] items-center gap-4 px-4 sm:px-6 py-4 bg-white/5 border-b border-white/5 select-none font-bold text-[10px] uppercase text-muted-foreground tracking-widest z-10 w-full">
                    
                    <div></div> {/* 40px Icon Spacer */}
                    
@@ -337,7 +358,7 @@ export const ExtratoPage = ({ filtroTipo, titulo, descricao }: ExtratoPageProps)
                 {/* Linhas (Reconstruídas com grid alinhado nativamente ao header ao invés de flex que flutua) */}
                 <div className="flex-1 w-full bg-black/10">
                   {filtradasEOrdenadas.map((t: TransacaoResponseDTO) => (
-                    <div key={t.id} className="group relative flex flex-col sm:grid sm:grid-cols-[40px_minmax(120px,1fr)_90px_100px_80px_70px_100px_70px] sm:items-center gap-3 sm:gap-3 xl:gap-4 px-4 sm:px-6 py-4 hover:bg-white/5 transition-all outline-none border-b border-white/5 last:border-0 border-transparent">
+                    <div key={t.id} className="group relative flex flex-col xl:grid xl:grid-cols-[40px_minmax(120px,1fr)_90px_100px_80px_70px_100px_70px] xl:items-center gap-3 xl:gap-4 px-4 sm:px-6 py-4 hover:bg-white/5 transition-all outline-none border-b border-white/5 last:border-0 border-transparent">
                       
                       {/* (Mobi/Desk) Icone de Categoria Dinâmico */}
                       <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${
@@ -357,14 +378,14 @@ export const ExtratoPage = ({ filtroTipo, titulo, descricao }: ExtratoPageProps)
                       </div>
 
                       {/* Categoria */}
-                      <div className="hidden sm:flex flex-col items-start gap-1 justify-center min-w-0 pr-1 xl:pr-2">
+                      <div className="hidden xl:flex flex-col items-start gap-1 justify-center min-w-0 pr-1 xl:pr-2">
                           <span className="text-[10px] text-muted-foreground bg-white/5 px-2 py-1 rounded w-full truncate uppercase tracking-wider font-semibold">
                               {t.nomeCategoria || 'Sem cat'}
                           </span>
                       </div>
 
                       {/* Método */}
-                      <div className="hidden sm:flex flex-col items-start gap-1 justify-center min-w-0 pr-1 xl:pr-2">
+                      <div className="hidden xl:flex flex-col items-start gap-1 justify-center min-w-0 pr-1 xl:pr-2">
                           {t.metodoPagamento ? (
                              <span className="text-[10px] text-muted-foreground/80 font-semibold px-1 truncate w-full">
                                {metodoLabel(t.metodoPagamento)}
@@ -375,12 +396,12 @@ export const ExtratoPage = ({ filtroTipo, titulo, descricao }: ExtratoPageProps)
                       </div>
 
                           {/* Data (Substituído lugar com Status) */}
-                          <div className="hidden sm:flex justify-start text-[12px] text-muted-foreground font-medium min-w-[70px] whitespace-nowrap">
-                            {t.data ? new Date(t.data + 'T12:00:00').toLocaleDateString(language, { day: '2-digit', month: 'short', year: 'numeric' }) : ''}
+                          <div className="hidden xl:flex justify-start text-[12px] text-muted-foreground font-medium min-w-0 truncate">
+                            {t.data ? new Date(t.data + 'T12:00:00').toLocaleDateString(language, { day: '2-digit', month: '2-digit', year: 'numeric' }) : ''}
                           </div>
 
                       {/* Status */}
-                      <div className="hidden sm:flex justify-start">
+                      <div className="hidden xl:flex justify-start">
                           {t.status && (
                             <span className={`text-[9px] uppercase tracking-wider font-bold px-1.5 xl:px-2 py-1 rounded w-[70px] text-center truncate ${
                               t.status === TransacaoResponseDTO.status.PAGO ? 'bg-emerald-500/10 text-emerald-400' : 'bg-amber-500/10 text-amber-400'
@@ -391,14 +412,14 @@ export const ExtratoPage = ({ filtroTipo, titulo, descricao }: ExtratoPageProps)
                       </div>
 
                       {/* Valor Fixo no Layout Grid */}
-                      <div className="hidden sm:flex justify-end pr-1 xl:pr-3 truncate">
+                      <div className="hidden xl:flex justify-end pr-1 xl:pr-3 truncate">
                         <p className={`text-[14px] xl:text-base font-bold tabular-nums tracking-tight whitespace-nowrap truncate ${t.tipo === TransacaoResponseDTO.tipo.RECEITA ? 'text-emerald-400' : 'text-rose-400'}`}>
                           {t.tipo === TransacaoResponseDTO.tipo.RECEITA ? '+' : ''} {formatarMoeda(t.valor ?? 0, moeda)}
                         </p>
                       </div>
 
                       {/* Ações Limpas Fixas em uma Coluna Final - Aparece no Desktop transparente e no hover opaco! */}
-                      <div className="hidden sm:flex items-center justify-end gap-1.5 opacity-40 group-hover:opacity-100 transition-opacity">
+                      <div className="hidden xl:flex items-center justify-end gap-1.5 opacity-40 group-hover:opacity-100 transition-opacity">
                         <button
                           onClick={() => abrirEditar(t)}
                           className="p-1.5 xl:p-2 rounded-lg text-muted-foreground hover:bg-white/10 hover:text-primary transition-all"
@@ -416,7 +437,7 @@ export const ExtratoPage = ({ filtroTipo, titulo, descricao }: ExtratoPageProps)
                       </div>
 
                       {/* MOBILE VIEW COMPONENTS - Renderizam dados compactos quando sm: é hidden */}
-                      <div className="sm:hidden flex flex-col gap-2 mt-1 px-1 w-full border-t border-white/5 pt-2">
+                      <div className="xl:hidden flex flex-col gap-2 mt-1 px-1 w-full border-t border-white/5 pt-2">
                           {/* Valores, Categorias e Data resumidos inline para Mobile */}
                           <div className="flex items-center justify-between">
                              <div className="flex items-center gap-2">
