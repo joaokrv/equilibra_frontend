@@ -284,10 +284,10 @@ export const ExtratoPage = ({ filtroTipo, titulo, descricao }: ExtratoPageProps)
           <div className="glass flex flex-col rounded-2xl shadow-xl border border-white/5 relative bg-background/40">
             {/* Wrapper de Overflow Horizontal para Telas Médias (iPads/Laptops menores) */}
             <div className="w-full overflow-x-auto">
-              <div className="w-full sm:min-w-[860px]">
+              <div className="w-full min-w-max">
                 
                 {/* Cabeçalho de Organização Expandida com Ações no Fim (Grid limpo e dividido com exatidão) */}
-                <div className="hidden sm:grid grid-cols-[40px_minmax(120px,1fr)_100px_110px_90px_80px_120px_80px] items-center gap-3 xl:gap-4 px-4 sm:px-6 py-4 bg-white/5 border-b border-white/5 select-none font-bold text-[10px] uppercase text-muted-foreground tracking-widest z-10 w-full">
+                <div className="hidden sm:grid grid-cols-[40px_minmax(120px,1fr)_90px_100px_80px_70px_100px_70px] items-center gap-3 xl:gap-4 px-4 sm:px-6 py-4 bg-white/5 border-b border-white/5 select-none font-bold text-[10px] uppercase text-muted-foreground tracking-widest z-10 w-full">
                    
                    <div></div> {/* 40px Icon Spacer */}
                    
@@ -337,7 +337,7 @@ export const ExtratoPage = ({ filtroTipo, titulo, descricao }: ExtratoPageProps)
                 {/* Linhas (Reconstruídas com grid alinhado nativamente ao header ao invés de flex que flutua) */}
                 <div className="flex-1 w-full bg-black/10">
                   {filtradasEOrdenadas.map((t: TransacaoResponseDTO) => (
-                    <div key={t.id} className="group relative flex flex-col sm:grid sm:grid-cols-[40px_minmax(120px,1fr)_100px_110px_90px_80px_120px_80px] sm:items-center gap-3 sm:gap-3 xl:gap-4 px-4 sm:px-6 py-4 hover:bg-white/5 transition-all outline-none border-b border-white/5 last:border-0 border-transparent">
+                    <div key={t.id} className="group relative flex flex-col sm:grid sm:grid-cols-[40px_minmax(120px,1fr)_90px_100px_80px_70px_100px_70px] sm:items-center gap-3 sm:gap-3 xl:gap-4 px-4 sm:px-6 py-4 hover:bg-white/5 transition-all outline-none border-b border-white/5 last:border-0 border-transparent">
                       
                       {/* (Mobi/Desk) Icone de Categoria Dinâmico */}
                       <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${
@@ -374,10 +374,10 @@ export const ExtratoPage = ({ filtroTipo, titulo, descricao }: ExtratoPageProps)
                           )}
                       </div>
 
-                      {/* Data (Substituído lugar com Status) */}
-                      <div className="hidden sm:flex justify-start text-[12px] text-muted-foreground font-medium truncate">
+                          {/* Data (Substituído lugar com Status) */}
+                          <div className="hidden sm:flex justify-start text-[12px] text-muted-foreground font-medium min-w-[70px] whitespace-nowrap">
                             {t.data ? new Date(t.data + 'T12:00:00').toLocaleDateString(language, { day: '2-digit', month: 'short', year: 'numeric' }) : ''}
-                      </div>
+                          </div>
 
                       {/* Status */}
                       <div className="hidden sm:flex justify-start">
