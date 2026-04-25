@@ -116,7 +116,7 @@ export const ReportModal = ({ isOpen, onClose, tipoContextoFixo }: ReportModalPr
       toast.success(tr(language, 'Relatório gerado com sucesso!', 'Report generated successfully!'));
       onClose();
       
-    } catch (error) {
+    } catch {
        toast.error(tr(language, 'Ocorreu um erro gerando o Relatório. Tente novamente mais tarde.', 'An error occurred. Try again later.'));
     } finally {
         setIsSubmittingManual(false);
