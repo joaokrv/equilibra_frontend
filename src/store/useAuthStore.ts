@@ -3,7 +3,7 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 
 const AUTH_STORAGE_KEY = 'equilibra-auth';
 
-// Remove vestígios antigos de auth no localStorage para manter sessão privada por aba.
+privada por aba.
 if (typeof window !== 'undefined') {
   window.localStorage.removeItem(AUTH_STORAGE_KEY);
 }
@@ -56,9 +56,7 @@ export const useAuthStore = create<AuthState>()(
       storage: createJSONStorage(() => sessionStorage),
       partialize: (state) => ({
         user: state.user,
-        token: state.token,
         isAuthenticated: state.isAuthenticated,
-        // RT nunca persiste — vive apenas no cookie HttpOnly (G5-A1)
       }),
     },
   ),

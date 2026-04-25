@@ -1,7 +1,9 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
+import axios from 'axios';
 import { useAuthStore } from './store/useAuthStore';
+import { API_BASE_URL } from './lib/apiBaseUrl';
 import { usePrivacyStore } from './store/usePrivacyStore';
 import { toast } from './store/useToastStore';
 import { PerfilService } from './api';
@@ -71,6 +73,30 @@ export default function App() {
   const hideValues = usePrivacyStore((state) => state.hideValues);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const [isInitializing, setIsInitializing] = useState(true);
+
+  useEffect(() => {
+    const { isAuthenticated, user, setAuth, logout } = useAuthStore.getState();
+
+    if (!isAuthenticated) {
+      setIsInitializing(false);
+      return;
+    }
+
+    axios
+      .post(`${API_BASE_URL}/api/auth/refresh`, {}, { withCredentials: true })
+      .then(({ data }) => {
+        if (user && data.accessToken) {
+          setAuth(user, data.accessToken);
+        }
+      })
+      .catch(() => {
+        logout();
+      })
+      .finally(() => {
+        setIsInitializing(false);
+      });
+  }, []);
 
   // Listener para logout forçado via interceptor 401 (G10.1 — F1-A3)
   useEffect(() => {
@@ -86,6 +112,14 @@ export default function App() {
   useEffect(() => {
     document.documentElement.dataset.privacyValues = hideValues ? 'hidden' : 'visible';
   }, [hideValues]);
+
+  if (isInitializing) {
+    return (
+      <div className="flex items-center justify-center min-h-screen bg-background">
+        <div className="w-10 h-10 border-4 border-primary border-t-transparent rounded-full animate-spin" />
+      </div>
+    );
+  }
 
   return (
     <Routes>
