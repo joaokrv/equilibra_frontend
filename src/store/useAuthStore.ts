@@ -56,8 +56,8 @@ export const useAuthStore = create<AuthState>()(
       storage: createJSONStorage(() => sessionStorage),
       partialize: (state) => ({
         user: state.user,
+        token: state.token,
         isAuthenticated: state.isAuthenticated,
-        // AT não persiste — reload dispara refresh silencioso via cookie HttpOnly (AR-02)
         // RT nunca persiste — vive apenas no cookie HttpOnly (G5-A1)
       }),
     },
