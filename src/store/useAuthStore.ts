@@ -3,7 +3,6 @@ import { persist, createJSONStorage } from 'zustand/middleware';
 
 const AUTH_STORAGE_KEY = 'equilibra-auth';
 
-privada por aba.
 if (typeof window !== 'undefined') {
   window.localStorage.removeItem(AUTH_STORAGE_KEY);
 }
