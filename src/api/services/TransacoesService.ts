@@ -9,7 +9,7 @@ import type { TransacaoResponseDTO } from '../models/TransacaoResponseDTO';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
-export class TransaEsService {
+export class TransacoesService {
     /**
      * Atualizar transação
      * Altera os dados de uma transação existente e reajusta os saldos/limites impactados.
@@ -51,26 +51,20 @@ export class TransaEsService {
         });
     }
     /**
-     * Listar transações mensais
-     * Retorna todas as transações de um mês e ano específicos para o usuário logado.
+     * Listar transações paginadas
+     * Retorna transações do usuário em páginas (sem filtro mensal). Use parâmetros page, size, sort.
      * @param pageable
-     * @param ano
-     * @param mes
-     * @returns any OK
+     * @returns PageTransacaoResponseDTO OK
      * @throws ApiError
      */
     public static listarPaginado(
         pageable: Pageable,
-        ano: number,
-        mes: number,
-    ): CancelablePromise<(Array<TransacaoResponseDTO> | PageTransacaoResponseDTO)> {
+    ): CancelablePromise<PageTransacaoResponseDTO> {
         return __request(OpenAPI, {
             method: 'GET',
             url: '/api/transacoes',
             query: {
                 'pageable': pageable,
-                'ano': ano,
-                'mes': mes,
             },
         });
     }
@@ -92,6 +86,27 @@ export class TransaEsService {
         });
     }
     /**
+     * Listar transações mensais
+     * Retorna todas as transações de um mês e ano específicos para o usuário logado.
+     * @param ano
+     * @param mes
+     * @returns TransacaoResponseDTO OK
+     * @throws ApiError
+     */
+    public static listarMensal(
+        ano: number,
+        mes: number,
+    ): CancelablePromise<Array<TransacaoResponseDTO>> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/transacoes/mensal',
+            query: {
+                'ano': ano,
+                'mes': mes,
+            },
+        });
+    }
+    /**
      * Listar transacoes por intervalo
      * Retorna transacoes entre dataInicio e dataFim. Intervalo maximo de 12 meses.
      * @param dataInicio
@@ -109,6 +124,24 @@ export class TransaEsService {
             query: {
                 'dataInicio': dataInicio,
                 'dataFim': dataFim,
+            },
+        });
+    }
+    /**
+     * Listar transações por fatura
+     * Retorna todas as transações de uma fatura específica.
+     * @param faturaId
+     * @returns TransacaoResponseDTO OK
+     * @throws ApiError
+     */
+    public static listarPorFatura(
+        faturaId: number,
+    ): CancelablePromise<Array<TransacaoResponseDTO>> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/transacoes/fatura',
+            query: {
+                'faturaId': faturaId,
             },
         });
     }

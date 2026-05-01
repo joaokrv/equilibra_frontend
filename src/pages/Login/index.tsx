@@ -5,7 +5,7 @@ import * as z from 'zod';
 import { useMutation } from '@tanstack/react-query';
 import { useAuthStore } from '../../store/useAuthStore';
 import type { User } from '../../store/useAuthStore';
-import { AutenticaOService } from '../../api';
+import { AutenticacaoService } from '../../api';
 import { Link } from 'react-router-dom';
 import { Eye, EyeOff } from 'lucide-react';
 import { Input } from '../../components/ui/Input';
@@ -39,7 +39,7 @@ export function LoginPage() {
   });
 
   const loginMutation = useMutation({
-    mutationFn: (data: LoginFormValues) => AutenticaOService.login({
+    mutationFn: (data: LoginFormValues) => AutenticacaoService.login({
       email: data.email,
       senha: data.senha
     }),

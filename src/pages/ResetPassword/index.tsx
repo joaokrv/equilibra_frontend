@@ -7,7 +7,7 @@ import { Link, useSearchParams, useNavigate } from 'react-router-dom';
 import { toast } from '../../store/useToastStore';
 import { ArrowLeft, ShieldCheck, Loader2, Eye, EyeOff, Check, X } from 'lucide-react';
 import logo from '../../assets/logo-equilibra.png';
-import { AutenticaOService } from '../../api';
+import { AutenticacaoService } from '../../api';
 import { useI18nStore } from '../../store/useI18nStore';
 import { getApiErrorMessage } from '../../lib/errorMessage';
 import { createPasswordSchema } from '../../lib/passwordValidation';
@@ -71,7 +71,7 @@ export function ResetPasswordPage() {
       return;
     }
 
-    AutenticaOService.validarToken(token)
+    AutenticacaoService.validarToken(token)
       .then((data) => {
         setEmail(data.email as string);
         setTokenValido(true);
@@ -84,7 +84,7 @@ export function ResetPasswordPage() {
 
   const resetMutation = useMutation({
     mutationFn: (data: ResetFormValues) =>
-      AutenticaOService.resetarSenha({
+      AutenticacaoService.resetarSenha({
         token: token!,
         novaSenha: data.novaSenha,
       }),

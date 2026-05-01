@@ -7,7 +7,7 @@ import type { CartaoResponseDTO } from '../models/CartaoResponseDTO';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
-export class CartaoControllerService {
+export class CartoesService {
     /**
      * @param id
      * @returns CartaoResponseDTO OK

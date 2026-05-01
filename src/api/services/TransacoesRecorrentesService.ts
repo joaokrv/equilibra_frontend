@@ -7,7 +7,7 @@ import type { TransacaoRecorrenteResponseDTO } from '../models/TransacaoRecorren
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
-export class TransaEsRecorrentesService {
+export class TransacoesRecorrentesService {
     /**
      * Atualizar recorrência
      * Edita uma recorrência. Afeta apenas meses futuros.

@@ -5,7 +5,7 @@ import {
 } from 'lucide-react';
 import { MainLayout } from '../../components/layout/MainLayout';
 import { DeleteConfirmationModal } from '../../components/modals/DeleteConfirmationModal';
-import { ContaControllerService } from '../../api/services/ContaControllerService';
+import { ContasService } from '../../api/services/ContasService';
 import { investimentosApi, InvestimentoItem, TipoInvestimento } from '../../lib/investimentosApi';
 import { formatarMoeda } from '../../lib/formatters';
 import { getApiErrorMessage } from '../../lib/errorMessage';
@@ -65,7 +65,7 @@ export const InvestimentosPage = () => {
 
   const { data: contas = [] } = useQuery({
     queryKey: ['contas'],
-    queryFn: () => ContaControllerService.listarContas(),
+    queryFn: () => ContasService.listarContas(),
   });
 
   const ensureArray = <T,>(value: unknown): T[] => {

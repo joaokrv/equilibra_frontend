@@ -5,7 +5,7 @@ import {
 } from 'lucide-react';
 import { MainLayout } from '../../components/layout/MainLayout';
 import { DeleteConfirmationModal } from '../../components/modals/DeleteConfirmationModal';
-import { TransaEsRecorrentesService, ContaControllerService, CartaoControllerService, CategoriaControllerService, TransacaoRecorrenteResponseDTO, TransacaoRecorrenteRequestDTO } from '../../api';
+import { TransacoesRecorrentesService, ContasService, CartoesService, CategoriasService, TransacaoRecorrenteResponseDTO, TransacaoRecorrenteRequestDTO } from '../../api';
 import { formatarMoeda } from '../../lib/formatters';
 import { METODO_PAGAMENTO_LABELS } from '../../lib/constants';
 import { getApiErrorMessage } from '../../lib/errorMessage';
@@ -39,19 +39,19 @@ export const RecorrentesPage = () => {
 
   const { data: recorrentes = [], isLoading } = useQuery({
     queryKey: ['recorrentes'],
-    queryFn: () => TransaEsRecorrentesService.listar(),
+    queryFn: () => TransacoesRecorrentesService.listar(),
   });
 
-  const { data: contas = [] } = useQuery({ queryKey: ['contas'], queryFn: () => ContaControllerService.listarContas() });
-  const { data: cartoes = [] } = useQuery({ queryKey: ['cartoes'], queryFn: () => CartaoControllerService.listarCartoes() });
-  const { data: categorias = [] } = useQuery({ queryKey: ['categorias'], queryFn: () => CategoriaControllerService.listarCategorias() });
+  const { data: contas = [] } = useQuery({ queryKey: ['contas'], queryFn: () => ContasService.listarContas() });
+  const { data: cartoes = [] } = useQuery({ queryKey: ['cartoes'], queryFn: () => CartoesService.listarCartoes() });
+  const { data: categorias = [] } = useQuery({ queryKey: ['categorias'], queryFn: () => CategoriasService.listarCategorias() });
 
   const categoriasFiltradas = (categorias as any[]).filter((c: any) => c.tipo === aba);
 
   const invalidar = () => queryClient.invalidateQueries({ queryKey: ['recorrentes'] });
 
   const criarMutation = useMutation({
-    mutationFn: () => TransaEsRecorrentesService.criar({
+    mutationFn: () => TransacoesRecorrentesService.criar({
       descricao: descricao.trim(),
       valor: Number(valor),
       tipo: aba as TransacaoRecorrenteRequestDTO.tipo,
@@ -69,7 +69,7 @@ export const RecorrentesPage = () => {
   });
 
   const editarMutation = useMutation({
-    mutationFn: () => TransaEsRecorrentesService.atualizar(editando!.id!, {
+    mutationFn: () => TransacoesRecorrentesService.atualizar(editando!.id!, {
       descricao: descricao.trim(),
       valor: Number(valor),
       tipo: aba as TransacaoRecorrenteRequestDTO.tipo,
@@ -87,7 +87,7 @@ export const RecorrentesPage = () => {
   });
 
   const deletarMutation = useMutation({
-    mutationFn: (id: number) => TransaEsRecorrentesService.deletar(id),
+    mutationFn: (id: number) => TransacoesRecorrentesService.deletar(id),
     onSuccess: () => {
       invalidar();
       toast.success(tr('Recorrência desativada.', 'Recurring transaction disabled.'));

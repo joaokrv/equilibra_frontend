@@ -11,10 +11,10 @@ import { toast } from '../../store/useToastStore';
 import { getApiErrorMessage } from '../../lib/errorMessage';
 import { useI18nStore } from '../../store/useI18nStore';
 import {
-  TransaEsService,
-  ContaControllerService,
-  CartaoControllerService,
-  CategoriaControllerService,
+  TransacoesService,
+  ContasService,
+  CartoesService,
+  CategoriasService,
 } from '../../api';
 import type { TransacaoResponseDTO } from '../../api/models/TransacaoResponseDTO';
 
@@ -38,6 +38,8 @@ const buildTransactionSchema = (language: 'pt-BR' | 'en-US') =>
     contaId: z.string().optional(),
     cartaoId: z.string().optional(),
     categoriaId: z.string().min(1, tr(language, 'Selecione uma categoria', 'Select a category')),
+    numeroParcela: z.string().optional(),
+    totalParcelas: z.string().optional(),
     idempotencyKey: z.string().min(1),
   });
 
@@ -70,6 +72,8 @@ export const TransactionModal = ({ isOpen, onClose, onSuccess, transacaoParaEdit
       status: 'PAGO',
       metodoPagamento: 'PIX',
       data: new Date().toISOString().split('T')[0],
+      numeroParcela: '1',
+      totalParcelas: '1',
       idempotencyKey: '',
     },
   });
@@ -91,6 +95,8 @@ export const TransactionModal = ({ isOpen, onClose, onSuccess, transacaoParaEdit
       setValue('categoriaId', transacaoParaEditar.categoriaId ? String(transacaoParaEditar.categoriaId) : '');
       setValue('contaId', transacaoParaEditar.contaId ? String(transacaoParaEditar.contaId) : '');
       setValue('cartaoId', transacaoParaEditar.cartaoId ? String(transacaoParaEditar.cartaoId) : '');
+      setValue('numeroParcela', transacaoParaEditar.numeroParcela ? String(transacaoParaEditar.numeroParcela) : '1');
+      setValue('totalParcelas', transacaoParaEditar.totalParcelas ? String(transacaoParaEditar.totalParcelas) : '1');
       setValue('idempotencyKey', uuidv4());
     } else {
       reset({
@@ -98,6 +104,8 @@ export const TransactionModal = ({ isOpen, onClose, onSuccess, transacaoParaEdit
         status: 'PAGO',
         metodoPagamento: 'PIX',
         data: new Date().toISOString().split('T')[0],
+        numeroParcela: '1',
+        totalParcelas: '1',
         idempotencyKey: uuidv4(),
       });
     }
@@ -106,25 +114,25 @@ export const TransactionModal = ({ isOpen, onClose, onSuccess, transacaoParaEdit
   // ─── Queries Dinâmicas ────────────────────────────────────────────
   const { data: contas = [] } = useQuery({
     queryKey: ['accounts'],
-    queryFn: () => ContaControllerService.listarContas(),
+    queryFn: () => ContasService.listarContas(),
     enabled: isOpen,
   });
 
   const { data: cartoes = [] } = useQuery({
     queryKey: ['cards'],
-    queryFn: () => CartaoControllerService.listarCartoes(),
+    queryFn: () => CartoesService.listarCartoes(),
     enabled: isOpen,
   });
 
   const { data: categorias = [] } = useQuery({
     queryKey: ['categories', tipo],
-    queryFn: () => CategoriaControllerService.listarCategorias(tipo),
+    queryFn: () => CategoriasService.listarCategorias(tipo),
     enabled: isOpen,
   });
 
   // ─── Mutation: Criar ──────────────────────────────────────────────
   const criarMutation = useMutation({
-    mutationFn: (payload: any) => TransaEsService.criarTransacao(payload),
+    mutationFn: (payload: any) => TransacoesService.criarTransacao(payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['transactions'] });
       queryClient.invalidateQueries({ queryKey: ['accounts'] });
@@ -151,7 +159,7 @@ export const TransactionModal = ({ isOpen, onClose, onSuccess, transacaoParaEdit
 
   // ─── Mutation: Atualizar ──────────────────────────────────────────
   const atualizarMutation = useMutation({
-    mutationFn: (payload: any) => TransaEsService.atualizarTransacao(transacaoParaEditar!.id!, payload),
+    mutationFn: (payload: any) => TransacoesService.atualizarTransacao(transacaoParaEditar!.id!, payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['transactions'] });
       queryClient.invalidateQueries({ queryKey: ['accounts'] });
@@ -182,6 +190,8 @@ export const TransactionModal = ({ isOpen, onClose, onSuccess, transacaoParaEdit
       contaId: data.contaId ? Number(data.contaId) : undefined,
       cartaoId: data.cartaoId ? Number(data.cartaoId) : undefined,
       categoriaId: Number(data.categoriaId),
+      numeroParcela: data.numeroParcela ? Number(data.numeroParcela) : undefined,
+      totalParcelas: data.totalParcelas ? Number(data.totalParcelas) : undefined,
     };
 
     if (isEditMode) {
@@ -339,6 +349,29 @@ export const TransactionModal = ({ isOpen, onClose, onSuccess, transacaoParaEdit
                 error={errors.categoriaId?.message}
               />
             </div>
+
+            {metodo === 'CARTAO_CREDITO' && (
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <Input
+                  {...register('numeroParcela')}
+                  label={tr(language, 'Parcela', 'Installment Number')}
+                  id="num-parcela-trans"
+                  type="number"
+                  min="1"
+                  placeholder={tr(language, '1', '1')}
+                  error={errors.numeroParcela?.message}
+                />
+                <Input
+                  {...register('totalParcelas')}
+                  label={tr(language, 'Total de Parcelas', 'Total Installments')}
+                  id="total-parcelas-trans"
+                  type="number"
+                  min="1"
+                  placeholder={tr(language, '1', '1')}
+                  error={errors.totalParcelas?.message}
+                />
+              </div>
+            )}
 
             {/* Campo Oculto de Idempotência */}
             <input type="hidden" {...register('idempotencyKey')} />

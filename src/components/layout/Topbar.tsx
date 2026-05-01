@@ -3,9 +3,9 @@ import { Search, User, Eye, EyeOff } from 'lucide-react';
 import { useAuthStore } from '../../store/useAuthStore';
 import { Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
-import { ContaControllerService } from '../../api/services/ContaControllerService';
-import { CategoriaControllerService } from '../../api/services/CategoriaControllerService';
-import { TransaEsService } from '../../api/services/TransaEsService';
+import { ContasService } from '../../api/services/ContasService';
+import { CategoriasService } from '../../api/services/CategoriasService';
+import { TransacoesService } from '../../api/services/TransacoesService';
 import { formatarMoeda } from '../../lib/formatters';
 import { useI18nStore } from '../../store/useI18nStore';
 import { t } from '../../lib/i18n';
@@ -34,17 +34,17 @@ export const Topbar = () => {
 
   const { data: contas = [] } = useQuery({
     queryKey: ['contas'],
-    queryFn: () => ContaControllerService.listarContas(),
+    queryFn: () => ContasService.listarContas(),
   });
 
   const { data: categorias = [] } = useQuery({
     queryKey: ['categorias'],
-    queryFn: () => CategoriaControllerService.listarCategorias(),
+    queryFn: () => CategoriasService.listarCategorias(),
   });
 
   const { data: transacoes = [] } = useQuery({
     queryKey: ['transacoes', hoje.getFullYear(), hoje.getMonth() + 1],
-    queryFn: () => TransaEsService.listarPaginado({ page: 0, size: 100 }, hoje.getFullYear(), hoje.getMonth() + 1),
+    queryFn: () => TransacoesService.listarMensal(hoje.getFullYear(), hoje.getMonth() + 1),
   });
 
   const listaTransacoes = Array.isArray(transacoes) ? transacoes : (transacoes as any)?.content ?? [];

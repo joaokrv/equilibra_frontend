@@ -32,6 +32,7 @@ export type { PatrimonioEvolucaoResponseDTO } from './models/PatrimonioEvolucaoR
 export type { PerfilResumoResponseDTO } from './models/PerfilResumoResponseDTO';
 export type { ReativarContaRequestDTO } from './models/ReativarContaRequestDTO';
 export type { ReenviarCodigoRequestDTO } from './models/ReenviarCodigoRequestDTO';
+export { RelatorioFiltroDTO } from './models/RelatorioFiltroDTO';
 export type { ResetarSenhaRequestDTO } from './models/ResetarSenhaRequestDTO';
 export type { SolicitarAlteracaoEmailRequestDTO } from './models/SolicitarAlteracaoEmailRequestDTO';
 export type { SolicitarRecuperacaoSenhaRequestDTO } from './models/SolicitarRecuperacaoSenhaRequestDTO';
@@ -47,15 +48,16 @@ export type { UsuarioRegistroRequestDTO } from './models/UsuarioRegistroRequestD
 export { UsuarioResponseDTO } from './models/UsuarioResponseDTO';
 export type { VerificarEmailRequestDTO } from './models/VerificarEmailRequestDTO';
 
-export { AutenticaOService } from './services/AutenticaOService';
-export { CartaoControllerService } from './services/CartaoControllerService';
-export { CategoriaControllerService } from './services/CategoriaControllerService';
-export { ContaControllerService } from './services/ContaControllerService';
+export { AutenticacaoService } from './services/AutenticacaoService';
+export { CartoesService } from './services/CartoesService';
+export { CategoriasService } from './services/CategoriasService';
+export { ContasService } from './services/ContasService';
 export { DashboardService } from './services/DashboardService';
-export { FaturaControllerService } from './services/FaturaControllerService';
+export { FaturasService } from './services/FaturasService';
 export { InvestimentosService } from './services/InvestimentosService';
 export { MercadoService } from './services/MercadoService';
-export { PatrimNioService } from './services/PatrimNioService';
+export { PatrimonioService } from './services/PatrimonioService';
 export { PerfilService } from './services/PerfilService';
-export { TransaEsService } from './services/TransaEsService';
-export { TransaEsRecorrentesService } from './services/TransaEsRecorrentesService';
+export { RelatoriosService } from './services/RelatoriosService';
+export { TransacoesService } from './services/TransacoesService';
+export { TransacoesRecorrentesService } from './services/TransacoesRecorrentesService';

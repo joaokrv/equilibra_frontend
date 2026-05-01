@@ -13,7 +13,7 @@ import type { VerificarEmailRequestDTO } from '../models/VerificarEmailRequestDT
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
-export class AutenticaOService {
+export class AutenticacaoService {
     /**
      * Verificar e-mail
      * Valida a conta do usuário usando o código de 6 dígitos enviado por e-mail.
@@ -156,12 +156,12 @@ export class AutenticaOService {
      * Login de usuário
      * Autentica o usuário, seta refresh token em cookie HttpOnly e retorna access token.
      * @param requestBody
-     * @returns AuthResponseDTO OK
+     * @returns any OK
      * @throws ApiError
      */
     public static login(
         requestBody: UsuarioLoginRequestDTO,
-    ): CancelablePromise<AuthResponseDTO> {
+    ): CancelablePromise<Record<string, any>> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/auth/login',

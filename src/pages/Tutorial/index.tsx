@@ -4,10 +4,10 @@ import { CheckCircle2, Circle, ArrowRight, Wallet, CreditCard, Tag, TrendingUp, 
 import { MainLayout } from '../../components/layout/MainLayout';
 import { useAuthStore } from '../../store/useAuthStore';
 import { useI18nStore } from '../../store/useI18nStore';
-import { ContaControllerService } from '../../api/services/ContaControllerService';
-import { CartaoControllerService } from '../../api/services/CartaoControllerService';
-import { CategoriaControllerService } from '../../api/services/CategoriaControllerService';
-import { TransaEsService } from '../../api/services/TransaEsService';
+import { ContasService } from '../../api/services/ContasService';
+import { CartoesService } from '../../api/services/CartoesService';
+import { CategoriasService } from '../../api/services/CategoriasService';
+import { TransacoesService } from '../../api/services/TransacoesService';
 import { TransacaoResponseDTO } from '../../api/models/TransacaoResponseDTO';
 import { investimentosApi } from '../../lib/investimentosApi';
 
@@ -39,22 +39,22 @@ export const TutorialPage = () => {
 
   const { data: contasRaw = [] } = useQuery({
     queryKey: ['tutorial-contas'],
-    queryFn: () => ContaControllerService.listarContas(),
+    queryFn: () => ContasService.listarContas(),
   });
 
   const { data: cartoesRaw = [] } = useQuery({
     queryKey: ['tutorial-cartoes'],
-    queryFn: () => CartaoControllerService.listarCartoes(),
+    queryFn: () => CartoesService.listarCartoes(),
   });
 
   const { data: categoriasRaw = [] } = useQuery({
     queryKey: ['tutorial-categorias'],
-    queryFn: () => CategoriaControllerService.listarCategorias(),
+    queryFn: () => CategoriasService.listarCategorias(),
   });
 
   const { data: transacoesRaw = [] } = useQuery({
     queryKey: ['tutorial-transacoes', ano, mes],
-    queryFn: () => TransaEsService.listarPaginado({}, ano, mes) as Promise<any>,
+    queryFn: () => TransacoesService.listarPaginado({}) as Promise<any>,
   });
 
   const { data: investimentosRaw = [] } = useQuery({

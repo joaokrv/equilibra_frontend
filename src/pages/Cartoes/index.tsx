@@ -1,8 +1,9 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   CreditCard, Plus, Trash2, X, Loader2, ChevronRight, ChevronDown,
-  Calendar, DollarSign, AlertTriangle, CheckCircle2, Clock, Pencil,
+  Calendar, DollarSign, AlertTriangle, CheckCircle2, Clock, Pencil, Eye,
 } from 'lucide-react';
 import imgVisa from '../../assets/cartoes/cartao-visa-removebg-preview.png';
 import imgMastercard from '../../assets/cartoes/cartao-mastercard-removebg-preview.png';
@@ -37,9 +38,9 @@ const BANDEIRA_IMAGENS: Record<string, string> = {
 };
 import { MainLayout } from '../../components/layout/MainLayout';
 import { DeleteConfirmationModal } from '../../components/modals/DeleteConfirmationModal';
-import { CartaoControllerService } from '../../api/services/CartaoControllerService';
-import { FaturaControllerService } from '../../api/services/FaturaControllerService';
-import { ContaControllerService } from '../../api/services/ContaControllerService';
+import { CartoesService } from '../../api/services/CartoesService';
+import { FaturasService } from '../../api/services/FaturasService';
+import { ContasService } from '../../api/services/ContasService';
 import { CartaoRegistroRequestDTO } from '../../api/models/CartaoRegistroRequestDTO';
 import { CartaoResponseDTO } from '../../api/models/CartaoResponseDTO';
 import { FaturaResponseDTO } from '../../api/models/FaturaResponseDTO';
@@ -52,6 +53,7 @@ import { useAuthStore } from '../../store/useAuthStore';
 import { useI18nStore } from '../../store/useI18nStore';
 
 export const CartoesPage = () => {
+  const navigate = useNavigate();
   const queryClient = useQueryClient();
   const moeda = (useAuthStore((s) => s.user?.moeda) as 'BRL' | 'USD' | 'EUR') || 'BRL';
   const language = useI18nStore((s) => s.language);
@@ -80,23 +82,23 @@ export const CartoesPage = () => {
 
   const { data: cartoes = [], isLoading } = useQuery({
     queryKey: ['cartoes'],
-    queryFn: () => CartaoControllerService.listarCartoes(),
+    queryFn: () => CartoesService.listarCartoes(),
   });
 
   const { data: contas = [] } = useQuery({
     queryKey: ['contas'],
-    queryFn: () => ContaControllerService.listarContas(),
+    queryFn: () => ContasService.listarContas(),
   });
 
   const { data: faturas = [] } = useQuery({
     queryKey: ['faturas', cartaoExpandido],
-    queryFn: () => FaturaControllerService.listarFaturasPorCartao(cartaoExpandido!),
+    queryFn: () => FaturasService.listarFaturasPorCartao(cartaoExpandido!),
     enabled: cartaoExpandido !== null,
   });
 
   const criarMutation = useMutation({
     mutationFn: () =>
-      CartaoControllerService.criarCartao({
+      CartoesService.criarCartao({
         nome: nome.trim(),
         limite: Number(limite),
         diaFechamento: Number(diaFechamento),
@@ -114,7 +116,7 @@ export const CartoesPage = () => {
   });
 
   const deletarMutation = useMutation({
-    mutationFn: (id: number) => CartaoControllerService.deletarCartao(id),
+    mutationFn: (id: number) => CartoesService.deletarCartao(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['cartoes'] });
       toast.success(tr('Cartão removido.', 'Card removed.'));
@@ -147,7 +149,7 @@ export const CartoesPage = () => {
 
   const pagarMutation = useMutation({
     mutationFn: () =>
-      FaturaControllerService.pagarFatura(modalPagar!.id!, {
+      FaturasService.pagarFatura(modalPagar!.id!, {
         contaId: Number(contaPagamentoId),
         valorPago: Number(valorPagamento),
       }),
@@ -341,6 +343,13 @@ export const CartoesPage = () => {
                                 )}
                               </div>
                               <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${cfg.color}`}>{cfg.label}</span>
+                              <button
+                                onClick={() => navigate(`/faturas/${cartao.id}?mes=${f.mes}&ano=${f.ano}`)}
+                                className="p-1 rounded-lg text-muted-foreground hover:text-white hover:bg-white/10 transition-all"
+                                aria-label={tr('Ver detalhes', 'View details')}
+                              >
+                                <Eye size={14} />
+                              </button>
                               {f.status !== FaturaResponseDTO.status.PAGA && (f.valorRestante ?? 0) > 0 && (
                                 <button
                                   onClick={() => {

@@ -17,6 +17,8 @@ export type TransacaoResponseDTO = {
     nomeCartao?: string;
     cartaoId?: number;
     isRecorrente?: boolean;
+    numeroParcela?: number;
+    totalParcelas?: number;
 };
 export namespace TransacaoResponseDTO {
     export enum tipo {

@@ -4,7 +4,7 @@ import { Wallet, Plus, Trash2, X, Loader2, Pencil, Search } from 'lucide-react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { MainLayout } from '../../components/layout/MainLayout';
 import { DeleteConfirmationModal } from '../../components/modals/DeleteConfirmationModal';
-import { ContaControllerService } from '../../api/services/ContaControllerService';
+import { ContasService } from '../../api/services/ContasService';
 import { ContaResponseDTO } from '../../api/models/ContaResponseDTO';
 import { investimentosApi } from '../../lib/investimentosApi';
 import { formatarMoeda } from '../../lib/formatters';
@@ -37,7 +37,7 @@ export const ContasPage = () => {
 
   const { data: contas = [], isLoading } = useQuery({
     queryKey: ['contas'],
-    queryFn: () => ContaControllerService.listarContas(),
+    queryFn: () => ContasService.listarContas(),
   });
 
   const { data: investimentos = [] } = useQuery({
@@ -58,7 +58,7 @@ export const ContasPage = () => {
 
   const criarMutation = useMutation({
     mutationFn: () =>
-      ContaControllerService.criarConta({
+      ContasService.criarConta({
         nome: nome.trim(),
         saldo: (saldo ? Number(saldo) : 0) + (investimentoInicial ? Number(investimentoInicial) : 0),
       }),
@@ -84,7 +84,7 @@ export const ContasPage = () => {
         } catch (error: unknown) {
           if (contaCriada?.id) {
             try {
-              await ContaControllerService.atualizarSaldo(Number(contaCriada.id), Number(saldo || 0));
+              await ContasService.atualizarSaldo(Number(contaCriada.id), Number(saldo || 0));
               await queryClient.invalidateQueries({ queryKey: ['contas'] });
               toast.warning(getApiErrorMessage(
                 error,
@@ -117,7 +117,7 @@ export const ContasPage = () => {
   });
 
   const editarMutation = useMutation({
-    mutationFn: () => ContaControllerService.atualizarSaldo(editando!.id!, Number(saldo)),
+    mutationFn: () => ContasService.atualizarSaldo(editando!.id!, Number(saldo)),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['contas'] });
       toast.success(tr('Saldo atualizado com sucesso.', 'Balance updated successfully.'));
@@ -128,7 +128,7 @@ export const ContasPage = () => {
   });
 
   const deletarMutation = useMutation({
-    mutationFn: (id: number) => ContaControllerService.deletarConta(id),
+    mutationFn: (id: number) => ContasService.deletarConta(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['contas'] });
       toast.success(tr('Conta removida.', 'Account removed.'));

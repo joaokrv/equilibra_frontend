@@ -7,7 +7,7 @@ import type { CategoriaResponseDTO } from '../models/CategoriaResponseDTO';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
-export class CategoriaControllerService {
+export class CategoriasService {
     /**
      * @param id
      * @param requestBody

@@ -6,7 +6,7 @@ import type { PatrimonioEvolucaoResponseDTO } from '../models/PatrimonioEvolucao
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
-export class PatrimNioService {
+export class PatrimonioService {
     /**
      * Evolução patrimonial
      * Retorna snapshots diários de patrimônio (contas + investimentos) no período informado.

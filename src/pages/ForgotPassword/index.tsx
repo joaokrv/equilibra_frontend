@@ -7,7 +7,7 @@ import { Input } from '../../components/ui/Input';
 import { toast } from '../../store/useToastStore';
 import { ArrowLeft, Send } from 'lucide-react';
 import logo from '../../assets/logo-equilibra.png';
-import { AutenticaOService } from '../../api';
+import { AutenticacaoService } from '../../api';
 import { useI18nStore } from '../../store/useI18nStore';
 import { getApiErrorMessage } from '../../lib/errorMessage';
 type ForgotFormValues = { email: string };
@@ -35,7 +35,7 @@ export function ForgotPasswordPage() {
 
   const solicitarMutation = useMutation({
     mutationFn: (data: ForgotFormValues) =>
-      AutenticaOService.solicitarRecuperacao({ email: data.email }),
+      AutenticacaoService.solicitarRecuperacao({ email: data.email }),
     onSuccess: () => {
       toast.success(
         tr('Se o e-mail estiver cadastrado, você receberá um link de recuperação. Verifique sua caixa de entrada e spam.', 'If the email is registered, you will receive a recovery link. Check your inbox and spam folder.'),

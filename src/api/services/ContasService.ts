@@ -7,7 +7,7 @@ import type { ContaResponseDTO } from '../models/ContaResponseDTO';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
-export class ContaControllerService {
+export class ContasService {
     /**
      * @param id
      * @param valor
@@ -59,7 +59,7 @@ export class ContaControllerService {
      * @returns ContaResponseDTO OK
      * @throws ApiError
      */
-    public static buscarPorId1(
+    public static buscarPorId2(
         id: number,
     ): CancelablePromise<ContaResponseDTO> {
         return __request(OpenAPI, {

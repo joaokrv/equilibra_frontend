@@ -1,12 +1,13 @@
 import { useState } from 'react';
 import { NavLink } from 'react-router-dom';
-import { 
-  LayoutDashboard, 
-  Wallet, 
-  TrendingUp, 
-  TrendingDown, 
-  Receipt, 
-  CreditCard, 
+import {
+  LayoutDashboard,
+  Wallet,
+  TrendingUp,
+  TrendingDown,
+  Receipt,
+  CreditCard,
+  FileText,
   Tag,
   Target,
   Repeat,
@@ -56,6 +57,7 @@ const menuItems = [
   { icon: TrendingDown, key: 'menuExpenses', to: '/despesas' },
   { icon: Receipt, key: 'menuStatement', to: '/extrato' },
   { icon: CreditCard, key: 'menuCards', to: '/cartoes' },
+  { icon: FileText, key: 'menuInvoices', to: '/faturas' },
   { icon: Repeat, key: 'menuFixed', to: '/recorrentes' },
   { icon: Tag, key: 'menuCategories', to: '/categorias' },
   { icon: Target, key: 'menuInvestments', to: '/investimentos' },

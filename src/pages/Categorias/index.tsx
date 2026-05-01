@@ -4,7 +4,7 @@ import { Tag, Plus, Trash2, X, TrendingUp, TrendingDown, Loader2, Pencil, Check,
 import { useSearchParams } from 'react-router-dom';
 import { MainLayout } from '../../components/layout/MainLayout';
 import { DeleteConfirmationModal } from '../../components/modals/DeleteConfirmationModal';
-import { CategoriaControllerService } from '../../api/services/CategoriaControllerService';
+import { CategoriasService } from '../../api/services/CategoriasService';
 import { CategoriaResponseDTO } from '../../api/models/CategoriaResponseDTO';
 import { CategoriaRegistroRequestDTO } from '../../api/models/CategoriaRegistroRequestDTO';
 import { getApiErrorMessage } from '../../lib/errorMessage';
@@ -35,12 +35,12 @@ export const CategoriasPage = () => {
 
   const { data: categorias = [], isLoading } = useQuery({
     queryKey: ['categorias'],
-    queryFn: () => CategoriaControllerService.listarCategorias(),
+    queryFn: () => CategoriasService.listarCategorias(),
   });
 
   const criarMutation = useMutation({
     mutationFn: () =>
-      CategoriaControllerService.criarCategoria({ nome: novoNome.trim(), tipo: novoTipo }),
+      CategoriasService.criarCategoria({ nome: novoNome.trim(), tipo: novoTipo }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['categorias'] });
       toast.success(tr(`Categoria "${novoNome.trim()}" criada com sucesso.`, `Category "${novoNome.trim()}" created successfully.`));
@@ -53,7 +53,7 @@ export const CategoriasPage = () => {
 
   const atualizarMutation = useMutation({
     mutationFn: ({ id, nome, tipo }: { id: number; nome: string; tipo: CategoriaRegistroRequestDTO.tipo }) =>
-      CategoriaControllerService.atualizarCategoria(id, { nome, tipo }),
+      CategoriasService.atualizarCategoria(id, { nome, tipo }),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['categorias'] });
       queryClient.invalidateQueries({ queryKey: ['categories'] });
@@ -65,7 +65,7 @@ export const CategoriasPage = () => {
   });
 
   const deletarMutation = useMutation({
-    mutationFn: (id: number) => CategoriaControllerService.deletarCategoria(id),
+    mutationFn: (id: number) => CategoriasService.deletarCategoria(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['categorias'] });
       queryClient.invalidateQueries({ queryKey: ['categories'] });

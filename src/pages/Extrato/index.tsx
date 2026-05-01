@@ -4,7 +4,7 @@ import { Receipt, ChevronLeft, ChevronRight, Loader2, TrendingUp, TrendingDown, 
 import { useSearchParams } from 'react-router-dom';
 import { MainLayout } from '../../components/layout/MainLayout';
 import { SortIcon } from '../../components/icons/SortIcon';
-import { TransaEsService } from '../../api/services/TransaEsService';
+import { TransacoesService } from '../../api/services/TransacoesService';
 import { TransacaoResponseDTO } from '../../api/models/TransacaoResponseDTO';
 import { TransactionModal } from '../../components/modals/TransactionModal';
 import { DeleteConfirmationModal } from '../../components/modals/DeleteConfirmationModal';
@@ -82,11 +82,11 @@ export const ExtratoPage = ({ filtroTipo, titulo, descricao }: ExtratoPageProps)
 
   const { data: transacoes = [], isLoading } = useQuery({
     queryKey: ['transacoes', ano, mes],
-    queryFn: () => TransaEsService.listarPaginado({ page: 0, size: 500 }, ano, mes),
+    queryFn: () => TransacoesService.listarMensal(ano, mes),
   });
 
   const deletarMutation = useMutation({
-    mutationFn: (id: number) => TransaEsService.deletarTransacao(id),
+    mutationFn: (id: number) => TransacoesService.deletarTransacao(id),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['transacoes'] });
       queryClient.invalidateQueries({ queryKey: ['accounts'] });

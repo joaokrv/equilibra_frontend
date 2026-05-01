@@ -15,6 +15,7 @@ import { ReceitasPage } from './pages/Receitas';
 import { DespesasPage } from './pages/Despesas';
 import { ExtratoPage } from './pages/Extrato';
 import { CartoesPage } from './pages/Cartoes';
+import { FaturasPage } from './pages/Faturas';
 import { CategoriasPage } from './pages/Categorias';
 import { InvestimentosPage } from './pages/Investimentos';
 import { RecorrentesPage } from './pages/Recorrentes';
@@ -140,6 +141,8 @@ export default function App() {
       <Route path="/despesas" element={<ProtectedRoute><VerifiedRoute><DespesasPage /></VerifiedRoute></ProtectedRoute>} />
       <Route path="/extrato" element={<ProtectedRoute><VerifiedRoute><ExtratoPage /></VerifiedRoute></ProtectedRoute>} />
       <Route path="/cartoes" element={<ProtectedRoute><VerifiedRoute><CartoesPage /></VerifiedRoute></ProtectedRoute>} />
+      <Route path="/faturas" element={<ProtectedRoute><VerifiedRoute><FaturasPage /></VerifiedRoute></ProtectedRoute>} />
+      <Route path="/faturas/:cartaoId" element={<ProtectedRoute><VerifiedRoute><FaturasPage /></VerifiedRoute></ProtectedRoute>} />
       <Route path="/categorias" element={<ProtectedRoute><VerifiedRoute><CategoriasPage /></VerifiedRoute></ProtectedRoute>} />
       <Route path="/investimentos" element={<ProtectedRoute><VerifiedRoute><InvestimentosPage /></VerifiedRoute></ProtectedRoute>} />
       <Route path="/recorrentes" element={<ProtectedRoute><VerifiedRoute><RecorrentesPage /></VerifiedRoute></ProtectedRoute>} />

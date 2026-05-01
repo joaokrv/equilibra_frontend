@@ -4,7 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Link, useNavigate } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
-import { AutenticaOService } from '../../api';
+import { AutenticacaoService } from '../../api';
 import { Input } from '../../components/ui/Input';
 import { toast } from '../../store/useToastStore';
 import logo from '../../assets/logo-equilibra.png';
@@ -62,7 +62,7 @@ export function RegisterPage() {
   ];
 
   const registerMutation = useMutation({
-    mutationFn: (data: RegisterFormValues) => AutenticaOService.registrar({
+    mutationFn: (data: RegisterFormValues) => AutenticacaoService.registrar({
       nome: data.nome,
       email: data.email,
       senha: data.senha

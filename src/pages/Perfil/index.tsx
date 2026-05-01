@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { useAuthStore } from '../../store/useAuthStore';
 import { toast } from '../../store/useToastStore';
-import { PerfilService, AutenticaOService, UsuarioAtualizacaoRequestDTO } from '../../api';
+import { PerfilService, AutenticacaoService, UsuarioAtualizacaoRequestDTO } from '../../api';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { 
   CheckCircle2, 
@@ -97,7 +97,7 @@ export function PerfilPage() {
 
   // Mutação para ativação de conta
   const ativarContaMutation = useMutation({
-    mutationFn: (codigoAtivacao: string) => AutenticaOService.verificarEmail({
+    mutationFn: (codigoAtivacao: string) => AutenticacaoService.verificarEmail({
       email: user?.email || '',
       codigo: codigoAtivacao
     }),
@@ -113,7 +113,7 @@ export function PerfilPage() {
 
   // Mutação para reenvio de código
   const reenviarCodigoMutation = useMutation({
-    mutationFn: () => AutenticaOService.reenviarCodigo({
+    mutationFn: () => AutenticacaoService.reenviarCodigo({
       email: user?.email || ''
     }),
     onSuccess: () => {
