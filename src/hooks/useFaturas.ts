@@ -1,9 +1,7 @@
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { FaturasService } from '../api/services/FaturasService';
 import { PagarFaturaRequestDTO } from '../api/models/PagarFaturaRequestDTO';
-import { TransacaoResponseDTO } from '../api/models/TransacaoResponseDTO';
 import { TransacoesService } from '../api/services/TransacoesService';
-import apiClient from '../lib/axios';
 
 export function useFaturasPorCartao(cartaoId: number | null) {
   return useQuery({
