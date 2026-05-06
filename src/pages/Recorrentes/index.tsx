@@ -247,13 +247,15 @@ export const RecorrentesPage = () => {
                   <input type="number" min={1} max={31} value={diaLancamento} onChange={(e) => setDiaLancamento(e.target.value)} placeholder="5" className="w-full bg-secondary/30 border border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium placeholder:text-muted-foreground/30" />
                 </div>
               </div>
-              <div className="space-y-1.5">
-                <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Conta', 'Account')}</label>
-                <select value={contaId} onChange={(e) => setContaId(e.target.value)} className="w-full bg-secondary/30 border border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium appearance-none">
-                  <option value="" className="bg-card text-white">{tr('Selecione...', 'Select...')}</option>
-                  {contas.map((c) => <option key={c.id} value={c.id} className="bg-card text-white">{c.nome}</option>)}
-                </select>
-              </div>
+              {metodoPagamento !== 'CARTAO_CREDITO' && (
+                <div className="space-y-1.5">
+                  <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Conta', 'Account')}</label>
+                  <select value={contaId} onChange={(e) => setContaId(e.target.value)} className="w-full bg-secondary/30 border border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium appearance-none">
+                    <option value="" className="bg-card text-white">{tr('Selecione...', 'Select...')}</option>
+                    {contas.map((c) => <option key={c.id} value={c.id} className="bg-card text-white">{c.nome}</option>)}
+                  </select>
+                </div>
+              )}
               <div className="space-y-1.5">
                 <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Categoria', 'Category')}</label>
                 <select value={categoriaId} onChange={(e) => setCategoriaId(e.target.value)} className="w-full bg-secondary/30 border border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium appearance-none">
@@ -263,16 +265,21 @@ export const RecorrentesPage = () => {
               </div>
               <div className="space-y-1.5">
                 <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Método de Pagamento', 'Payment Method')}</label>
-                <select value={metodoPagamento} onChange={(e) => setMetodoPagamento(e.target.value as TransacaoRecorrenteRequestDTO.metodoPagamento | '')} className="w-full bg-secondary/30 border border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium appearance-none">
+                <select value={metodoPagamento} onChange={(e) => {
+                    const novoMetodo = e.target.value as TransacaoRecorrenteRequestDTO.metodoPagamento | '';
+                    setMetodoPagamento(novoMetodo);
+                    if (novoMetodo === 'CARTAO_CREDITO') setContaId('');
+                    else setCartaoId('');
+                }} className="w-full bg-secondary/30 border border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium appearance-none">
                   <option value="" className="bg-card text-white">{tr('Nenhum', 'None')}</option>
                   {Object.entries(METODO_PAGAMENTO_LABELS).map(([val, label]) => <option key={val} value={val} className="bg-card text-white">{label}</option>)}
                 </select>
               </div>
-              {cartoes.length > 0 && (
+              {metodoPagamento === 'CARTAO_CREDITO' && cartoes.length > 0 && (
                 <div className="space-y-1.5">
-                  <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Cartão (Opcional)', 'Card (Optional)')}</label>
+                  <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Cartão', 'Card')}</label>
                   <select value={cartaoId} onChange={(e) => setCartaoId(e.target.value)} className="w-full bg-secondary/30 border border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium appearance-none">
-                    <option value="" className="bg-card text-white">{tr('Nenhum', 'None')}</option>
+                    <option value="" className="bg-card text-white">{tr('Selecione...', 'Select...')}</option>
                     {cartoes.map((c) => <option key={c.id} value={c.id} className="bg-card text-white">{c.nome}</option>)}
                   </select>
                 </div>
@@ -288,7 +295,7 @@ export const RecorrentesPage = () => {
                 </div>
               </div>
             </div>
-            <button onClick={handleSalvar} disabled={!descricao.trim() || !valor || !contaId || !diaLancamento || criarMutation.isPending || editarMutation.isPending} className="w-full bg-primary hover:bg-primary/90 text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-primary/20 active:scale-[0.98] text-sm disabled:opacity-50 flex items-center justify-center gap-2">
+            <button onClick={handleSalvar} disabled={!descricao.trim() || !valor || !diaLancamento || (metodoPagamento === 'CARTAO_CREDITO' ? !cartaoId : !contaId) || criarMutation.isPending || editarMutation.isPending} className="w-full bg-primary hover:bg-primary/90 text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-primary/20 active:scale-[0.98] text-sm disabled:opacity-50 flex items-center justify-center gap-2">
               {(criarMutation.isPending || editarMutation.isPending) ? <><Loader2 size={16} className="animate-spin" /> {tr('Salvando...', 'Saving...')}</> : <>{editando ? <Pencil size={16} /> : <Plus size={16} />} {editando ? tr('Atualizar', 'Update') : tr('Criar', 'Create')}</>}
             </button>
           </div>

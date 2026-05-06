@@ -184,11 +184,22 @@ export const TransactionModal = ({ isOpen, onClose, onSuccess, transacaoParaEdit
   });
 
   const onSubmit = (data: TransactionFormValues) => {
+    let finalContaId = data.contaId ? Number(data.contaId) : undefined;
+    let finalCartaoId = data.cartaoId ? Number(data.cartaoId) : undefined;
+
+    if (data.metodoPagamento === 'CARTAO_CREDITO') {
+      finalContaId = undefined;
+    } else {
+      finalCartaoId = undefined;
+      data.numeroParcela = undefined;
+      data.totalParcelas = undefined;
+    }
+
     const payload = {
       ...data,
       valor: Number(data.valor),
-      contaId: data.contaId ? Number(data.contaId) : undefined,
-      cartaoId: data.cartaoId ? Number(data.cartaoId) : undefined,
+      contaId: finalContaId,
+      cartaoId: finalCartaoId,
       categoriaId: Number(data.categoriaId),
       numeroParcela: data.numeroParcela ? Number(data.numeroParcela) : undefined,
       totalParcelas: data.totalParcelas ? Number(data.totalParcelas) : undefined,
