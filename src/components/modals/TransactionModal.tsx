@@ -63,6 +63,7 @@ export const TransactionModal = ({ isOpen, onClose, onSuccess, transacaoParaEdit
     handleSubmit,
     watch,
     setValue,
+    getValues,
     reset,
     formState: { errors },
   } = useForm<TransactionFormValues>({
@@ -80,6 +81,16 @@ export const TransactionModal = ({ isOpen, onClose, onSuccess, transacaoParaEdit
 
   const tipo = watch('tipo');
   const metodo = watch('metodoPagamento');
+
+  // Sincroniza status com método: cartão sempre PENDENTE; ao sair de cartão, volta para PAGO
+  useEffect(() => {
+    const currentStatus = getValues('status');
+    if (metodo === 'CARTAO_CREDITO' && currentStatus !== 'PENDENTE') {
+      setValue('status', 'PENDENTE');
+    } else if (metodo !== 'CARTAO_CREDITO' && currentStatus === 'PENDENTE') {
+      setValue('status', 'PAGO');
+    }
+  }, [metodo, getValues, setValue]);
 
   // Preencher formulário ao abrir (novo ou edição)
   useEffect(() => {
@@ -308,7 +319,7 @@ export const TransactionModal = ({ isOpen, onClose, onSuccess, transacaoParaEdit
               />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
               <Input
                 {...register('data')}
                 label={tr(language, 'Data', 'Date')}
@@ -330,6 +341,17 @@ export const TransactionModal = ({ isOpen, onClose, onSuccess, transacaoParaEdit
                   { label: tr(language, 'Vale Alimentação', 'Meal Voucher'), value: 'VALE_ALIMENTACAO' },
                 ]}
                 error={errors.metodoPagamento?.message}
+              />
+              <Select
+                {...register('status')}
+                label={tr(language, 'Status', 'Status')}
+                id="status-trans"
+                disabled={metodo === 'CARTAO_CREDITO'}
+                options={[
+                  { label: tr(language, 'Pago', 'Paid'), value: 'PAGO' },
+                  { label: tr(language, 'Pendente', 'Pending'), value: 'PENDENTE' },
+                ]}
+                error={errors.status?.message}
               />
             </div>
 

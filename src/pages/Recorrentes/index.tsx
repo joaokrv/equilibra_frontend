@@ -295,7 +295,7 @@ export const RecorrentesPage = () => {
                 </div>
               </div>
             </div>
-            <button onClick={handleSalvar} disabled={!descricao.trim() || !valor || !diaLancamento || (metodoPagamento === 'CARTAO_CREDITO' ? !cartaoId : !contaId) || criarMutation.isPending || editarMutation.isPending} className="w-full bg-primary hover:bg-primary/90 text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-primary/20 active:scale-[0.98] text-sm disabled:opacity-50 flex items-center justify-center gap-2">
+            <button onClick={handleSalvar} disabled={!descricao.trim() || !valor || !diaLancamento || !metodoPagamento || (metodoPagamento === 'CARTAO_CREDITO' ? !cartaoId : !contaId) || criarMutation.isPending || editarMutation.isPending} className="w-full bg-primary hover:bg-primary/90 text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-primary/20 active:scale-[0.98] text-sm disabled:opacity-50 flex items-center justify-center gap-2">
               {(criarMutation.isPending || editarMutation.isPending) ? <><Loader2 size={16} className="animate-spin" /> {tr('Salvando...', 'Saving...')}</> : <>{editando ? <Pencil size={16} /> : <Plus size={16} />} {editando ? tr('Atualizar', 'Update') : tr('Criar', 'Create')}</>}
             </button>
           </div>
