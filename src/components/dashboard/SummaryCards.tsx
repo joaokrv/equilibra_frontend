@@ -23,8 +23,8 @@ interface SummaryCardProps {
   secondaryLabel?: string;
   secondaryValue?: number;
   moeda: 'BRL' | 'USD' | 'EUR';
-  inicioPeriodoAnterior?: string;
-  inicioPeriodoAtual?: string;
+  inicioPeriodoAnterior?: string | null;
+  inicioPeriodoAtual?: string | null;
 }
 
 const SummaryCard = ({
@@ -135,8 +135,8 @@ interface SummaryCardsProps {
   saldoTotalContas: number;
   saldoTotalContasAnterior: number | null;
   moeda: 'BRL' | 'USD' | 'EUR';
-  inicioPeriodoAnterior?: string;
-  inicioPeriodoAtual?: string;
+  inicioPeriodoAnterior?: string | null;
+  inicioPeriodoAtual?: string | null;
 }
 
 export const SummaryCards = ({
