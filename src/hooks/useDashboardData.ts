@@ -100,13 +100,17 @@ export const useDashboardData = (
   const resumo = resumoPeriodo as DashboardResumoPeriodoResponse | undefined;
 
   const totalReceitas = toNumber(resumo?.totalReceitasAtual);
+  const totalReceitasAnterior = toNumber(resumo?.totalReceitasAnterior);
   const totalGastos = toNumber(resumo?.totalDespesasAtual);
+  const totalGastosAnterior = toNumber(resumo?.totalDespesasAnterior);
   const totalReceitasPendentes = toNumber(resumo?.totalReceitasPendentesAtual);
   const totalGastosPendentes = toNumber(resumo?.totalDespesasPendentesAtual);
   const variacaoReceitasPercent = resumo?.variacaoReceitasPercentual ?? null;
   const variacaoGastosPercent = resumo?.variacaoDespesasPercentual ?? null;
   const saldoTotalContas = toNumber(resumo?.saldoContasAtual);
+  const saldoTotalContasAnterior = toNumber(resumo?.saldoContasAnterior);
   const totalInvestido = toNumber(resumo?.totalInvestidoAtual);
+  const totalInvestidoAnterior = toNumber(resumo?.totalInvestidoAnterior);
   const variacaoSaldoContasPercent = resumo?.variacaoSaldoContasPercentual ?? null;
   const variacaoInvestimentosPercent = resumo?.variacaoInvestimentosPercentual ?? null;
 
@@ -167,7 +171,9 @@ export const useDashboardData = (
     periodoPatrimonio,
     transacoesList: transacoesPeriodoList,
     totalReceitas: totalReceitas * conversionRate,
+    totalReceitasAnterior: totalReceitasAnterior * conversionRate,
     totalGastos: totalGastos * conversionRate,
+    totalGastosAnterior: totalGastosAnterior * conversionRate,
     totalReceitasPendentes: totalReceitasPendentes * conversionRate,
     totalGastosPendentes: totalGastosPendentes * conversionRate,
     variacaoReceitasPercent,
@@ -175,7 +181,9 @@ export const useDashboardData = (
     variacaoInvestimentosPercent,
     variacaoSaldoContasPercent,
     saldoTotalContas: saldoTotalContas * conversionRate,
+    saldoTotalContasAnterior: saldoTotalContasAnterior * conversionRate,
     totalInvestido: totalInvestido * conversionRate,
+    totalInvestidoAnterior: totalInvestidoAnterior * conversionRate,
     despesasPorCategoria: despesasPorCategoria.map(d => ({ ...d, value: d.value * conversionRate })),
     receitasPorCategoria: receitasPorCategoria.map(r => ({ ...r, value: r.value * conversionRate })),
     evolucaoPatrimonio: evolucaoPatrimonioList.map(item => ({

@@ -19,7 +19,9 @@ export const Dashboard = () => {
   const {
     transacoesList,
     totalReceitas,
+    totalReceitasAnterior,
     totalGastos,
+    totalGastosAnterior,
     totalReceitasPendentes,
     totalGastosPendentes,
     variacaoReceitasPercent,
@@ -27,12 +29,16 @@ export const Dashboard = () => {
     variacaoInvestimentosPercent,
     variacaoSaldoContasPercent,
     saldoTotalContas,
+    saldoTotalContasAnterior,
     totalInvestido,
+    totalInvestidoAnterior,
     despesasPorCategoria,
     receitasPorCategoria,
     evolucaoPatrimonio,
     isLoadingTransactions,
-    moeda
+    moeda,
+    intervaloAtual,
+    intervaloAnterior
   } = useDashboardData(periodoSelecionado, periodoPatrimonio);
 
   const periodOptions: Array<{ value: DashboardPeriodo; label: string }> = [
@@ -92,7 +98,9 @@ export const Dashboard = () => {
 
       <SummaryCards
         totalReceitas={totalReceitas}
+        totalReceitasAnterior={totalReceitasAnterior}
         totalGastos={totalGastos}
+        totalGastosAnterior={totalGastosAnterior}
         totalReceitasPendentes={totalReceitasPendentes}
         totalGastosPendentes={totalGastosPendentes}
         variacaoReceitasPercent={variacaoReceitasPercent}
@@ -100,8 +108,12 @@ export const Dashboard = () => {
         variacaoInvestimentosPercent={variacaoInvestimentosPercent}
         variacaoSaldoContasPercent={variacaoSaldoContasPercent}
         totalInvestido={totalInvestido}
+        totalInvestidoAnterior={totalInvestidoAnterior}
         saldoTotalContas={saldoTotalContas}
+        saldoTotalContasAnterior={saldoTotalContasAnterior}
         moeda={moeda}
+        inicioPeriodoAnterior={intervaloAnterior.inicio}
+        inicioPeriodoAtual={intervaloAtual.inicio}
       />
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6 lg:gap-8 mb-8 sm:mb-10 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200">

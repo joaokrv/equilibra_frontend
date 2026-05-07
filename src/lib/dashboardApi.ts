@@ -18,7 +18,9 @@ export interface DashboardResumoPeriodoResponse {
   totalDespesasPendentesAtual: number;
   variacaoDespesasPercentual: number | null;
   saldoContasAtual: number;
+  saldoContasAnterior: number;
   totalInvestidoAtual: number;
+  totalInvestidoAnterior: number;
   variacaoSaldoContasPercentual: number | null;
   variacaoInvestimentosPercentual: number | null;
 }
