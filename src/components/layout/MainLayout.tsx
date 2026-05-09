@@ -7,21 +7,91 @@ import { TransactionModal } from '../modals/TransactionModal';
 import { useQueryClient } from '@tanstack/react-query';
 import { useAuthStore } from '../../store/useAuthStore';
 import { useI18nStore } from '../../store/useI18nStore';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 interface MainLayoutProps {
   children: React.ReactNode;
 }
 
 export const MainLayout = ({ children }: MainLayoutProps) => {
-  const tr = (pt: string, en: string) => (language === 'en-US' ? en : pt);
-  const [isModalOpen, setIsModalOpen] = useState(false);
   const queryClient = useQueryClient();
   const user = useAuthStore(state => state.user);
   const language = useI18nStore((state) => state.language);
+  const tr = (pt: string, en: string) => (language === 'en-US' ? en : pt);
+  const location = useLocation();
   const navigate = useNavigate();
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [modalContext, setModalContext] = useState<{
+    initialSection: 'receita' | 'despesa' | 'investimento';
+    allowSectionSwitch: boolean;
+    tipoFixo?: 'RECEITA' | 'DESPESA';
+    defaultTipo?: 'RECEITA' | 'DESPESA';
+  }>({
+    initialSection: 'despesa',
+    allowSectionSwitch: true,
+    defaultTipo: 'DESPESA',
+  });
 
   const isVerified = user?.isEmailVerificado ?? false;
+  const pathname = location.pathname;
+
+  const getContextoDoBotao = () => {
+    if (pathname.startsWith('/receitas')) {
+      return {
+        label: tr('Registrar receita', 'Add income'),
+        initialSection: 'receita' as const,
+        allowSectionSwitch: false,
+        tipoFixo: 'RECEITA' as const,
+        defaultTipo: 'RECEITA' as const,
+      };
+    }
+
+    if (pathname.startsWith('/despesas')) {
+      return {
+        label: tr('Registrar despesa', 'Add expense'),
+        initialSection: 'despesa' as const,
+        allowSectionSwitch: false,
+        tipoFixo: 'DESPESA' as const,
+        defaultTipo: 'DESPESA' as const,
+      };
+    }
+
+    if (pathname.startsWith('/investimentos')) {
+      return {
+        label: tr('Registrar investimento', 'Add investment'),
+        initialSection: 'investimento' as const,
+        allowSectionSwitch: false,
+      };
+    }
+
+    return {
+      label: tr('Registrar lançamento', 'Add entry'),
+      initialSection: 'despesa' as const,
+      allowSectionSwitch: true,
+      defaultTipo: 'DESPESA' as const,
+    };
+  };
+
+  const contextoBotao = getContextoDoBotao();
+
+  const abrirModal = () => {
+    setModalContext({
+      initialSection: contextoBotao.initialSection,
+      allowSectionSwitch: contextoBotao.allowSectionSwitch,
+      tipoFixo: contextoBotao.tipoFixo,
+      defaultTipo: contextoBotao.defaultTipo,
+    });
+    setIsModalOpen(true);
+  };
+
+  const invalidarAposCriacao = () => {
+    queryClient.invalidateQueries({ queryKey: ['transactions'] });
+    queryClient.invalidateQueries({ queryKey: ['transacoes'] });
+    queryClient.invalidateQueries({ queryKey: ['dashboard-summary'] });
+    queryClient.invalidateQueries({ queryKey: ['patrimony-evolution'] });
+    queryClient.invalidateQueries({ queryKey: ['investimentos'] });
+    queryClient.invalidateQueries({ queryKey: ['accounts'] });
+  };
 
   return (
     <div className="flex h-dvh bg-background overflow-hidden relative">
@@ -58,11 +128,11 @@ export const MainLayout = ({ children }: MainLayoutProps) => {
         </main>
       </div>
 
-      {/* Botão Flutuante — Nova Transação (Apenas se verificado) */}
+      {/* Botão Flutuante — Novo Lançamento (Apenas se verificado) */}
       {isVerified && (
         <>
           <button 
-            onClick={() => setIsModalOpen(true)}
+            onClick={abrirModal}
             className="
               fixed bottom-4 right-4 sm:bottom-8 sm:right-8 bg-primary text-white px-3 sm:px-6 py-3 sm:py-4 rounded-xl sm:rounded-2xl 
               shadow-[0_10px_40px_-10px_rgba(124,58,237,0.5)] transition-all duration-300 transform hover:scale-110 active:scale-95
@@ -74,16 +144,18 @@ export const MainLayout = ({ children }: MainLayoutProps) => {
               <Plus size={18} strokeWidth={3} />
             </div>
             <span className="hidden sm:inline drop-shadow-md">
-              {tr('Registrar Transação', 'Add Transaction')}
+              {contextoBotao.label}
             </span>
           </button>
 
           <TransactionModal 
             isOpen={isModalOpen} 
             onClose={() => setIsModalOpen(false)}
-            onSuccess={() => {
-              queryClient.invalidateQueries({ queryKey: ['transactions'] });
-            }}
+            onSuccess={invalidarAposCriacao}
+            defaultTipo={modalContext.defaultTipo}
+            tipoFixo={modalContext.tipoFixo}
+            initialSection={modalContext.initialSection}
+            allowSectionSwitch={modalContext.allowSectionSwitch}
           />
         </>
       )}

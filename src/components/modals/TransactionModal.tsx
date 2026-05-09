@@ -1,15 +1,16 @@
-import { useEffect, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { v4 as uuidv4 } from 'uuid';
-import { X, ReceiptText } from 'lucide-react';
+import { X, ReceiptText, Target } from 'lucide-react';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { Button } from '../ui/Button';
 import { Input, Select } from '../ui/Input';
 import { toast } from '../../store/useToastStore';
 import { getApiErrorMessage } from '../../lib/errorMessage';
 import { useI18nStore } from '../../store/useI18nStore';
+import { InvestmentQuickSection } from './InvestmentQuickSection';
 import {
   TransacoesService,
   ContasService,
@@ -18,8 +19,20 @@ import {
 } from '../../api';
 import type { TransacaoResponseDTO } from '../../api/models/TransacaoResponseDTO';
 
+type ModalSection = 'receita' | 'despesa' | 'investimento';
+type TipoFixo = 'RECEITA' | 'DESPESA';
+
 const tr = (language: 'pt-BR' | 'en-US', pt: string, en: string) =>
   language === 'en-US' ? en : pt;
+
+const inferSectionFromTipo = (tipo?: string | null): ModalSection =>
+  tipo === 'RECEITA' ? 'receita' : 'despesa';
+
+const getTipoDaSection = (section: ModalSection): TipoFixo | undefined => {
+  if (section === 'receita') return 'RECEITA';
+  if (section === 'despesa') return 'DESPESA';
+  return undefined;
+};
 
 const buildTransactionSchema = (language: 'pt-BR' | 'en-US') =>
   z.object({
@@ -50,13 +63,28 @@ interface TransactionModalProps {
   onClose: () => void;
   onSuccess?: () => void;
   transacaoParaEditar?: TransacaoResponseDTO;
+  defaultTipo?: TipoFixo;
+  tipoFixo?: TipoFixo;
+  initialSection?: ModalSection;
+  allowSectionSwitch?: boolean;
 }
 
-export const TransactionModal = ({ isOpen, onClose, onSuccess, transacaoParaEditar }: TransactionModalProps) => {
+export const TransactionModal = ({
+  isOpen,
+  onClose,
+  onSuccess,
+  transacaoParaEditar,
+  defaultTipo,
+  tipoFixo,
+  initialSection = 'despesa',
+  allowSectionSwitch = true,
+}: TransactionModalProps) => {
   const queryClient = useQueryClient();
   const isEditMode = !!transacaoParaEditar;
   const language = useI18nStore((state) => state.language);
+  const [activeSection, setActiveSection] = useState<ModalSection>(initialSection);
   const schema = useMemo(() => buildTransactionSchema(language), [language]);
+  const tipoInicial = tipoFixo ?? defaultTipo ?? getTipoDaSection(initialSection) ?? 'DESPESA';
 
   const {
     register,
@@ -69,7 +97,7 @@ export const TransactionModal = ({ isOpen, onClose, onSuccess, transacaoParaEdit
   } = useForm<TransactionFormValues>({
     resolver: zodResolver(schema),
     defaultValues: {
-      tipo: 'DESPESA',
+      tipo: tipoInicial,
       status: 'PAGO',
       metodoPagamento: 'PIX',
       data: new Date().toISOString().split('T')[0],
@@ -81,6 +109,25 @@ export const TransactionModal = ({ isOpen, onClose, onSuccess, transacaoParaEdit
 
   const tipo = watch('tipo');
   const metodo = watch('metodoPagamento');
+
+  useEffect(() => {
+    if (isOpen) {
+      setActiveSection(isEditMode ? inferSectionFromTipo(transacaoParaEditar?.tipo) : initialSection);
+    }
+  }, [isOpen, isEditMode, initialSection, transacaoParaEditar]);
+
+  useEffect(() => {
+    if (tipoFixo) {
+      setValue('tipo', tipoFixo);
+      return;
+    }
+
+    if (activeSection === 'receita') {
+      setValue('tipo', 'RECEITA');
+    } else if (activeSection === 'despesa') {
+      setValue('tipo', 'DESPESA');
+    }
+  }, [activeSection, setValue, tipoFixo]);
 
   // Sincroniza status com método: cartão sempre PENDENTE; ao sair de cartão, volta para PAGO
   useEffect(() => {
@@ -111,7 +158,7 @@ export const TransactionModal = ({ isOpen, onClose, onSuccess, transacaoParaEdit
       setValue('idempotencyKey', uuidv4());
     } else {
       reset({
-        tipo: 'DESPESA',
+        tipo: tipoInicial,
         status: 'PAGO',
         metodoPagamento: 'PIX',
         data: new Date().toISOString().split('T')[0],
@@ -120,25 +167,25 @@ export const TransactionModal = ({ isOpen, onClose, onSuccess, transacaoParaEdit
         idempotencyKey: uuidv4(),
       });
     }
-  }, [isOpen, isEditMode, transacaoParaEditar, setValue, reset]);
+  }, [isOpen, isEditMode, transacaoParaEditar, setValue, reset, tipoInicial]);
 
   // ─── Queries Dinâmicas ────────────────────────────────────────────
   const { data: contas = [] } = useQuery({
     queryKey: ['accounts'],
     queryFn: () => ContasService.listarContas(),
-    enabled: isOpen,
+    enabled: isOpen && activeSection !== 'investimento',
   });
 
   const { data: cartoes = [] } = useQuery({
     queryKey: ['cards'],
     queryFn: () => CartoesService.listarCartoes(),
-    enabled: isOpen,
+    enabled: isOpen && activeSection !== 'investimento',
   });
 
   const { data: categorias = [] } = useQuery({
     queryKey: ['categories', tipo],
     queryFn: () => CategoriasService.listarCategorias(tipo),
-    enabled: isOpen,
+    enabled: isOpen && activeSection !== 'investimento',
   });
 
   // ─── Mutation: Criar ──────────────────────────────────────────────
@@ -148,6 +195,8 @@ export const TransactionModal = ({ isOpen, onClose, onSuccess, transacaoParaEdit
       queryClient.invalidateQueries({ queryKey: ['transactions'] });
       queryClient.invalidateQueries({ queryKey: ['accounts'] });
       queryClient.invalidateQueries({ queryKey: ['transacoes'] });
+      queryClient.invalidateQueries({ queryKey: ['dashboard-summary'] });
+      queryClient.invalidateQueries({ queryKey: ['patrimony-evolution'] });
       onSuccess?.();
       reset();
       onClose();
@@ -158,10 +207,10 @@ export const TransactionModal = ({ isOpen, onClose, onSuccess, transacaoParaEdit
         : undefined;
       const message = getApiErrorMessage(
         error,
-        tr(language, 'Não foi possível registrar a transação. Revise os dados e tente novamente.', 'Could not save the transaction. Review the data and try again.'),
+        tr(language, 'Não foi possível registrar o lançamento. Revise os dados e tente novamente.', 'Could not save the entry. Review the data and try again.'),
       );
       if (errorStatus === 409) {
-        toast.warning(tr(language, 'Esta transação já foi processada.', 'This transaction has already been processed.'));
+        toast.warning(tr(language, 'Este lançamento já foi processado.', 'This entry has already been processed.'));
       } else {
         toast.error(message);
       }
@@ -175,7 +224,9 @@ export const TransactionModal = ({ isOpen, onClose, onSuccess, transacaoParaEdit
       queryClient.invalidateQueries({ queryKey: ['transactions'] });
       queryClient.invalidateQueries({ queryKey: ['accounts'] });
       queryClient.invalidateQueries({ queryKey: ['transacoes'] });
-      toast.success(tr(language, 'Transação atualizada com sucesso!', 'Transaction updated successfully!'));
+      queryClient.invalidateQueries({ queryKey: ['dashboard-summary'] });
+      queryClient.invalidateQueries({ queryKey: ['patrimony-evolution'] });
+      toast.success(tr(language, 'Lançamento atualizado com sucesso!', 'Entry updated successfully!'));
       onSuccess?.();
       reset();
       onClose();
@@ -186,15 +237,15 @@ export const TransactionModal = ({ isOpen, onClose, onSuccess, transacaoParaEdit
           error,
           tr(
             language,
-            'Não foi possível salvar a edição da transação. Revise os dados e tente novamente.',
-            'Could not save transaction changes. Review the data and try again.',
+            'Não foi possível salvar a edição do lançamento. Revise os dados e tente novamente.',
+            'Could not save the entry changes. Review the data and try again.',
           ),
         ),
       );
     },
   });
 
-  const onSubmit = (data: TransactionFormValues) => {
+  const onTransactionSubmit = (data: TransactionFormValues) => {
     let finalContaId = data.contaId ? Number(data.contaId) : undefined;
     let finalCartaoId = data.cartaoId ? Number(data.cartaoId) : undefined;
 
@@ -225,7 +276,27 @@ export const TransactionModal = ({ isOpen, onClose, onSuccess, transacaoParaEdit
 
   if (!isOpen) return null;
 
+  const isInvestmentSection = activeSection === 'investimento' && !isEditMode;
+  const showSectionSwitch = allowSectionSwitch && !isEditMode;
   const isPending = criarMutation.isPending || atualizarMutation.isPending;
+  const headerTitle = isEditMode
+    ? tr(language, 'Editar Lançamento', 'Edit Entry')
+    : isInvestmentSection
+      ? tr(language, 'Movimentação de Investimento', 'Investment Movement')
+      : activeSection === 'receita'
+        ? tr(language, 'Nova Receita', 'New Income')
+        : activeSection === 'despesa'
+          ? tr(language, 'Nova Despesa', 'New Expense')
+          : tr(language, 'Novo Lançamento', 'New Entry');
+  const headerDescription = isEditMode
+    ? tr(language, 'Atualize os dados do lançamento', 'Update the entry data')
+    : isInvestmentSection
+      ? tr(language, 'Aporte ou resgate sem inflar receitas nem despesas.', 'Deposit or withdraw without inflating income or expenses.')
+      : activeSection === 'receita'
+        ? tr(language, 'Registre suas entradas com o contexto da tela.', 'Register your income with the page context.')
+        : activeSection === 'despesa'
+          ? tr(language, 'Registre seus gastos com o contexto da tela.', 'Register your expenses with the page context.')
+          : tr(language, 'Controle sua saúde financeira', 'Track your financial health');
 
   // ─── Opções dinâmicas para os selects ─────────────────────────────
   const contaOptions = [
@@ -253,54 +324,76 @@ export const TransactionModal = ({ isOpen, onClose, onSuccess, transacaoParaEdit
   ];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start sm:items-center justify-center p-2 sm:p-4 animate-in fade-in duration-300">
+    <div className="fixed inset-0 z-50 flex items-start justify-center p-2 sm:items-center sm:p-4 animate-in fade-in duration-300">
       <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" onClick={onClose} />
 
-      <div className="glass w-full max-w-xl max-h-[94dvh] overflow-y-auto rounded-2xl sm:rounded-3xl p-4 sm:p-8 relative z-10 animate-in zoom-in-95 duration-300">
-         <div className="flex items-start sm:items-center justify-between mb-6 sm:mb-8 gap-3">
-            <div className="flex items-center gap-3">
-              <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
-                <ReceiptText size={20} />
-              </div>
-              <div>
-                <h3 className="text-lg sm:text-xl font-bold text-white leading-tight">
-                  {isEditMode ? tr(language, 'Editar Transação', 'Edit Transaction') : tr(language, 'Nova Transação', 'New Transaction')}
-                </h3>
-                <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-widest">
-                  {isEditMode
-                    ? tr(language, 'Atualize os dados da transação', 'Update transaction data')
-                    : tr(language, 'Controle sua saúde financeira', 'Track your financial health')}
-                </p>
-              </div>
+      <div className="glass relative z-10 w-full max-w-xl max-h-[94dvh] overflow-y-auto rounded-2xl p-4 sm:rounded-3xl sm:p-8 animate-in zoom-in-95 duration-300">
+        <div className="mb-6 flex items-start justify-between gap-3 sm:mb-8 sm:items-center">
+          <div className="flex items-center gap-3">
+            <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary sm:h-12 sm:w-12 sm:rounded-2xl">
+              {isInvestmentSection ? <Target size={20} /> : <ReceiptText size={20} />}
             </div>
+            <div>
+              <h3 className="text-lg font-bold leading-tight text-white sm:text-xl">
+                {headerTitle}
+              </h3>
+              <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                {headerDescription}
+              </p>
+            </div>
+          </div>
+          <button
+            onClick={onClose}
+            className="rounded-full p-2 text-muted-foreground transition-all hover:bg-white/5 hover:text-white"
+            aria-label={tr(language, 'Fechar modal', 'Close modal')}
+          >
+            <X size={20} />
+          </button>
+        </div>
+
+        {showSectionSwitch && (
+          <div className="mb-6 grid grid-cols-1 gap-3 sm:grid-cols-3">
             <button
-              onClick={onClose}
-              className="p-2 hover:bg-white/5 rounded-full text-muted-foreground hover:text-white transition-all"
-              aria-label={tr(language, 'Fechar modal', 'Close modal')}
+              type="button"
+              onClick={() => setActiveSection('receita')}
+              className={`rounded-xl border px-4 py-3 text-xs font-bold uppercase tracking-widest transition-all ${
+                activeSection === 'receita'
+                  ? 'border-emerald-500 bg-emerald-500/10 text-emerald-500 shadow-lg shadow-emerald-500/10'
+                  : 'border-transparent bg-secondary/20 text-muted-foreground hover:text-white'
+              }`}
             >
-              <X size={20} />
+              {tr(language, 'Receita', 'Income')}
             </button>
-         </div>
+            <button
+              type="button"
+              onClick={() => setActiveSection('despesa')}
+              className={`rounded-xl border px-4 py-3 text-xs font-bold uppercase tracking-widest transition-all ${
+                activeSection === 'despesa'
+                  ? 'border-rose-500 bg-rose-500/10 text-rose-500 shadow-lg shadow-rose-500/10'
+                  : 'border-transparent bg-secondary/20 text-muted-foreground hover:text-white'
+              }`}
+            >
+              {tr(language, 'Despesa', 'Expense')}
+            </button>
+            <button
+              type="button"
+              onClick={() => setActiveSection('investimento')}
+              className={`rounded-xl border px-4 py-3 text-xs font-bold uppercase tracking-widest transition-all ${
+                activeSection === 'investimento'
+                  ? 'border-sky-500 bg-sky-500/10 text-sky-400 shadow-lg shadow-sky-500/10'
+                  : 'border-transparent bg-secondary/20 text-muted-foreground hover:text-white'
+              }`}
+            >
+              {tr(language, 'Investimento', 'Investment')}
+            </button>
+          </div>
+        )}
 
-         <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
-            <div className="grid grid-cols-2 gap-4">
-               <button
-                 type="button"
-                 onClick={() => setValue('tipo', 'DESPESA')}
-                 className={`py-3 rounded-xl font-bold text-xs uppercase tracking-widest transition-all border ${tipo === 'DESPESA' ? 'bg-rose-500/10 border-rose-500 text-rose-500 shadow-lg shadow-rose-500/10' : 'bg-secondary/20 border-transparent text-muted-foreground'}`}
-               >
-                 {tr(language, 'Despesa', 'Expense')}
-               </button>
-               <button
-                 type="button"
-                 onClick={() => setValue('tipo', 'RECEITA')}
-                 className={`py-3 rounded-xl font-bold text-xs uppercase tracking-widest transition-all border ${tipo === 'RECEITA' ? 'bg-emerald-500/10 border-emerald-500 text-emerald-500 shadow-lg shadow-emerald-500/10' : 'bg-secondary/20 border-transparent text-muted-foreground'}`}
-               >
-                 {tr(language, 'Receita', 'Income')}
-               </button>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        {isInvestmentSection ? (
+          <InvestmentQuickSection onCancel={onClose} onSuccess={onSuccess} />
+        ) : (
+          <form onSubmit={handleSubmit(onTransactionSubmit)} className="space-y-6">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               <Input
                 {...register('descricao')}
                 label={tr(language, 'Descrição', 'Description')}
@@ -319,7 +412,7 @@ export const TransactionModal = ({ isOpen, onClose, onSuccess, transacaoParaEdit
               />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-3">
               <Input
                 {...register('data')}
                 label={tr(language, 'Data', 'Date')}
@@ -355,7 +448,7 @@ export const TransactionModal = ({ isOpen, onClose, onSuccess, transacaoParaEdit
               />
             </div>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
               {metodo === 'CARTAO_CREDITO' ? (
                 <Select
                   {...register('cartaoId')}
@@ -384,7 +477,7 @@ export const TransactionModal = ({ isOpen, onClose, onSuccess, transacaoParaEdit
             </div>
 
             {metodo === 'CARTAO_CREDITO' && (
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                 <Input
                   {...register('numeroParcela')}
                   label={tr(language, 'Parcela', 'Installment Number')}
@@ -406,10 +499,9 @@ export const TransactionModal = ({ isOpen, onClose, onSuccess, transacaoParaEdit
               </div>
             )}
 
-            {/* Campo Oculto de Idempotência */}
             <input type="hidden" {...register('idempotencyKey')} />
 
-            <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-2 sm:pt-4">
+            <div className="flex flex-col gap-3 pt-2 sm:flex-row sm:gap-4 sm:pt-4">
               <Button
                 type="button"
                 variant="outline"
@@ -425,10 +517,17 @@ export const TransactionModal = ({ isOpen, onClose, onSuccess, transacaoParaEdit
                 className="flex-1"
                 id="btn-confirm-modal"
               >
-                {isEditMode ? tr(language, 'ATUALIZAR', 'UPDATE') : tr(language, 'REGISTRAR NO FLUXO', 'SAVE TRANSACTION')}
+                {isEditMode
+                  ? tr(language, 'ATUALIZAR', 'UPDATE')
+                  : activeSection === 'receita'
+                    ? tr(language, 'REGISTRAR RECEITA', 'SAVE INCOME')
+                    : activeSection === 'despesa'
+                      ? tr(language, 'REGISTRAR DESPESA', 'SAVE EXPENSE')
+                      : tr(language, 'REGISTRAR LANÇAMENTO', 'SAVE ENTRY')}
               </Button>
             </div>
-         </form>
+          </form>
+        )}
       </div>
     </div>
   );

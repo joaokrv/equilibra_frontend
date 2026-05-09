@@ -95,6 +95,7 @@ export const useDashboardData = (
       const dataB = new Date(b.data || 0).getTime();
       return dataB - dataA;
     });
+  const transacoesSemTransferencias = transacoesPeriodoList.filter((transacao) => !transacao.isTransferencia);
   const evolucaoPatrimonioList = ensureArray<PatrimonioEvolucaoItem>(evolucaoPatrimonioBruta);
 
   const resumo = resumoPeriodo as DashboardResumoPeriodoResponse | undefined;
@@ -115,7 +116,7 @@ export const useDashboardData = (
   const variacaoInvestimentosPercent = resumo?.variacaoInvestimentosPercentual ?? null;
 
   // Agrupamento por Categoria para o Gráfico de Pizza
-  const categoriasMap = transacoesPeriodoList.reduce((acc, t) => {
+  const categoriasMap = transacoesSemTransferencias.reduce((acc, t) => {
     const catName = t.nomeCategoria || 'Outros';
     if (t.tipo === TransacaoResponseDTO.tipo.DESPESA) {
       acc[catName] = (acc[catName] || 0) + (t.valor || 0);
@@ -127,7 +128,7 @@ export const useDashboardData = (
     .map((name) => ({ name, value: categoriasMap[name] }))
     .sort((a, b) => b.value - a.value);
 
-  const receitasMap = transacoesPeriodoList.reduce((acc, t) => {
+  const receitasMap = transacoesSemTransferencias.reduce((acc, t) => {
     const catName = t.nomeCategoria || 'Outros';
     if (t.tipo === TransacaoResponseDTO.tipo.RECEITA) {
       acc[catName] = (acc[catName] || 0) + (t.valor || 0);
@@ -169,7 +170,7 @@ export const useDashboardData = (
   return {
     periodo,
     periodoPatrimonio,
-    transacoesList: transacoesPeriodoList,
+    transacoesList: transacoesSemTransferencias,
     totalReceitas: totalReceitas * conversionRate,
     totalReceitasAnterior: totalReceitasAnterior * conversionRate,
     totalGastos: totalGastos * conversionRate,

@@ -19,6 +19,7 @@ export type TransacaoResponseDTO = {
     isRecorrente?: boolean;
     numeroParcela?: number;
     totalParcelas?: number;
+    isTransferencia?: boolean;
 };
 export namespace TransacaoResponseDTO {
     export enum tipo {

@@ -1,4 +1,4 @@
-import { TrendingUp, TrendingDown } from 'lucide-react';
+import { TrendingUp, TrendingDown, Repeat } from 'lucide-react';
 import { format } from 'date-fns';
 import { ptBR } from 'date-fns/locale';
 import { enUS } from 'date-fns/locale';
@@ -39,12 +39,14 @@ export const RecentTransactions = ({ transacoesList }: RecentTransactionsProps) 
             <div className="flex items-center gap-3 sm:gap-4 min-w-0 flex-1">
               <div
                 className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl ${
-                  transacao.tipo === TransacaoResponseDTO.tipo.RECEITA
-                    ? 'bg-emerald-500/10 text-emerald-500'
-                    : 'bg-rose-500/10 text-rose-500'
+                  transacao.isTransferencia
+                    ? 'bg-sky-500/10 text-sky-400'
+                    : transacao.tipo === TransacaoResponseDTO.tipo.RECEITA
+                      ? 'bg-emerald-500/10 text-emerald-500'
+                      : 'bg-rose-500/10 text-rose-500'
                 } flex items-center justify-center group-hover:bg-primary/10 transition-colors`}
               >
-                {transacao.tipo === TransacaoResponseDTO.tipo.RECEITA ? <TrendingUp size={18} /> : <TrendingDown size={18} />}
+                {transacao.isTransferencia ? <Repeat size={18} /> : (transacao.tipo === TransacaoResponseDTO.tipo.RECEITA ? <TrendingUp size={18} /> : <TrendingDown size={18} />)}
               </div>
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-bold text-white mb-0.5 truncate">{transacao.descricao}</p>
@@ -57,10 +59,14 @@ export const RecentTransactions = ({ transacoesList }: RecentTransactionsProps) 
             <div className="text-right shrink-0 pl-2">
               <p
                 className={`text-sm font-bold whitespace-nowrap ${
-                  transacao.tipo === TransacaoResponseDTO.tipo.RECEITA ? 'text-emerald-500' : 'text-rose-500'
+                  transacao.isTransferencia
+                    ? 'text-sky-400'
+                    : transacao.tipo === TransacaoResponseDTO.tipo.RECEITA
+                      ? 'text-emerald-500'
+                      : 'text-rose-500'
                 }`}
               >
-                {transacao.tipo === TransacaoResponseDTO.tipo.RECEITA ? '+' : '-'} {formatarMoeda(transacao.valor!)}
+                {transacao.isTransferencia ? '' : (transacao.tipo === TransacaoResponseDTO.tipo.RECEITA ? '+' : '-')} {formatarMoeda(transacao.valor!)}
               </p>
             </div>
           </div>

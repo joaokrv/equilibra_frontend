@@ -68,8 +68,9 @@ export const TutorialPage = () => {
   const transacoes = ensureArray<any>(transacoesRaw);
   const investimentos = ensureArray<any>(investimentosRaw);
 
-  const receitas = transacoes.filter((t) => t.tipo === TransacaoResponseDTO.tipo.RECEITA);
-  const despesas = transacoes.filter((t) => t.tipo === TransacaoResponseDTO.tipo.DESPESA);
+  const transacoesSemTransferencias = transacoes.filter((t) => !t.isTransferencia);
+  const receitas = transacoesSemTransferencias.filter((t) => t.tipo === TransacaoResponseDTO.tipo.RECEITA);
+  const despesas = transacoesSemTransferencias.filter((t) => t.tipo === TransacaoResponseDTO.tipo.DESPESA);
 
   const possuiSaldoInicialDefinido = contas.length > 0 && contas.every((c) => c.saldo !== null && c.saldo !== undefined);
   const possuiMetaInvestimento = investimentos.some((i) => i.metaAtual !== null && i.metaAtual !== undefined && Number(i.metaAtual) > 0);

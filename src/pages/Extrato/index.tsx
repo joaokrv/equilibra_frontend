@@ -101,6 +101,10 @@ export const ExtratoPage = ({ filtroTipo, titulo, descricao }: ExtratoPageProps)
 
   const lista = Array.isArray(transacoes) ? transacoes : (transacoes as any)?.content ?? [];
   const totalElements: number = (transacoes as any)?.totalElements ?? 0;
+  const listaSemTransferencias = lista.filter((t: TransacaoResponseDTO) => !t.isTransferencia);
+  const listaBase = filtroTipo
+    ? listaSemTransferencias.filter((t: TransacaoResponseDTO) => t.tipo === filtroTipo)
+    : lista;
 
   useEffect(() => {
     if (lista.length >= 500 && totalElements > lista.length) {
@@ -114,8 +118,7 @@ export const ExtratoPage = ({ filtroTipo, titulo, descricao }: ExtratoPageProps)
   }, [lista.length, totalElements]);
 
   // Passo 1: Filtragem
-  const filtradas = lista.filter((t: TransacaoResponseDTO) => {
-    if (filtroTipo && t.tipo !== filtroTipo) return false;
+  const filtradas = listaBase.filter((t: TransacaoResponseDTO) => {
     if (busca && !t.descricao?.toLowerCase().includes(busca.toLowerCase())) return false;
     return true;
   });
@@ -161,11 +164,13 @@ export const ExtratoPage = ({ filtroTipo, titulo, descricao }: ExtratoPageProps)
     }
   };
 
-  const totalReceitas = filtradas.filter((t: TransacaoResponseDTO) => t.tipo === TransacaoResponseDTO.tipo.RECEITA).reduce((s: number, t: TransacaoResponseDTO) => s + (t.valor ?? 0), 0);
-  const totalDespesas = filtradas.filter((t: TransacaoResponseDTO) => t.tipo === TransacaoResponseDTO.tipo.DESPESA).reduce((s: number, t: TransacaoResponseDTO) => s + (t.valor ?? 0), 0);
+  const resumoBase = filtroTipo ? filtradas : listaSemTransferencias;
 
-  const totalPendentes = filtradas.filter((t: TransacaoResponseDTO) => t.status === TransacaoResponseDTO.status.PENDENTE).reduce((s: number, t: TransacaoResponseDTO) => s + (t.valor ?? 0), 0);
-  const totalPagos = filtradas.filter((t: TransacaoResponseDTO) => t.status === TransacaoResponseDTO.status.PAGO).reduce((s: number, t: TransacaoResponseDTO) => s + (t.valor ?? 0), 0);
+  const totalReceitas = resumoBase.filter((t: TransacaoResponseDTO) => t.tipo === TransacaoResponseDTO.tipo.RECEITA).reduce((s: number, t: TransacaoResponseDTO) => s + (t.valor ?? 0), 0);
+  const totalDespesas = resumoBase.filter((t: TransacaoResponseDTO) => t.tipo === TransacaoResponseDTO.tipo.DESPESA).reduce((s: number, t: TransacaoResponseDTO) => s + (t.valor ?? 0), 0);
+
+  const totalPendentes = resumoBase.filter((t: TransacaoResponseDTO) => t.status === TransacaoResponseDTO.status.PENDENTE).reduce((s: number, t: TransacaoResponseDTO) => s + (t.valor ?? 0), 0);
+  const totalPagos = resumoBase.filter((t: TransacaoResponseDTO) => t.status === TransacaoResponseDTO.status.PAGO).reduce((s: number, t: TransacaoResponseDTO) => s + (t.valor ?? 0), 0);
 
   const navMes = (dir: -1 | 1) => {
     let m = mes + dir;
@@ -362,9 +367,11 @@ export const ExtratoPage = ({ filtroTipo, titulo, descricao }: ExtratoPageProps)
                       
                       {/* (Mobi/Desk) Icone de Categoria Dinâmico */}
                       <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${
-                        t.tipo === TransacaoResponseDTO.tipo.RECEITA ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'
+                        t.isTransferencia
+                          ? 'bg-sky-500/10 text-sky-400'
+                          : t.tipo === TransacaoResponseDTO.tipo.RECEITA ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'
                       }`}>
-                        {t.tipo === TransacaoResponseDTO.tipo.RECEITA ? <TrendingUp size={18} /> : <TrendingDown size={18} />}
+                        {t.isTransferencia ? <Repeat size={18} /> : (t.tipo === TransacaoResponseDTO.tipo.RECEITA ? <TrendingUp size={18} /> : <TrendingDown size={18} />)}
                       </div>
                       
                       {/* Nome da Transação e Tag Fixa */}
@@ -413,8 +420,8 @@ export const ExtratoPage = ({ filtroTipo, titulo, descricao }: ExtratoPageProps)
 
                       {/* Valor Fixo no Layout Grid */}
                       <div className="hidden xl:flex justify-end pr-1 xl:pr-3 truncate">
-                        <p className={`text-[14px] xl:text-base font-bold tabular-nums tracking-tight whitespace-nowrap truncate ${t.tipo === TransacaoResponseDTO.tipo.RECEITA ? 'text-emerald-400' : 'text-rose-400'}`}>
-                          {t.tipo === TransacaoResponseDTO.tipo.RECEITA ? '+' : ''} {formatarMoeda(t.valor ?? 0, moeda)}
+                        <p className={`text-[14px] xl:text-base font-bold tabular-nums tracking-tight whitespace-nowrap truncate ${t.isTransferencia ? 'text-sky-400' : t.tipo === TransacaoResponseDTO.tipo.RECEITA ? 'text-emerald-400' : 'text-rose-400'}`}>
+                          {t.isTransferencia ? '' : t.tipo === TransacaoResponseDTO.tipo.RECEITA ? '+' : ''} {formatarMoeda(t.valor ?? 0, moeda)}
                         </p>
                       </div>
 
@@ -462,8 +469,8 @@ export const ExtratoPage = ({ filtroTipo, titulo, descricao }: ExtratoPageProps)
                                   {statusLabel(t.status)}
                                 </span>
                              )}
-                             <p className={`text-lg font-bold tabular-nums tracking-tight ${t.tipo === TransacaoResponseDTO.tipo.RECEITA ? 'text-emerald-400' : 'text-rose-400'}`}>
-                               {t.tipo === TransacaoResponseDTO.tipo.RECEITA ? '+' : ''} {formatarMoeda(t.valor ?? 0, moeda)}
+                             <p className={`text-lg font-bold tabular-nums tracking-tight ${t.isTransferencia ? 'text-sky-400' : t.tipo === TransacaoResponseDTO.tipo.RECEITA ? 'text-emerald-400' : 'text-rose-400'}`}>
+                               {t.isTransferencia ? '' : t.tipo === TransacaoResponseDTO.tipo.RECEITA ? '+' : ''} {formatarMoeda(t.valor ?? 0, moeda)}
                              </p>
                           </div>
                           
