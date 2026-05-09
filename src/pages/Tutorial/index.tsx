@@ -1,9 +1,11 @@
 import { Link } from 'react-router-dom';
+import { useEffect } from 'react';
 import { useQuery } from '@tanstack/react-query';
 import { CheckCircle2, Circle, ArrowRight, Wallet, CreditCard, Tag, TrendingUp, TrendingDown, Target, ShieldCheck, Compass } from 'lucide-react';
 import { MainLayout } from '../../components/layout/MainLayout';
 import { useAuthStore } from '../../store/useAuthStore';
 import { useI18nStore } from '../../store/useI18nStore';
+import { useTutorialStore } from '../../store/useTutorialStore';
 import { ContasService } from '../../api/services/ContasService';
 import { CartoesService } from '../../api/services/CartoesService';
 import { CategoriasService } from '../../api/services/CategoriasService';
@@ -32,6 +34,7 @@ export const TutorialPage = () => {
   const language = useI18nStore((s) => s.language);
   const tr = (pt: string, en: string) => (language === 'en-US' ? en : pt);
   const user = useAuthStore((s) => s.user);
+  const markTutorialCompleted = useTutorialStore((s) => s.markCompleted);
 
   const hoje = new Date();
   const ano = hoje.getFullYear();
@@ -138,6 +141,12 @@ export const TutorialPage = () => {
   const obrigatorios = steps.filter((s) => !s.optional);
   const concluidosObrigatorios = obrigatorios.filter((s) => s.completed).length;
   const progresso = obrigatorios.length > 0 ? Math.round((concluidosObrigatorios / obrigatorios.length) * 100) : 0;
+
+  useEffect(() => {
+    if (progresso >= 100) {
+      markTutorialCompleted();
+    }
+  }, [progresso, markTutorialCompleted]);
 
   return (
     <MainLayout>

@@ -9,6 +9,7 @@ import { Link } from 'react-router-dom';
 import { CircleHelp } from 'lucide-react';
 import { useState } from 'react';
 import { useI18nStore } from '../store/useI18nStore';
+import { useTutorialStore } from '../store/useTutorialStore';
 import { t } from '../lib/i18n';
 import type { DashboardPeriodo } from '../lib/dashboardApi';
 
@@ -16,6 +17,7 @@ export const Dashboard = () => {
   const [periodoSelecionado, setPeriodoSelecionado] = useState<DashboardPeriodo>('1M');
   const [periodoPatrimonio, setPeriodoPatrimonio] = useState<DashboardPeriodo>('6M');
   const language = useI18nStore((state) => state.language);
+  const isTutorialCompleted = useTutorialStore((state) => state.isCompleted);
   const {
     transacoesList,
     totalReceitas,
@@ -86,13 +88,15 @@ export const Dashboard = () => {
             </div>
           </div>
 
-          <Link
-            to="/tutorial"
-            className="inline-flex items-center justify-center gap-2 rounded-xl border border-primary/35 bg-primary/10 px-4 py-2.5 text-sm font-semibold text-primary hover:bg-primary/20 transition-colors"
-          >
-            <CircleHelp size={16} />
-            {language === 'en-US' ? 'How to get started' : 'Como começar'}
-          </Link>
+          {!isTutorialCompleted && (
+            <Link
+              to="/tutorial"
+              className="inline-flex items-center justify-center gap-2 rounded-xl border border-primary/35 bg-primary/10 px-4 py-2.5 text-sm font-semibold text-primary hover:bg-primary/20 transition-colors"
+            >
+              <CircleHelp size={16} />
+              {language === 'en-US' ? 'How to get started' : 'Como começar'}
+            </Link>
+          )}
         </div>
       </header>
 

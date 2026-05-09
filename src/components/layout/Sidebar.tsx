@@ -18,6 +18,7 @@ import {
 } from 'lucide-react';
 import { useAuthStore } from '../../store/useAuthStore';
 import { useI18nStore } from '../../store/useI18nStore';
+import { useTutorialStore } from '../../store/useTutorialStore';
 import { useQueryClient } from '@tanstack/react-query';
 import { t } from '../../lib/i18n';
 import logo from '../../assets/logo-equilibra.png';
@@ -67,6 +68,7 @@ const menuItems = [
 
 export const Sidebar = () => {
   const language = useI18nStore((state) => state.language);
+  const isTutorialCompleted = useTutorialStore((state) => state.isCompleted);
   const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(() => {
     const saved = localStorage.getItem('sidebar-open');
@@ -81,6 +83,9 @@ export const Sidebar = () => {
   };
   const logout = useAuthStore(state => state.logout);
   const queryClient = useQueryClient();
+  const visibleMenuItems = isTutorialCompleted
+    ? menuItems.filter((item) => item.key !== 'menuTutorial')
+    : menuItems;
 
   const handleLogout = () => {
     // UI responde imediato — logout local primeiro (P1-6)
@@ -125,7 +130,7 @@ export const Sidebar = () => {
         </div>
 
         <nav className="flex-1 px-3 space-y-2">
-          {menuItems.map((item) => (
+          {visibleMenuItems.map((item) => (
             <SidebarItem
               key={item.to}
               icon={item.icon}
@@ -179,7 +184,7 @@ export const Sidebar = () => {
           </div>
 
           <nav className="flex-1 px-3 space-y-2 overflow-y-auto">
-            {menuItems.map((item) => (
+            {visibleMenuItems.map((item) => (
               <SidebarItem
                 key={item.to}
                 icon={item.icon}
