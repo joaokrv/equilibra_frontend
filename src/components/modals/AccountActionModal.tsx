@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useMutation } from '@tanstack/react-query';
-import { AutenticacaoService } from '../../api';
+import { AutenticacaoService, SolicitarAcaoContaRequestDTO } from '../../api';
 import { toast } from '../../store/useToastStore';
 import { useI18nStore } from '../../store/useI18nStore';
 import { getApiErrorMessage } from '../../lib/errorMessage';
 import { AlertTriangle, Trash2, EyeOff, X, ShieldCheck, ArrowLeft } from 'lucide-react';
 
-type Acao = 'EXCLUIR' | 'DESATIVAR';
+type Acao = SolicitarAcaoContaRequestDTO.acao;
+const Acao = SolicitarAcaoContaRequestDTO.acao;
 type Etapa = 'escolha' | 'confirmacao' | 'otp';
 
 interface AccountActionModalProps {
@@ -57,7 +58,7 @@ export function AccountActionModal({ isOpen, onClose, onSuccess }: AccountAction
     mutationFn: () => AutenticacaoService.excluirConta({ senha, codigo }),
     onSuccess: () => {
       toast.success(tr('Conta excluída permanentemente.', 'Account permanently deleted.'));
-      onSuccess('EXCLUIR');
+      onSuccess(Acao.EXCLUIR);
     },
     onError: (error: unknown) => {
       toast.error(
@@ -73,7 +74,7 @@ export function AccountActionModal({ isOpen, onClose, onSuccess }: AccountAction
     mutationFn: () => AutenticacaoService.desativarConta({ senha, codigo }),
     onSuccess: () => {
       toast.success(tr('Conta desativada com sucesso.', 'Account deactivated successfully.'));
-      onSuccess('DESATIVAR');
+      onSuccess(Acao.DESATIVAR);
     },
     onError: (error: unknown) => {
       toast.error(
@@ -87,7 +88,7 @@ export function AccountActionModal({ isOpen, onClose, onSuccess }: AccountAction
 
   if (!isOpen) return null;
 
-  const isExcluir = acao === 'EXCLUIR';
+  const isExcluir = acao === Acao.EXCLUIR;
   const accentColor = isExcluir ? 'rose' : 'amber';
   const isPending =
     solicitarMutation.isPending ||
@@ -128,7 +129,7 @@ export function AccountActionModal({ isOpen, onClose, onSuccess }: AccountAction
 
             <div className="space-y-3">
               <button
-                onClick={() => { setAcao('DESATIVAR'); setEtapa('confirmacao'); }}
+                onClick={() => { setAcao(Acao.DESATIVAR); setEtapa('confirmacao'); }}
                 className="w-full flex items-center gap-4 p-4 bg-amber-500/10 border border-amber-500/20 hover:border-amber-500/50 rounded-2xl transition-all text-left group"
               >
                 <div className="p-2 bg-amber-500/20 rounded-xl shrink-0">
@@ -148,7 +149,7 @@ export function AccountActionModal({ isOpen, onClose, onSuccess }: AccountAction
               </button>
 
               <button
-                onClick={() => { setAcao('EXCLUIR'); setEtapa('confirmacao'); }}
+                onClick={() => { setAcao(Acao.EXCLUIR); setEtapa('confirmacao'); }}
                 className="w-full flex items-center gap-4 p-4 bg-rose-500/10 border border-rose-500/20 hover:border-rose-500/50 rounded-2xl transition-all text-left group"
               >
                 <div className="p-2 bg-rose-500/20 rounded-xl shrink-0">
@@ -249,7 +250,7 @@ export function AccountActionModal({ isOpen, onClose, onSuccess }: AccountAction
             <form
               onSubmit={(e) => {
                 e.preventDefault();
-                if (acao === 'EXCLUIR') {
+                if (acao === Acao.EXCLUIR) {
                   confirmarExcluirMutation.mutate();
                 } else {
                   confirmarDesativarMutation.mutate();

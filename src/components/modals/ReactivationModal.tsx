@@ -19,14 +19,12 @@ export function ReactivationModal({ isOpen, onClose, email, onSuccess }: Reactiv
 
   const [senha, setSenha] = useState('');
   const [codigo, setCodigo] = useState('');
-  const [codigoEnviado, setCodigoEnviado] = useState(false);
   const [cooldown, setCooldown] = useState(0);
 
   useEffect(() => {
     if (isOpen) {
       setSenha('');
       setCodigo('');
-      setCodigoEnviado(true); // backend já enviou o código ao detectar conta inativa no login
     }
   }, [isOpen]);
 
