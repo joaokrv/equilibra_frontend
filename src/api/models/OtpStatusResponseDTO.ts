@@ -11,3 +11,4 @@ export type OtpStatusResponseDTO = {
     proximaTentativaEm?: string;
     registroId: string;
 };
+

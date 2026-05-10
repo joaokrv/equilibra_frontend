@@ -1,24 +1,26 @@
 import { useState, useRef, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/useAuthStore';
 import { toast } from '../../store/useToastStore';
 import { PerfilService, AutenticacaoService, UsuarioAtualizacaoRequestDTO } from '../../api';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { 
-  CheckCircle2, 
-  AlertTriangle, 
-  Send, 
-  ShieldCheck, 
-  Mail, 
-  User as UserIcon, 
-  Camera, 
-  Phone, 
+import {
+  CheckCircle2,
+  AlertTriangle,
+  Send,
+  ShieldCheck,
+  Mail,
+  User as UserIcon,
+  Camera,
+  Phone,
   Coins,
   TrendingUp,
   Wallet,
   ArrowUpCircle,
-  ArrowDownCircle
+  ArrowDownCircle,
+  ShieldAlert
 } from 'lucide-react';
+import { AccountActionModal } from '../../components/modals/AccountActionModal';
 import { Input } from '../../components/ui/Input';
 import { MainLayout } from '../../components/layout/MainLayout';
 import { getApiErrorMessage } from '../../lib/errorMessage';
@@ -26,18 +28,19 @@ import { useI18nStore, type AppLanguage } from '../../store/useI18nStore';
 import { formatarMoeda } from '../../lib/formatters';
 
 export function PerfilPage() {
-  const { user, updateProfile, updateIsEmailVerificado } = useAuthStore();
+  const { user, updateProfile, updateIsEmailVerificado, logout } = useAuthStore();
   const { language, setLanguage } = useI18nStore();
+  const navigate = useNavigate();
   const tr = (pt: string, en: string) => (idioma === 'en-US' ? en : pt);
   const fileInputRef = useRef<HTMLInputElement>(null);
-  
-  // Estados para o formulário
+
   const [nome, setNome] = useState(user?.nome || '');
   const [celular, setCelular] = useState(user?.celular || '');
   const [moeda, setMoeda] = useState(user?.moeda || 'BRL');
   const [idioma, setIdioma] = useState<AppLanguage>(language);
   const [codigo, setCodigo] = useState('');
   const [cooldown, setCooldown] = useState(0);
+  const [showAccountActionModal, setShowAccountActionModal] = useState(false);
 
   useEffect(() => {
     if (user) {
@@ -157,6 +160,17 @@ export function PerfilPage() {
     const novoIdioma = e.target.value as AppLanguage;
     setIdioma(novoIdioma);
     setLanguage(novoIdioma);
+  };
+
+  const handleAccountActionSuccess = (acao: 'EXCLUIR' | 'DESATIVAR') => {
+    setShowAccountActionModal(false);
+    logout();
+    navigate('/login');
+    if (acao === 'EXCLUIR') {
+      toast.success(tr('Sua conta foi excluída permanentemente.', 'Your account has been permanently deleted.'), 6000);
+    } else {
+      toast.info(tr('Sua conta foi desativada. Você pode reativá-la ao fazer login.', 'Your account has been deactivated. You can reactivate it by logging in.'), 6000);
+    }
   };
 
   return (
@@ -421,7 +435,41 @@ export function PerfilPage() {
 
           </div>
         </div>
+
+        {/* Zona de Perigo */}
+        <section className="glass rounded-2xl sm:rounded-[2rem] p-5 sm:p-8 border border-rose-500/20 bg-rose-500/5 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-rose-500/20 rounded-xl border border-rose-500/20 shrink-0">
+                <ShieldAlert className="text-rose-500 w-5 h-5" />
+              </div>
+              <div>
+                <h3 className="font-black text-white uppercase text-sm tracking-wider">
+                  {tr('Zona de Perigo', 'Danger Zone')}
+                </h3>
+                <p className="text-xs text-muted-foreground mt-0.5">
+                  {tr(
+                    'Desativar ou excluir sua conta são ações que requerem confirmação por e-mail.',
+                    'Deactivating or deleting your account requires email confirmation.'
+                  )}
+                </p>
+              </div>
+            </div>
+            <button
+              onClick={() => setShowAccountActionModal(true)}
+              className="shrink-0 px-5 py-3 bg-rose-500/10 border border-rose-500/30 hover:bg-rose-500/20 hover:border-rose-500/60 text-rose-500 font-black rounded-2xl transition-all uppercase tracking-widest text-xs active:scale-95"
+            >
+              {tr('Gerenciar Conta', 'Manage Account')}
+            </button>
+          </div>
+        </section>
       </div>
+
+      <AccountActionModal
+        isOpen={showAccountActionModal}
+        onClose={() => setShowAccountActionModal(false)}
+        onSuccess={handleAccountActionSuccess}
+      />
     </MainLayout>
   );
 }

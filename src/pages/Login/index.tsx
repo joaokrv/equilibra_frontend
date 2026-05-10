@@ -14,6 +14,7 @@ import logo from '../../assets/logo-equilibra.png';
 import { useI18nStore } from '../../store/useI18nStore';
 import { getApiErrorMessage } from '../../lib/errorMessage';
 import { OtpModal } from '../../components/modals/OtpModal';
+import { ReactivationModal } from '../../components/modals/ReactivationModal';
 import { ApiError } from '../../api';
 type LoginFormValues = {
   email: string;
@@ -27,6 +28,8 @@ export function LoginPage() {
   const [showPassword, setShowPassword] = useState(false);
   const [isOtpModalOpen, setIsOtpModalOpen] = useState(false);
   const [otpData, setOtpData] = useState({ registroId: '', email: '' });
+  const [isReactivationModalOpen, setIsReactivationModalOpen] = useState(false);
+  const [reactivationEmail, setReactivationEmail] = useState('');
   const loginSchema = z.object({
     email: z.string().email(tr('Insira um e-mail válido', 'Enter a valid email')), 
     senha: z.string().min(6, tr('A senha deve ter no mínimo 6 caracteres', 'Password must be at least 6 characters')),
@@ -36,7 +39,7 @@ export function LoginPage() {
     register,
     handleSubmit,
     setError,
-    watch,
+    getValues,
     formState: { errors },
   } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -64,12 +67,17 @@ export function LoginPage() {
       if (error instanceof ApiError && error.status === 403) {
         const body = error.body as any;
         if (body?.otpStatus) {
-          setOtpData({ 
-            registroId: body.otpStatus.registroId, 
-            email: watch('email') 
+          setOtpData({
+            registroId: body.otpStatus.registroId,
+            email: getValues('email')
           });
           setIsOtpModalOpen(true);
           toast.warning(tr('Ative sua conta para continuar.', 'Activate your account to continue.'), 5000);
+          return;
+        }
+        if (body?.codigo === 'CONTA_DESATIVADA') {
+          setReactivationEmail(getValues('email'));
+          setIsReactivationModalOpen(true);
           return;
         }
       }
@@ -166,7 +174,7 @@ export function LoginPage() {
         </Link>
       </div>
 
-      <OtpModal 
+      <OtpModal
         isOpen={isOtpModalOpen}
         onClose={() => setIsOtpModalOpen(false)}
         registroId={otpData.registroId}
@@ -175,6 +183,13 @@ export function LoginPage() {
           setIsOtpModalOpen(false);
           toast.success(tr('Conta ativada! Você já pode entrar.', 'Account activated! You can now sign in.'));
         }}
+      />
+
+      <ReactivationModal
+        isOpen={isReactivationModalOpen}
+        onClose={() => setIsReactivationModalOpen(false)}
+        email={reactivationEmail}
+        onSuccess={() => setIsReactivationModalOpen(false)}
       />
     </div>
   );

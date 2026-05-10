@@ -5,5 +5,6 @@
 export type ReativarContaRequestDTO = {
     email: string;
     senha: string;
+    codigo: string;
 };
 

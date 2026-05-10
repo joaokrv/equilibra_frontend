@@ -63,6 +63,11 @@ export function OtpModal({ isOpen, onClose, registroId, email, onSuccess }: OtpM
     }
   });
 
+  // Limpa o código ao reabrir o modal
+  useEffect(() => {
+    if (isOpen) setCodigo('');
+  }, [isOpen]);
+
   // Gerenciamento dos timers (Countdown)
   useEffect(() => {
     if (!status) return;

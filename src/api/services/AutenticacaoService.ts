@@ -3,14 +3,16 @@
 /* tslint:disable */
 /* eslint-disable */
 import type { AuthResponseDTO } from '../models/AuthResponseDTO';
+import type { ConfirmarAcaoContaRequestDTO } from '../models/ConfirmarAcaoContaRequestDTO';
+import type { OtpStatusResponseDTO } from '../models/OtpStatusResponseDTO';
 import type { ReativarContaRequestDTO } from '../models/ReativarContaRequestDTO';
 import type { ReenviarCodigoRequestDTO } from '../models/ReenviarCodigoRequestDTO';
 import type { ResetarSenhaRequestDTO } from '../models/ResetarSenhaRequestDTO';
+import type { SolicitarAcaoContaRequestDTO } from '../models/SolicitarAcaoContaRequestDTO';
 import type { SolicitarRecuperacaoSenhaRequestDTO } from '../models/SolicitarRecuperacaoSenhaRequestDTO';
 import type { UsuarioLoginRequestDTO } from '../models/UsuarioLoginRequestDTO';
 import type { UsuarioRegistroRequestDTO } from '../models/UsuarioRegistroRequestDTO';
 import type { VerificarEmailRequestDTO } from '../models/VerificarEmailRequestDTO';
-import type { OtpStatusResponseDTO } from '../models/OtpStatusResponseDTO';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
@@ -67,39 +69,20 @@ export class AutenticacaoService {
         });
     }
     /**
-     * Solicitar pré-registro
-     * Inicia o fluxo de cadastro com OTP. Retorna registroId para validação.
+     * Registrar novo usuário
+     * Cria uma conta pendente de verificação.
      * @param requestBody
-     * @returns OtpStatusResponseDTO OK
+     * @returns string OK
      * @throws ApiError
      */
-    public static preRegistrar(
+    public static registrar(
         requestBody: UsuarioRegistroRequestDTO,
-    ): CancelablePromise<OtpStatusResponseDTO> {
+    ): CancelablePromise<string> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/api/auth/pre-registrar',
+            url: '/api/auth/registrar',
             body: requestBody,
             mediaType: 'application/json',
-        });
-    }
-
-    /**
-     * Consultar status do OTP
-     * Retorna o estado atual do pré-registro.
-     * @param registroId
-     * @returns OtpStatusResponseDTO OK
-     * @throws ApiError
-     */
-    public static getOtpStatus(
-        registroId: string,
-    ): CancelablePromise<OtpStatusResponseDTO> {
-        return __request(OpenAPI, {
-            method: 'GET',
-            url: '/api/auth/otp-status',
-            query: {
-                'registroId': registroId,
-            },
         });
     }
     /**
@@ -205,6 +188,92 @@ export class AutenticacaoService {
             query: {
                 'token': token,
             },
+        });
+    }
+    /**
+     * Solicitar pré-registro
+     * Inicia o fluxo de cadastro com OTP. Retorna registroId para validação.
+     * @param requestBody
+     * @returns OtpStatusResponseDTO OK
+     * @throws ApiError
+     */
+    public static preRegistrar(
+        requestBody: UsuarioRegistroRequestDTO,
+    ): CancelablePromise<OtpStatusResponseDTO> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/auth/pre-registrar',
+            body: requestBody,
+            mediaType: 'application/json',
+        });
+    }
+    /**
+     * Consultar status do OTP
+     * Retorna o estado atual do pré-registro.
+     * @param registroId
+     * @returns OtpStatusResponseDTO OK
+     * @throws ApiError
+     */
+    public static getOtpStatus(
+        registroId: string,
+    ): CancelablePromise<OtpStatusResponseDTO> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/auth/otp-status',
+            query: {
+                'registroId': registroId,
+            },
+        });
+    }
+    /**
+     * Solicitar ação de conta
+     * Valida senha e envia OTP tipado para excluir ou desativar conta.
+     * @param requestBody
+     * @returns any OK
+     * @throws ApiError
+     */
+    public static solicitarAcaoConta(
+        requestBody: SolicitarAcaoContaRequestDTO,
+    ): CancelablePromise<any> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/auth/solicitar-acao-conta',
+            body: requestBody,
+            mediaType: 'application/json',
+        });
+    }
+    /**
+     * Excluir conta
+     * Confirma exclusão permanente da conta via senha + OTP.
+     * @param requestBody
+     * @returns any OK
+     * @throws ApiError
+     */
+    public static excluirConta(
+        requestBody: ConfirmarAcaoContaRequestDTO,
+    ): CancelablePromise<any> {
+        return __request(OpenAPI, {
+            method: 'DELETE',
+            url: '/api/auth/excluir-conta',
+            body: requestBody,
+            mediaType: 'application/json',
+        });
+    }
+    /**
+     * Desativar conta
+     * Confirma desativação da conta via senha + OTP.
+     * @param requestBody
+     * @returns any OK
+     * @throws ApiError
+     */
+    public static desativarConta(
+        requestBody: ConfirmarAcaoContaRequestDTO,
+    ): CancelablePromise<any> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/auth/desativar-conta',
+            body: requestBody,
+            mediaType: 'application/json',
         });
     }
 }

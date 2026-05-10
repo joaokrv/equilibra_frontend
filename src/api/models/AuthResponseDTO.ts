@@ -2,8 +2,8 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-import type { UsuarioResponseDTO } from './UsuarioResponseDTO';
 import type { OtpStatusResponseDTO } from './OtpStatusResponseDTO';
+import type { UsuarioResponseDTO } from './UsuarioResponseDTO';
 export type AuthResponseDTO = {
     accessToken?: string;
     refreshToken?: string;

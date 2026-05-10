@@ -5,5 +5,6 @@
 export type VerificarEmailRequestDTO = {
     email: string;
     codigo: string;
+    registroId?: string;
 };
 

@@ -2,8 +2,8 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type ReenviarCodigoRequestDTO = {
-    email: string;
-    registroId?: string;
+export type ConfirmarAcaoContaRequestDTO = {
+    senha: string;
+    codigo: string;
 };
 
