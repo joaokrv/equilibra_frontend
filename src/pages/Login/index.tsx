@@ -13,6 +13,8 @@ import { toast } from '../../store/useToastStore';
 import logo from '../../assets/logo-equilibra.png';
 import { useI18nStore } from '../../store/useI18nStore';
 import { getApiErrorMessage } from '../../lib/errorMessage';
+import { OtpModal } from '../../components/modals/OtpModal';
+import { ApiError } from '../../api';
 type LoginFormValues = {
   email: string;
   senha: string;
@@ -23,6 +25,8 @@ export function LoginPage() {
   const language = useI18nStore((s) => s.language);
   const tr = (pt: string, en: string) => (language === 'en-US' ? en : pt);
   const [showPassword, setShowPassword] = useState(false);
+  const [isOtpModalOpen, setIsOtpModalOpen] = useState(false);
+  const [otpData, setOtpData] = useState({ registroId: '', email: '' });
   const loginSchema = z.object({
     email: z.string().email(tr('Insira um e-mail válido', 'Enter a valid email')), 
     senha: z.string().min(6, tr('A senha deve ter no mínimo 6 caracteres', 'Password must be at least 6 characters')),
@@ -32,6 +36,7 @@ export function LoginPage() {
     register,
     handleSubmit,
     setError,
+    watch,
     formState: { errors },
   } = useForm<LoginFormValues>({
     resolver: zodResolver(loginSchema),
@@ -48,15 +53,7 @@ export function LoginPage() {
 
       if (response.accessToken && user?.id && user?.nome && user?.email) {
         setAuth(user, response.accessToken);
-
-        if (!user.isEmailVerificado) {
-          toast.warning(
-            tr('Sua conta ainda não foi ativada. Algumas funcionalidades estarão bloqueadas até a verificação do e-mail.', 'Your account is not verified yet. Some features will remain blocked until email verification.'),
-            8000
-          );
-        } else {
-          toast.success(tr('Bem-vindo de volta ao Equilibra!', 'Welcome back to Equilibra!'));
-        }
+        toast.success(tr('Bem-vindo de volta ao Equilibra!', 'Welcome back to Equilibra!'));
       } else {
         setError('root', {
           message: tr('Resposta do servidor incompleta. Tente novamente.', 'Incomplete server response. Please try again.'),
@@ -64,19 +61,17 @@ export function LoginPage() {
       }
     },
     onError: (error: unknown) => {
-      let code: string | undefined;
-      if (typeof error === 'object' && error !== null) {
-        const typedError = error as {
-          body?: { code?: string };
-          response?: { data?: { code?: string } };
-        };
-        code = typedError.body?.code ?? typedError.response?.data?.code;
-      }
-
-      if (code === 'EMAIL_NAO_VERIFICADO') {
-        toast.warning(tr('Seu e-mail ainda não foi verificado. Ative sua conta para continuar.', 'Your email has not been verified yet. Verify your account to continue.'), 8000);
-        setError('root', { message: tr('Verifique seu e-mail para ativar a conta.', 'Check your email to activate your account.') });
-        return;
+      if (error instanceof ApiError && error.status === 403) {
+        const body = error.body as any;
+        if (body?.otpStatus) {
+          setOtpData({ 
+            registroId: body.otpStatus.registroId, 
+            email: watch('email') 
+          });
+          setIsOtpModalOpen(true);
+          toast.warning(tr('Ative sua conta para continuar.', 'Activate your account to continue.'), 5000);
+          return;
+        }
       }
 
       setError('root', {
@@ -170,6 +165,17 @@ export function LoginPage() {
           {tr('Esqueci minha senha', 'Forgot my password')}
         </Link>
       </div>
+
+      <OtpModal 
+        isOpen={isOtpModalOpen}
+        onClose={() => setIsOtpModalOpen(false)}
+        registroId={otpData.registroId}
+        email={otpData.email}
+        onSuccess={() => {
+          setIsOtpModalOpen(false);
+          toast.success(tr('Conta ativada! Você já pode entrar.', 'Account activated! You can now sign in.'));
+        }}
+      />
     </div>
   );
 }

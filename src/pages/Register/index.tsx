@@ -12,6 +12,7 @@ import { Check, X, Eye, EyeOff } from 'lucide-react';
 import { useI18nStore } from '../../store/useI18nStore';
 import { getApiErrorMessage } from '../../lib/errorMessage';
 import { createPasswordSchema } from '../../lib/passwordValidation';
+import { OtpModal } from '../../components/modals/OtpModal';
 type RegisterFormValues = {
   nome: string;
   email: string;
@@ -26,6 +27,8 @@ export function RegisterPage() {
   const tr = (pt: string, en: string) => (language === 'en-US' ? en : pt);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isOtpModalOpen, setIsOtpModalOpen] = useState(false);
+  const [otpData, setOtpData] = useState({ registroId: '', email: '' });
   const registerSchema = z.object({
     nome: z.string().min(3, tr('O nome deve ter no mínimo 3 caracteres', 'Name must be at least 3 characters')),
     email: z.string().email(tr('Insira um e-mail válido', 'Enter a valid email')),
@@ -62,15 +65,17 @@ export function RegisterPage() {
   ];
 
   const registerMutation = useMutation({
-    mutationFn: (data: RegisterFormValues) => AutenticacaoService.registrar({
+    mutationFn: (data: RegisterFormValues) => AutenticacaoService.preRegistrar({
       nome: data.nome,
       email: data.email,
       senha: data.senha
     }),
-    onSuccess: () => {
-      toast.success(tr('Conta criada com sucesso!', 'Account created successfully!'), 3000);
+    onSuccess: (data) => {
+      toast.success(tr('Cadastro iniciado!', 'Registration started!'), 3000);
       toast.info(tr('Enviamos um código de verificação para o seu e-mail.', 'We sent a verification code to your email.'), 8000);
-      navigate('/login');
+      
+      setOtpData({ registroId: data.registroId, email: watch('email') });
+      setIsOtpModalOpen(true);
     },
     onError: (error: unknown) => {
       setError('root', { 
@@ -211,6 +216,17 @@ export function RegisterPage() {
           {tr('Já tem uma conta?', 'Already have an account?')} <Link to="/login" className="text-primary hover:underline font-bold">{tr('Fazer Login', 'Sign In')}</Link>
         </p>
       </div>
+
+      <OtpModal 
+        isOpen={isOtpModalOpen}
+        onClose={() => setIsOtpModalOpen(false)}
+        registroId={otpData.registroId}
+        email={otpData.email}
+        onSuccess={() => {
+          setIsOtpModalOpen(false);
+          navigate('/login');
+        }}
+      />
     </div>
   );
 }

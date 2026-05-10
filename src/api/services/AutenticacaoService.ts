@@ -10,6 +10,7 @@ import type { SolicitarRecuperacaoSenhaRequestDTO } from '../models/SolicitarRec
 import type { UsuarioLoginRequestDTO } from '../models/UsuarioLoginRequestDTO';
 import type { UsuarioRegistroRequestDTO } from '../models/UsuarioRegistroRequestDTO';
 import type { VerificarEmailRequestDTO } from '../models/VerificarEmailRequestDTO';
+import type { OtpStatusResponseDTO } from '../models/OtpStatusResponseDTO';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
@@ -66,20 +67,39 @@ export class AutenticacaoService {
         });
     }
     /**
-     * Registrar novo usuário
-     * Cria uma conta pendente de verificação.
+     * Solicitar pré-registro
+     * Inicia o fluxo de cadastro com OTP. Retorna registroId para validação.
      * @param requestBody
-     * @returns string OK
+     * @returns OtpStatusResponseDTO OK
      * @throws ApiError
      */
-    public static registrar(
+    public static preRegistrar(
         requestBody: UsuarioRegistroRequestDTO,
-    ): CancelablePromise<string> {
+    ): CancelablePromise<OtpStatusResponseDTO> {
         return __request(OpenAPI, {
             method: 'POST',
-            url: '/api/auth/registrar',
+            url: '/api/auth/pre-registrar',
             body: requestBody,
             mediaType: 'application/json',
+        });
+    }
+
+    /**
+     * Consultar status do OTP
+     * Retorna o estado atual do pré-registro.
+     * @param registroId
+     * @returns OtpStatusResponseDTO OK
+     * @throws ApiError
+     */
+    public static getOtpStatus(
+        registroId: string,
+    ): CancelablePromise<OtpStatusResponseDTO> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/auth/otp-status',
+            query: {
+                'registroId': registroId,
+            },
         });
     }
     /**

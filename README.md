@@ -66,6 +66,15 @@ O roteamento possui tres guardas:
 - `ProtectedRoute`: exige autenticacao
 - `VerifiedRoute`: exige email verificado para modulos financeiros
 
+### Verificacao de e-mail (OTP)
+
+- O cadastro inicia um pre-registro e abre o modal de OTP.
+- No login, se o backend retornar `EMAIL_NAO_VERIFICADO`, o modal e aberto e informa que o codigo foi enviado.
+- O modal usa o status do servidor e nao expira localmente.
+- Estados padronizados: ATIVO, EXPIRADO, BLOQUEADO, USADO.
+- Countdown exibido para expiraEm, bloqueadoAte e proximoReenvioEm.
+- `registroId` salvo em sessionStorage para restaurar o fluxo apos refresh.
+
 ### Estado global
 
 - `useAuthStore`: usuario autenticado, token e estado de sessao
@@ -168,6 +177,8 @@ Boas praticas:
  - Nao armazenar secrets no frontend
  - Tokens de autenticacao devem ser tratados somente pelo fluxo de auth
  - Nunca commitar arquivos `.env` locais
+ - Mensagens de erro neutras no cadastro para evitar enumeracao de e-mail
+ - Timers do OTP baseados no servidor (nao confiar no relogio local)
  
  O `.gitignore` ja cobre:
  
@@ -178,7 +189,8 @@ Boas praticas:
  ### Hardening e Prevenções Aplicadas
  
  - **CSP Rígido (Content-Security-Policy)**: Diretiva `unsafe-inline` removida estritamente de `script-src` via `vercel.json` visando bloqueio de injeção cross-site-scripting.
- - **Rate Limit UI (Cooldowns)**: Formulários sensíveis como de `reenviar-código` e OTP travam em um cronômetro stateful e visual de 60 segundos após envios validados, mitigando spam por triggers legítimos de clientes antes mesmo de tocar os Limiters do Backend.
+ - **Rate Limit UI (Cooldowns)**: Formulários sensíveis respeitam cooldowns de OTP (1 min para tentativa e 5 min para reenvio) com countdown visual sincronizado com o backend.
+ - **Mensagens Neutras**: erros de cadastro evitam confirmar se o e-mail existe.
  - **Proteções de Depreciação**: Remoção preventiva do cabeçalho datado `X-XSS-Protection`, delegando total proteção aos browsers modernos via CSP.
  
  ---
@@ -210,7 +222,7 @@ A aplicação está em produção utilizando plataforma de hospedagem estática 
 | Módulo | Status | Detalhes |
 |---|---|---|
 | Telas financeiras | ✅ Completo | Dashboard, Contas, Cartões, Faturas, Transações, Investimentos |
-| Autenticação | ✅ Completo | Login, Cadastro, Recuperação de Senha, Verificação OTP |
+| Autenticação | 🔄 Em atualização | Pre-registro com OTP obrigatório, modal com countdown e novos estados |
 | Internacionalização | ✅ Completo | pt-BR e en-US com persistência |
 | Perfil do usuário | ✅ Completo | Foto, dados, alteração de e-mail e senha |
 | CI (GitHub Actions) | ✅ Completo | Workflow lint + build a cada push/PR |

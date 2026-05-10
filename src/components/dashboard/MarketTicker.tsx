@@ -75,7 +75,7 @@ export const MarketTicker: React.FC = () => {
     items.push({
       key: 'selic', label: 'SELIC', value: `${Number(selic).toFixed(2)}% a.a.`,
       icon: <Percent size={14} />, iconBg: 'bg-violet-500/10 text-violet-400',
-      href: 'https://www.bcb.gov.br/monetariapolitica/taxaselic',
+      href: 'https://www.bcb.gov.br/controleinflacao/taxaselic',
     });
   }
 

@@ -47,6 +47,7 @@ export type { UsuarioLoginRequestDTO } from './models/UsuarioLoginRequestDTO';
 export type { UsuarioRegistroRequestDTO } from './models/UsuarioRegistroRequestDTO';
 export { UsuarioResponseDTO } from './models/UsuarioResponseDTO';
 export type { VerificarEmailRequestDTO } from './models/VerificarEmailRequestDTO';
+export type { OtpStatusResponseDTO } from './models/OtpStatusResponseDTO';
 
 export { AutenticacaoService } from './services/AutenticacaoService';
 export { CartoesService } from './services/CartoesService';
