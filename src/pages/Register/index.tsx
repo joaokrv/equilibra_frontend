@@ -4,7 +4,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { Link, useNavigate } from 'react-router-dom';
 import { useMutation } from '@tanstack/react-query';
-import { AutenticacaoService } from '../../api';
+import { AutenticacaoService, ApiError } from '../../api';
 import { Input } from '../../components/ui/Input';
 import { toast } from '../../store/useToastStore';
 import logo from '../../assets/logo-equilibra.png';
@@ -78,6 +78,20 @@ export function RegisterPage() {
       setIsOtpModalOpen(true);
     },
     onError: (error: unknown) => {
+      if (error instanceof ApiError && (error.status === 423 || error.status === 410)) {
+        const body = error.body as any;
+        const otpStatus = body?.otpStatus || body;
+        
+        if (otpStatus?.registroId) {
+          setOtpData({ 
+            registroId: otpStatus.registroId, 
+            email: watch('email') 
+          });
+          setIsOtpModalOpen(true);
+          return;
+        }
+      }
+
       setError('root', { 
         message: getApiErrorMessage(error, tr('Erro ao registrar usuário. Tente outro e-mail.', 'Error creating user. Try another email.'))
       });
