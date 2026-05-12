@@ -7,8 +7,8 @@ import type { UsuarioResponseDTO } from './UsuarioResponseDTO';
 export type AuthResponseDTO = {
     accessToken?: string;
     refreshToken?: string;
-    expiresIn?: number;
-    user?: UsuarioResponseDTO;
+    expiraEm?: number;
+    usuario?: UsuarioResponseDTO;
     otpStatus?: OtpStatusResponseDTO;
 };
 

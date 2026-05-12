@@ -52,7 +52,7 @@ export function LoginPage() {
       senha: data.senha
     }),
     onSuccess: (response) => {
-      const user = response.user as User | undefined;
+      const user = response.usuario as User | undefined;
 
       if (response.accessToken && user?.id && user?.nome && user?.email) {
         setAuth(user, response.accessToken);

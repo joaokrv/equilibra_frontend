@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useMutation, useQuery } from '@tanstack/react-query';
-import { AutenticacaoService } from '../../api';
+import { ApiError, AutenticacaoService } from '../../api';
+import type { OtpStatusResponseDTO } from '../../api';
 import { toast } from '../../store/useToastStore';
 import { useI18nStore } from '../../store/useI18nStore';
 import { getApiErrorMessage } from '../../lib/errorMessage';
@@ -14,6 +15,48 @@ interface OtpModalProps {
   onSuccess?: () => void;
 }
 
+const isOtpStatusResponse = (value: unknown): value is OtpStatusResponseDTO => {
+  if (!value || typeof value !== 'object') {
+    return false;
+  }
+
+  const candidate = value as Partial<OtpStatusResponseDTO>;
+  return typeof candidate.status === 'string'
+    && typeof candidate.tentativasRestantes === 'number'
+    && typeof candidate.expiraEm === 'string'
+    && typeof candidate.registroId === 'string';
+};
+
+const extrairOtpStatus = (value: unknown): OtpStatusResponseDTO | null => {
+  if (isOtpStatusResponse(value)) {
+    return value;
+  }
+
+  if (value instanceof ApiError) {
+    return isOtpStatusResponse(value.body) ? value.body : null;
+  }
+
+  if (!value || typeof value !== 'object') {
+    return null;
+  }
+
+  const candidate = value as { body?: unknown; data?: unknown; response?: { data?: unknown } };
+
+  if (isOtpStatusResponse(candidate.body)) {
+    return candidate.body;
+  }
+
+  if (isOtpStatusResponse(candidate.data)) {
+    return candidate.data;
+  }
+
+  if (candidate.response && isOtpStatusResponse(candidate.response.data)) {
+    return candidate.response.data;
+  }
+
+  return null;
+};
+
 export function OtpModal({ isOpen, onClose, registroId, email, onSuccess }: OtpModalProps) {
   const language = useI18nStore((s) => s.language);
   const tr = (pt: string, en: string) => (language === 'en-US' ? en : pt);
@@ -21,14 +64,26 @@ export function OtpModal({ isOpen, onClose, registroId, email, onSuccess }: OtpM
   const [codigo, setCodigo] = useState('');
   const [timeLeft, setTimeLeft] = useState<number>(0);
   const [canResend, setCanResend] = useState(false);
+  const [otpStatus, setOtpStatus] = useState<OtpStatusResponseDTO | undefined>(undefined);
 
   // Consulta o status atual do OTP (tentativas, bloqueios, timers)
-  const { data: status, refetch } = useQuery({
+  const { data: queryStatus, refetch } = useQuery({
     queryKey: ['otp-status', registroId],
     queryFn: () => AutenticacaoService.getOtpStatus(registroId),
     enabled: isOpen && !!registroId,
-    refetchInterval: 10000, // Atualiza a cada 10s
+    refetchOnWindowFocus: false,
   });
+
+  const sincronizarStatus = (valor: unknown): boolean => {
+    const statusExtraido = extrairOtpStatus(valor);
+
+    if (!statusExtraido) {
+      return false;
+    }
+
+    setOtpStatus(statusExtraido);
+    return true;
+  };
 
   // Mutação para verificar o código
   const verifyMutation = useMutation({
@@ -42,8 +97,9 @@ export function OtpModal({ isOpen, onClose, registroId, email, onSuccess }: OtpM
       if (onSuccess) onSuccess();
     },
     onError: (error: any) => {
-      // Se for 423 (Locked), o useQuery vai pegar o novo status no refetch
-      refetch();
+      if (!sincronizarStatus(error)) {
+        void refetch();
+      }
       toast.error(getApiErrorMessage(error, tr('Código inválido ou expirado.', 'Invalid or expired code.')));
     }
   });
@@ -54,37 +110,57 @@ export function OtpModal({ isOpen, onClose, registroId, email, onSuccess }: OtpM
       email,
       registroId
     }),
-    onSuccess: () => {
+    onSuccess: (response) => {
+      if (!sincronizarStatus(response)) {
+        void refetch();
+      }
       toast.info(tr('Um novo código foi enviado para seu e-mail.', 'A new code has been sent to your email.'));
-      refetch();
     },
     onError: (error) => {
+      if (!sincronizarStatus(error)) {
+        void refetch();
+      }
       toast.error(getApiErrorMessage(error, tr('Não foi possível reenviar o código agora.', 'Could not resend the code now.')));
     }
   });
 
-  // Limpa o código ao reabrir o modal
+  // Sincroniza o estado inicial do backend e limpa dados locais ao abrir/fechar o modal
   useEffect(() => {
-    if (isOpen) setCodigo('');
-  }, [isOpen]);
+    if (!isOpen) {
+      setCodigo('');
+      setOtpStatus(undefined);
+      setTimeLeft(0);
+      setCanResend(false);
+      return;
+    }
+
+    setCodigo('');
+    setOtpStatus(undefined);
+  }, [isOpen, registroId]);
+
+  useEffect(() => {
+    if (queryStatus) {
+      setOtpStatus(queryStatus);
+    }
+  }, [queryStatus]);
 
   // Gerenciamento dos timers (Countdown)
   useEffect(() => {
-    if (!status) return;
+    if (!otpStatus) return;
 
     const updateTimers = () => {
       const agora = new Date().getTime();
       
       // Timer de expiração do registro
-      if (status.expiraEm) {
-        const expira = new Date(status.expiraEm).getTime();
+      if (otpStatus.expiraEm) {
+        const expira = new Date(otpStatus.expiraEm).getTime();
         const diff = Math.max(0, Math.floor((expira - agora) / 1000));
         setTimeLeft(diff);
       }
 
       // Timer de reenvio
-      if (status.proximoReenvioEm) {
-        const reenvio = new Date(status.proximoReenvioEm).getTime();
+      if (otpStatus.proximoReenvioEm) {
+        const reenvio = new Date(otpStatus.proximoReenvioEm).getTime();
         setCanResend(agora >= reenvio);
       } else {
         setCanResend(true);
@@ -94,7 +170,7 @@ export function OtpModal({ isOpen, onClose, registroId, email, onSuccess }: OtpM
     updateTimers();
     const interval = setInterval(updateTimers, 1000);
     return () => clearInterval(interval);
-  }, [status]);
+  }, [otpStatus]);
 
   const handleVerify = (e: React.FormEvent) => {
     e.preventDefault();
@@ -111,7 +187,7 @@ export function OtpModal({ isOpen, onClose, registroId, email, onSuccess }: OtpM
 
   if (!isOpen) return null;
 
-  const isLocked = status?.status === 'BLOQUEADO';
+  const isLocked = otpStatus?.status === 'BLOQUEADO';
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm animate-in fade-in duration-200">
@@ -163,9 +239,9 @@ export function OtpModal({ isOpen, onClose, registroId, email, onSuccess }: OtpM
                   </span>
                 </div>
                 
-                {status?.tentativasRestantes !== undefined && (
-                  <span className={`text-[10px] font-bold uppercase tracking-wider ${status.tentativasRestantes <= 1 ? 'text-destructive' : 'text-muted-foreground'}`}>
-                    {status.tentativasRestantes} {tr('tentativas restantes', 'attempts remaining')}
+                {otpStatus?.tentativasRestantes !== undefined && (
+                  <span className={`text-[10px] font-bold uppercase tracking-wider ${otpStatus.tentativasRestantes <= 1 ? 'text-destructive' : 'text-muted-foreground'}`}>
+                    {otpStatus.tentativasRestantes} {tr('tentativas restantes', 'attempts remaining')}
                   </span>
                 )}
               </div>
