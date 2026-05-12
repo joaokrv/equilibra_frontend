@@ -189,6 +189,7 @@ export function LoginPage() {
         isOpen={isReactivationModalOpen}
         onClose={() => setIsReactivationModalOpen(false)}
         email={reactivationEmail}
+        initialPassword={getValues('senha')}
         onSuccess={() => setIsReactivationModalOpen(false)}
       />
     </div>

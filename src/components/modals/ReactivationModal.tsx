@@ -10,10 +10,11 @@ interface ReactivationModalProps {
   isOpen: boolean;
   onClose: () => void;
   email: string;
+  initialPassword?: string;
   onSuccess: () => void;
 }
 
-export function ReactivationModal({ isOpen, onClose, email, onSuccess }: ReactivationModalProps) {
+export function ReactivationModal({ isOpen, onClose, email, initialPassword = '', onSuccess }: ReactivationModalProps) {
   const language = useI18nStore((s) => s.language);
   const tr = (pt: string, en: string) => (language === 'en-US' ? en : pt);
 
@@ -23,10 +24,10 @@ export function ReactivationModal({ isOpen, onClose, email, onSuccess }: Reactiv
 
   useEffect(() => {
     if (isOpen) {
-      setSenha('');
+      setSenha(initialPassword);
       setCodigo('');
     }
-  }, [isOpen]);
+  }, [isOpen, initialPassword]);
 
   useEffect(() => {
     if (cooldown <= 0) return;
