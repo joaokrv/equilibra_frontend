@@ -1,3 +1,4 @@
+// eslint-disable-next-line no-restricted-imports
 import axios from 'axios';
 import type { AxiosError, InternalAxiosRequestConfig } from 'axios';
 import { useAuthStore } from '../store/useAuthStore';

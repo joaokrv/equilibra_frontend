@@ -25,8 +25,6 @@ import { ForgotPasswordPage } from './pages/ForgotPassword';
 import { ResetPasswordPage } from './pages/ResetPassword';
 import { NotFoundPage } from './pages/NotFound';
 
-// Renderiza imediatamente com estado local; session-check hidrata o perfil e detecta
-// sessão revogada em até 30s via refetchInterval. Proteção real via interceptor 401 (G10.1).
 const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated);
   const updateProfile = useAuthStore((s) => s.updateProfile);
@@ -47,7 +45,6 @@ const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
   return isAuthenticated ? <>{children}</> : <Navigate to="/login" replace />;
 };
 
-// Bloqueia acesso a rotas financeiras até e-mail verificado; redireciona com toast.
 const VerifiedRoute = ({ children }: { children: React.ReactNode }) => {
   const user = useAuthStore(state => state.user);
   const isUnverified = user !== null && !user.isEmailVerificado;
@@ -99,7 +96,6 @@ export default function App() {
       });
   }, []);
 
-  // Listener para logout forçado via interceptor 401 (G10.1 — F1-A3)
   useEffect(() => {
     const handleForceLogout = () => {
       queryClient.clear();

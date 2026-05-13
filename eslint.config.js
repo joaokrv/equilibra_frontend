@@ -25,6 +25,12 @@ export default defineConfig([
       'react-hooks/exhaustive-deps': 'warn',
       'react-hooks/incompatible-library': 'warn',
       'react-hooks/set-state-in-effect': 'warn',
+      'no-restricted-imports': ['error', {
+        paths: [{
+          name: 'axios',
+          message: 'Use "import apiClient from \'@/lib/axios\'" em vez de importar axios diretamente. A instância raw não possui baseURL, interceptores de JWT nem refresh automático.'
+        }]
+      }],
     },
   },
 ])
