@@ -21,12 +21,8 @@ export const CategoriasPage = () => {
   const [novoNome, setNovoNome] = useState('');
   const [novoTipo, setNovoTipo] = useState<CategoriaRegistroRequestDTO.tipo>(CategoriaRegistroRequestDTO.tipo.DESPESA);
   const [busca, setBusca] = useState(buscaParam);
-
-  // Estado de edição inline
   const [editandoId, setEditandoId] = useState<number | null>(null);
   const [nomeEditando, setNomeEditando] = useState('');
-
-  // Modal de confirmação de exclusão
   const [categoriaParaDeletar, setCategoriaParaDeletar] = useState<CategoriaResponseDTO | undefined>(undefined);
 
   useEffect(() => {

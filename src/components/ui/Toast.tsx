@@ -50,10 +50,7 @@ const ToastItem = ({ id, message, variant, duration = 5000 }: {
   const Icon = config.icon;
 
   useEffect(() => {
-    // Animação de entrada
     requestAnimationFrame(() => setIsVisible(true));
-
-    // Countdown visual
     if (duration > 0) {
       const interval = setInterval(() => {
         setProgress((prev) => {

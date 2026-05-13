@@ -53,8 +53,6 @@ const SummaryCard = ({
     : isPositive
       ? 'bg-emerald-500/10 text-emerald-500'
       : 'bg-rose-500/10 text-rose-500';
-
-  // Formatar nome do mês
   const formatMonthName = (dateStr: string): string => {
     if (!dateStr) return '';
     const date = new Date(dateStr);

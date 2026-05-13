@@ -25,8 +25,6 @@ export const RecorrentesPage = () => {
   const [editando, setEditando] = useState<TransacaoRecorrenteResponseDTO | null>(null);
   const [recorrenteParaDeletar, setRecorrenteParaDeletar] = useState<{ id: number; descricao: string } | null>(null);
   const [deletandoId, setDeletandoId] = useState<number | null>(null);
-
-  // Form
   const [descricao, setDescricao] = useState('');
   const [valor, setValor] = useState('');
   const [metodoPagamento, setMetodoPagamento] = useState<TransacaoRecorrenteRequestDTO.metodoPagamento | ''>('');

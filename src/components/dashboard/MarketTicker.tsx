@@ -41,8 +41,6 @@ export const MarketTicker: React.FC = () => {
   const btc = indices['BITCOIN'];
   const nasdaq = indices['NASDAQ'];
   const dowjones = indices['DOWJONES'];
-
-  // Montar lista de itens do ticker
   const items: TickerItem[] = [];
 
   if (ibov?.valor != null && ibov.variacao != null) {
@@ -164,8 +162,6 @@ export const MarketTicker: React.FC = () => {
       href: 'https://finance.yahoo.com/quote/BTC-BRL/',
     });
   }
-
-  // Ações B3
   stocks.forEach((stock: StockQuote) => {
     const pos = stock.regularMarketChangePercent >= 0;
     items.push({
@@ -199,8 +195,6 @@ export const MarketTicker: React.FC = () => {
       )}
     </a>
   );
-
-  // Calcular duração baseada no número de itens (mais itens = mais lento)
   const duration = Math.max(30, items.length * 4);
 
   return (

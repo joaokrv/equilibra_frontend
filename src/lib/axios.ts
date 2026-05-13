@@ -3,6 +3,7 @@ import axios from 'axios';
 import type { AxiosError, InternalAxiosRequestConfig } from 'axios';
 import { useAuthStore } from '../store/useAuthStore';
 import { API_BASE_URL } from './apiBaseUrl';
+import { toast } from '../store/useToastStore';
 
 /**
  * Instância Axios centralizada para toda a aplicação.
@@ -17,12 +18,12 @@ const apiClient = axios.create({
   headers: {
     'Content-Type': 'application/json',
   },
-  // Necessário para enviar/receber o cookie HttpOnly do refresh token (G5-A1)
   withCredentials: true,
 });
 
 // ─── Flag para evitar múltiplos refreshes simultâneos ────────────────
 let isRefreshing = false;
+let coldStartToastShown = false;
 let failedQueue: Array<{
   resolve: (token: string) => void;
   reject: (error: unknown) => void;
@@ -58,22 +59,33 @@ apiClient.interceptors.request.use(
 apiClient.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {
-    const originalRequest = error.config as InternalAxiosRequestConfig & {
-      _retry?: boolean;
-    };
-
-    // Se não é 401 ou já tentamos retry, rejeitar normalmente
-    if (error.response?.status !== 401 || originalRequest._retry) {
+    // ─── Tratamento de Cold Start (Render) ────────────────
+    const isNetworkError = error.message === 'Network Error' || error.code === 'ECONNABORTED';
+    const isBadGateway = error.response?.status === 502 || error.response?.status === 504 || error.response?.status === 503;
+    
+    if (isNetworkError || isBadGateway) {
+      if (!coldStartToastShown) {
+        coldStartToastShown = true;
+        toast.warning('Servidor em inicialização. Tente novamente em 3 a 5 minutos.', 10000);
+        
+        // Reseta a flag após 1 minuto para caso o usuário tente novamente depois
+        setTimeout(() => {
+          coldStartToastShown = false;
+        }, 60000);
+      }
       return Promise.reject(error);
     }
 
-    // Ignorar refresh para rotas de autenticação (evita loop infinito)
+    const originalRequest = error.config as InternalAxiosRequestConfig & {
+      _retry?: boolean;
+    };
+    if (error.response?.status !== 401 || originalRequest._retry) {
+      return Promise.reject(error);
+    }
     const url = originalRequest.url || '';
     if (url.includes('/api/auth/login') || url.includes('/api/auth/refresh') || url.includes('/api/auth/logout')) {
       return Promise.reject(error);
     }
-
-    // Se já está refreshando, enfileirar esta request
     if (isRefreshing) {
       return new Promise<string>((resolve, reject) => {
         failedQueue.push({ resolve, reject });
@@ -87,7 +99,6 @@ apiClient.interceptors.response.use(
     isRefreshing = true;
 
     try {
-      // RT enviado automaticamente via cookie HttpOnly (withCredentials=true)
       const { data } = await axios.post(
         `${API_BASE_URL}/api/auth/refresh`,
         {},
@@ -95,21 +106,14 @@ apiClient.interceptors.response.use(
       );
 
       const newAccessToken = data.accessToken;
-
-      // Atualizar store com novo access token
       const currentUser = useAuthStore.getState().user;
       if (currentUser && newAccessToken) {
         useAuthStore.getState().setAuth(currentUser, newAccessToken);
       }
-
-      // Processar fila de requests pendentes com o novo token
       processQueue(null, newAccessToken);
-
-      // Re-executar request original com novo token
       originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
       return apiClient(originalRequest);
     } catch (refreshError) {
-      // Refresh falhou — sessão expirada; CustomEvent desacopla do router (G10.1)
       processQueue(refreshError, null);
       window.dispatchEvent(new CustomEvent('auth:force-logout'));
       return Promise.reject(refreshError);

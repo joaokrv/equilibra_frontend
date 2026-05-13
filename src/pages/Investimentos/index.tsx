@@ -46,10 +46,7 @@ export const InvestimentosPage = () => {
   const [modal, setModal] = useState<ModalTipo>(null);
   const [investimentoSelecionado, setInvestimentoSelecionado] = useState<InvestimentoItem | null>(null);
   const [investimentoParaDeletar, setInvestimentoParaDeletar] = useState<{ id: number; descricao: string } | null>(null);
-  const [deletandoId, setDeletandoId] = useState<number | null>(null);
-
-  // Form states
-  const [descricao, setDescricao] = useState('');
+  const [deletandoId, setDeletandoId] = useState<number | null>(null);  const [descricao, setDescricao] = useState('');
   const [valorInicial, setValorInicial] = useState('');
   const [meta, setMeta] = useState('');
   const [valor, setValor] = useState('');

@@ -60,24 +60,16 @@ export const ExtratoPage = ({ filtroTipo, titulo, descricao }: ExtratoPageProps)
   const [ano, setAno] = useState(hoje.getFullYear());
   const [mes, setMes] = useState(hoje.getMonth() + 1);
   const [busca, setBusca] = useState(buscaParam);
-
-  // Estados de Ordenação
   const [sortField, setSortField] = useState<SortField>('data');
-  const [sortDirection, setSortDirection] = useState<SortDirection>('desc'); // data desc é o padrão
-
-  // Estado do Relatório
+  const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
   const [modalRelatorioAberto, setModalRelatorioAberto] = useState(false);
   const tipoContextoFixo = filtroTipo === TransacaoResponseDTO.tipo.RECEITA ? 'RECEITA' : (filtroTipo === TransacaoResponseDTO.tipo.DESPESA ? 'DESPESA' : 'GERAL');
 
   useEffect(() => {
     setBusca(buscaParam);
   }, [buscaParam]);
-
-  // Edição
   const [transacaoParaEditar, setTransacaoParaEditar] = useState<TransacaoResponseDTO | undefined>(undefined);
   const [modalEditarAberto, setModalEditarAberto] = useState(false);
-
-  // Exclusão
   const [transacaoParaDeletar, setTransacaoParaDeletar] = useState<TransacaoResponseDTO | undefined>(undefined);
 
   const { data: transacoes = [], isLoading } = useQuery({
@@ -116,14 +108,10 @@ export const ExtratoPage = ({ filtroTipo, titulo, descricao }: ExtratoPageProps)
       );
     }
   }, [lista.length, totalElements]);
-
-  // Passo 1: Filtragem
   const filtradas = listaBase.filter((t: TransacaoResponseDTO) => {
     if (busca && !t.descricao?.toLowerCase().includes(busca.toLowerCase())) return false;
     return true;
   });
-
-  // Passo 2: Ordenação
   const filtradasEOrdenadas = [...filtradas].sort((a: TransacaoResponseDTO, b: TransacaoResponseDTO) => {
     let cmp = 0;
     switch(sortField) {
@@ -152,7 +140,7 @@ export const ExtratoPage = ({ filtroTipo, titulo, descricao }: ExtratoPageProps)
          break;
       }
     }
-    return sortDirection === 'asc' ? cmp : -cmp; // Inverte o sinal dependendo da direção
+    return sortDirection === 'asc' ? cmp : -cmp;
   });
 
   const handleSort = (field: SortField) => {
@@ -160,7 +148,7 @@ export const ExtratoPage = ({ filtroTipo, titulo, descricao }: ExtratoPageProps)
       setSortDirection(prev => prev === 'asc' ? 'desc' : 'asc');
     } else {
       setSortField(field);
-      setSortDirection('asc'); // Default ao mudar field
+      setSortDirection('asc');
     }
   };
 

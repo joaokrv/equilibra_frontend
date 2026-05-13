@@ -158,5 +158,12 @@ export const getApiErrorMessage = (error: unknown, fallback: string): string => 
     return getFriendlyMethodNotAllowedMessage(fallback);
   }
 
+  if (statusCode === 502 || statusCode === 503 || statusCode === 504) {
+    if (isEnglishFallback(fallback)) {
+      return 'Server is starting. Please wait 3 to 5 minutes.';
+    }
+    return 'Servidor em inicialização. Tente novamente em 3 a 5 minutos.';
+  }
+
   return fallback;
 };

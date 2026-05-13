@@ -61,10 +61,7 @@ export function ResetPasswordPage() {
     { label: tr('Minúscula', 'Lowercase'), met: /[a-z]/.test(senhaValue) },
     { label: tr('Número', 'Number'), met: /[0-9]/.test(senhaValue) },
     { label: tr('Especial (@$!%*)', 'Special (@$!%*)'), met: /[@$!%*?&]/.test(senhaValue) },
-  ];
-
-  // Valida o token ao carregar a página
-  useEffect(() => {
+  ];  useEffect(() => {
     if (!token) {
       setTokenValido(false);
       setErroToken(tr('Nenhum token de recuperação informado.', 'No recovery token provided.'));
@@ -100,10 +97,7 @@ export function ResetPasswordPage() {
 
   const onSubmit = (data: ResetFormValues) => {
     resetMutation.mutate(data);
-  };
-
-  // Estado de carregamento enquanto valida o token
-  if (tokenValido === null) {
+  };  if (tokenValido === null) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background">
         <div className="glass p-6 sm:p-10 rounded-2xl sm:rounded-3xl flex flex-col items-center gap-4">
@@ -114,10 +108,7 @@ export function ResetPasswordPage() {
         </div>
       </div>
     );
-  }
-
-  // Token inválido ou expirado
-  if (!tokenValido) {
+  }  if (!tokenValido) {
     return (
       <div className="min-h-screen flex items-center justify-center bg-background p-4">
         <div className="glass w-full max-w-lg p-5 sm:p-8 lg:p-10 rounded-2xl sm:rounded-3xl flex flex-col items-center">
@@ -146,10 +137,7 @@ export function ResetPasswordPage() {
         </div>
       </div>
     );
-  }
-
-  // Formulário de nova senha
-  return (
+  }  return (
     <div className="min-h-screen flex items-center justify-center bg-background p-4 font-sans">
       <div className="glass w-full max-w-lg p-5 sm:p-8 lg:p-10 rounded-2xl sm:rounded-3xl flex flex-col items-center">
         <img

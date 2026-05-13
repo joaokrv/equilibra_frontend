@@ -15,6 +15,7 @@ import { useI18nStore } from '../../store/useI18nStore';
 import { getApiErrorMessage } from '../../lib/errorMessage';
 import { OtpModal } from '../../components/modals/OtpModal';
 import { ReactivationModal } from '../../components/modals/ReactivationModal';
+import { ServerStatusBadge } from '../../components/ui/ServerStatusBadge';
 import { ApiError } from '../../api';
 type LoginFormValues = {
   email: string;
@@ -172,6 +173,10 @@ export function LoginPage() {
         >
           {tr('Esqueci minha senha', 'Forgot my password')}
         </Link>
+        
+        <div className="mt-8 pt-4 border-t border-white/5 w-full text-center">
+          <ServerStatusBadge />
+        </div>
       </div>
 
       <OtpModal

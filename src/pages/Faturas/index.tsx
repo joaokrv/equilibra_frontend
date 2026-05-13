@@ -93,8 +93,6 @@ export const FaturasPage = () => {
       }
     );
   };
-
-  // Página lista de cartões (sem cartaoId)
   if (!cartaoIdNum) {
     return (
       <MainLayout>
@@ -149,8 +147,6 @@ export const FaturasPage = () => {
       </MainLayout>
     );
   }
-
-  // Página detalhe de fatura
   return (
     <MainLayout>
       <div className="p-3 sm:p-4 lg:p-6 space-y-5 sm:space-y-6 animate-in fade-in duration-500">

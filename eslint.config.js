@@ -20,7 +20,6 @@ export default defineConfig([
       globals: globals.browser,
     },
     rules: {
-      // Reduz ruído no plano "verde rápido" sem alterar runtime.
       '@typescript-eslint/no-explicit-any': 'warn',
       'react-hooks/exhaustive-deps': 'warn',
       'react-hooks/incompatible-library': 'warn',

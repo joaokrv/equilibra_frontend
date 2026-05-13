@@ -128,8 +128,6 @@ export const TransactionModal = ({
       setValue('tipo', 'DESPESA');
     }
   }, [activeSection, setValue, tipoFixo]);
-
-  // Sincroniza status com método: cartão sempre PENDENTE; ao sair de cartão, volta para PAGO
   useEffect(() => {
     const currentStatus = getValues('status');
     if (metodo === 'CARTAO_CREDITO' && currentStatus !== 'PENDENTE') {
@@ -138,8 +136,6 @@ export const TransactionModal = ({
       setValue('status', 'PAGO');
     }
   }, [metodo, getValues, setValue]);
-
-  // Preencher formulário ao abrir (novo ou edição)
   useEffect(() => {
     if (!isOpen) return;
 

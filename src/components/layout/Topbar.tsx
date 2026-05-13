@@ -48,8 +48,6 @@ export const Topbar = () => {
   });
 
   const listaTransacoes = Array.isArray(transacoes) ? transacoes : (transacoes as any)?.content ?? [];
-
-  // Fechar ao clicar fora
   useEffect(() => {
     const handler = (e: MouseEvent) => {
       if (containerRef.current && !containerRef.current.contains(e.target as Node)) {

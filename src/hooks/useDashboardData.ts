@@ -58,8 +58,6 @@ export const useDashboardData = (
   const currentYear = now.getFullYear();
   const diasEvolucao = PERIODO_DIAS_EVOLUCAO[periodoPatrimonio];
   const intervaloTransacoes = useMemo(() => calcularIntervalo(periodo), [periodo]);
-
-  // Resumo consolidado de cards para o período selecionado
   const {
     data: resumoPeriodo,
     isLoading: isLoadingResumo,
@@ -68,8 +66,6 @@ export const useDashboardData = (
     queryKey: ['dashboard-summary', periodo],
     queryFn: () => dashboardApi.obterResumoPorPeriodo(periodo),
   });
-
-  // Transações do período para distribuição por categoria e lançamentos recentes
   const {
     data: transacoesPeriodoResponse = [],
     isLoading: isLoadingTransactionsPeriodo,
@@ -79,14 +75,10 @@ export const useDashboardData = (
     queryFn: () =>
       dashboardApi.listarPorIntervalo(intervaloTransacoes.dataInicio, intervaloTransacoes.dataFim),
   });
-
-  // Evolução patrimonial (snapshots diários)
   const { data: evolucaoPatrimonioBruta = [] } = useQuery({
     queryKey: ['patrimony-evolution', diasEvolucao],
     queryFn: () => patrimonioApi.listarEvolucao(diasEvolucao),
   });
-
-  // Normalizar lista (paginação ou array direto)
   const transacoesPeriodoList = (Array.isArray(transacoesPeriodoResponse)
     ? transacoesPeriodoResponse
     : [])
@@ -114,8 +106,6 @@ export const useDashboardData = (
   const totalInvestidoAnterior = toNumber(resumo?.totalInvestidoAnterior);
   const variacaoSaldoContasPercent = resumo?.variacaoSaldoContasPercentual ?? null;
   const variacaoInvestimentosPercent = resumo?.variacaoInvestimentosPercentual ?? null;
-
-  // Agrupamento por Categoria para o Gráfico de Pizza
   const categoriasMap = transacoesSemTransferencias.reduce((acc, t) => {
     const catName = t.nomeCategoria || 'Outros';
     if (t.tipo === TransacaoResponseDTO.tipo.DESPESA) {
@@ -139,8 +129,6 @@ export const useDashboardData = (
   const receitasPorCategoria = Object.keys(receitasMap)
     .map((name) => ({ name, value: receitasMap[name] }))
     .sort((a, b) => b.value - a.value);
-
-  // Fator de Conversão Baseado na Preferência do Usuário
   const conversionRate = useMemo(() => {
     const moeda = user?.moeda || 'BRL';
     if (moeda === 'USD' && exchange) {
@@ -151,7 +139,7 @@ export const useDashboardData = (
       const bid = parseFloat(eurExchange.bid);
       return bid > 0 ? 1 / bid : 1;
     }
-    return 1; // BRL ou fallback
+    return 1;
   }, [user?.moeda, exchange, eurExchange]);
 
   const isLoadingTransactions = isLoadingTransactionsPeriodo || isLoadingResumo;

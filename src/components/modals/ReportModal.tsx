@@ -57,7 +57,6 @@ export const ReportModal = ({ isOpen, onClose, tipoContextoFixo }: ReportModalPr
     }
 
     const date = new Date();
-    // 1º e Ultimo dia do Mes para os campos Date
     const start = new Date(date.getFullYear(), date.getMonth(), 1).toISOString().split('T')[0];
     const end = new Date(date.getFullYear(), date.getMonth() + 1, 0).toISOString().split('T')[0];
 
@@ -70,8 +69,6 @@ export const ReportModal = ({ isOpen, onClose, tipoContextoFixo }: ReportModalPr
   const onSubmit = async (data: ReportFormValues) => {
     try {
       setIsSubmittingManual(true);
-      
-      // Resgata dinamicamente o Token Bearer JWT do escopo da API
       const token = typeof OpenAPI.TOKEN === 'function'
         ? await OpenAPI.TOKEN({ method: 'POST', url: '/api/v1/relatorios/exportar' })
         : OpenAPI.TOKEN;
@@ -82,8 +79,6 @@ export const ReportModal = ({ isOpen, onClose, tipoContextoFixo }: ReportModalPr
           tipoFiltro: tipoContextoFixo,
           statusTransacao: data.statusTransacao === '' ? null : data.statusTransacao
       };
-
-      // Dispara o JS Vanilla nativo para controlar o array de bytes (Blob)
       const response = await fetch(`${OpenAPI.BASE}/api/v1/relatorios/exportar?formato=${data.formato}`, {
           method: 'POST',
           headers: {
@@ -96,8 +91,6 @@ export const ReportModal = ({ isOpen, onClose, tipoContextoFixo }: ReportModalPr
       if (!response.ok) {
           throw new Error('Falha ao exportar da API.');
       }
-
-      // Converte a reposta bruta em Objeto Vinculado Binário e injeta em URL Volátil
       const blob = await response.blob();
       const url = window.URL.createObjectURL(blob);
       

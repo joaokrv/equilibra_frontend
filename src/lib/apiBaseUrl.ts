@@ -16,10 +16,7 @@ const normalizedApiBaseUrl = apiBaseUrlFromEnv
 if (import.meta.env.PROD && normalizedApiBaseUrl) {
   const normalizedFrontendOrigin = frontendOrigin
     ? normalizeBaseUrl(frontendOrigin)
-    : '';
-
-  // Evita configuracao invalida que dispara 405 no frontend (POST /api/* no proprio dominio web).
-  if (normalizedFrontendOrigin && normalizedApiBaseUrl === normalizedFrontendOrigin) {
+    : '';  if (normalizedFrontendOrigin && normalizedApiBaseUrl === normalizedFrontendOrigin) {
     throw new Error(
       'Configuracao invalida: VITE_API_BASE_URL aponta para o mesmo dominio do frontend. Defina a URL do backend (ex: Render).',
     );
@@ -29,10 +26,7 @@ if (import.meta.env.PROD && normalizedApiBaseUrl) {
     throw new Error(
       'Configuracao invalida: VITE_API_BASE_URL nao pode apontar para equilibra-frontend.vercel.app. Use a URL publica do backend.',
     );
-  }
-
-  // Exige HTTPS em producao — previne MITM e redirect para servidor do atacante (F5-A3)
-  if (!normalizedApiBaseUrl.startsWith('https://')) {
+  }  if (!normalizedApiBaseUrl.startsWith('https://')) {
     throw new Error(
       'Configuracao invalida: VITE_API_BASE_URL deve usar HTTPS em producao. URL atual: ' + normalizedApiBaseUrl,
     );

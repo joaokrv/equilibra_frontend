@@ -71,8 +71,6 @@ export const CartoesPage = () => {
   const [valorPagamento, setValorPagamento] = useState('');
   const [contaPagamentoId, setContaPagamentoId] = useState('');
   const [cartaoParaDeletar, setCartaoParaDeletar] = useState<{ id: number; nome: string } | null>(null);
-
-  // Form novo cartão
   const [nome, setNome] = useState('');
   const [limite, setLimite] = useState('');
   const [diaFechamento, setDiaFechamento] = useState('');
@@ -355,7 +353,6 @@ export const CartoesPage = () => {
                                   onClick={() => {
                                     setModalPagar(f);
                                     setValorPagamento(String(f.valorRestante ?? 0));
-                                    // Pré-selecionar conta vinculada ao cartão (se existir)
                                     if (cartao.contaId) setContaPagamentoId(String(cartao.contaId));
                                   }}
                                   className="text-[10px] font-bold text-primary hover:text-primary/80 transition-colors bg-primary/10 px-2 py-1 rounded-lg"

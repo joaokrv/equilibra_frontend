@@ -23,6 +23,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { t } from '../../lib/i18n';
 import logo from '../../assets/logo-equilibra.png';
 import apiClient from '../../lib/axios';
+import { ServerStatusBadge } from '../ui/ServerStatusBadge';
 
 interface SidebarItemProps {
   icon: React.ElementType;
@@ -88,12 +89,9 @@ export const Sidebar = () => {
     : menuItems;
 
   const handleLogout = () => {
-    // UI responde imediato — logout local primeiro (P1-6)
     queryClient.clear();
     logout();
-    // Backend fire-and-forget: invalida sessão + limpa cookie HttpOnly (G5-A1)
     apiClient.post('/api/auth/logout').catch(() => {
-      // Silencioso — sessão local já encerrada
     });
   };
 
@@ -140,6 +138,10 @@ export const Sidebar = () => {
             />
           ))}
         </nav>
+
+        <div className={`px-4 mb-3 flex ${isOpen ? 'justify-start' : 'justify-center'}`}>
+          <ServerStatusBadge showLabel={isOpen} />
+        </div>
 
         <div className="p-3 border-t border-white/5">
           <div
@@ -195,6 +197,10 @@ export const Sidebar = () => {
               />
             ))}
           </nav>
+
+          <div className="px-4 mb-3 flex justify-start">
+            <ServerStatusBadge showLabel={true} />
+          </div>
 
           <div className="p-3 border-t border-white/5">
             <div

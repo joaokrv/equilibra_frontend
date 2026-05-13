@@ -8,9 +8,6 @@ import { ToastContainer } from './components/ui/Toast'
 import { API_BASE_URL } from './lib/apiBaseUrl'
 import './index.css'
 import App from './App.tsx'
-
-// Configuração da API gerada pelo Swagger
-// Em produção, usa VITE_API_BASE_URL (Vercel). Em dev, cai para proxy local.
 OpenAPI.BASE = API_BASE_URL
 OpenAPI.WITH_CREDENTIALS = true
 OpenAPI.TOKEN = async () => {

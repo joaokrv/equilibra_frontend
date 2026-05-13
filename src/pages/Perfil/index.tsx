@@ -52,26 +52,17 @@ export function PerfilPage() {
 
   useEffect(() => {
     setIdioma(language);
-  }, [language]);
-
-  // Countdown de reenvio de código
-  useEffect(() => {
+  }, [language]);  useEffect(() => {
     if (cooldown <= 0) return;
     const timer = setInterval(() => {
       setCooldown(prev => Math.max(0, prev - 1));
     }, 1000);
     return () => clearInterval(timer);
-  }, [cooldown]);
-
-  // Query para buscar Balanço Geral
-  const { data: resumo, isLoading: isLoadingResumo } = useQuery({
+  }, [cooldown]);  const { data: resumo, isLoading: isLoadingResumo } = useQuery({
     queryKey: ['perfil-resumo'],
     queryFn: () => PerfilService.obterResumoFinanceiro(),
     enabled: !!user,
-  });
-
-  // Mutação para atualizar perfil (Texto)
-  const updatePerfilMutation = useMutation({
+  });  const updatePerfilMutation = useMutation({
     mutationFn: (data: UsuarioAtualizacaoRequestDTO) =>
       PerfilService.atualizarPerfil(data),
     onSuccess: (updatedUser) => {
@@ -81,14 +72,9 @@ export function PerfilPage() {
     onError: (error: unknown) => {
       toast.error(getApiErrorMessage(error, tr('Nao foi possivel salvar seu perfil agora. Verifique os dados e tente novamente.', 'Could not save your profile right now. Check your data and try again.')));
     }
-  });
-
-  // Mutação para upload de foto
-  const uploadFotoMutation = useMutation({
+  });  const uploadFotoMutation = useMutation({
     mutationFn: (file: Blob) => PerfilService.atualizarFoto({ file }),
-    onSuccess: () => {
-      // Recarregar dados do perfil para pegar a nova fotoBase64
-      PerfilService.obterPerfil().then(updatedUser => {
+    onSuccess: () => {      PerfilService.obterPerfil().then(updatedUser => {
         updateProfile(updatedUser);
         toast.success(tr('Foto de perfil atualizada!', 'Profile photo updated!'), 3000);
       });
@@ -96,10 +82,7 @@ export function PerfilPage() {
     onError: (error: unknown) => {
       toast.error(getApiErrorMessage(error, tr('Nao foi possivel enviar sua imagem de perfil. Tente novamente com outra imagem.', 'Could not upload your profile image. Try again with another image.')));
     }
-  });
-
-  // Mutação para ativação de conta
-  const ativarContaMutation = useMutation({
+  });  const ativarContaMutation = useMutation({
     mutationFn: (codigoAtivacao: string) => AutenticacaoService.verificarEmail({
       email: user?.email || '',
       codigo: codigoAtivacao
@@ -112,10 +95,7 @@ export function PerfilPage() {
     onError: (error: unknown) => {
       toast.error(getApiErrorMessage(error, tr('Codigo invalido ou expirado. Confira o e-mail e tente novamente.', 'Invalid or expired code. Check your email and try again.')));
     }
-  });
-
-  // Mutação para reenvio de código
-  const reenviarCodigoMutation = useMutation({
+  });  const reenviarCodigoMutation = useMutation({
     mutationFn: () => AutenticacaoService.reenviarCodigo({
       email: user?.email || ''
     }),

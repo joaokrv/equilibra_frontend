@@ -66,8 +66,6 @@ export function OtpModal({ isOpen, onClose, registroId, email, onSuccess }: OtpM
   const [lockoutTimeLeft, setLockoutTimeLeft] = useState<number>(0);
   const [canResend, setCanResend] = useState(false);
   const [otpStatus, setOtpStatus] = useState<OtpStatusResponseDTO | undefined>(undefined);
-
-  // Consulta o status atual do OTP (tentativas, bloqueios, timers)
   const { data: queryStatus, refetch } = useQuery({
     queryKey: ['otp-status', registroId],
     queryFn: () => AutenticacaoService.getOtpStatus(registroId),
@@ -85,8 +83,6 @@ export function OtpModal({ isOpen, onClose, registroId, email, onSuccess }: OtpM
     setOtpStatus(statusExtraido);
     return true;
   };
-
-  // Mutação para verificar o código
   const verifyMutation = useMutation({
     mutationFn: (code: string) => AutenticacaoService.verificarEmail({
       email,
@@ -104,8 +100,6 @@ export function OtpModal({ isOpen, onClose, registroId, email, onSuccess }: OtpM
       toast.error(getApiErrorMessage(error, tr('Código inválido ou expirado.', 'Invalid or expired code.')));
     }
   });
-
-  // Mutação para reenvio
   const resendMutation = useMutation({
     mutationFn: () => AutenticacaoService.reenviarCodigo({
       email,
@@ -124,8 +118,6 @@ export function OtpModal({ isOpen, onClose, registroId, email, onSuccess }: OtpM
       toast.error(getApiErrorMessage(error, tr('Não foi possível reenviar o código agora.', 'Could not resend the code now.')));
     }
   });
-
-  // Sincroniza o estado inicial do backend e limpa dados locais ao abrir/fechar o modal
   useEffect(() => {
     if (!isOpen) {
       setCodigo('');
@@ -145,22 +137,16 @@ export function OtpModal({ isOpen, onClose, registroId, email, onSuccess }: OtpM
       setOtpStatus(queryStatus);
     }
   }, [queryStatus]);
-
-  // Gerenciamento dos timers (Countdown)
   useEffect(() => {
     if (!otpStatus) return;
 
     const updateTimers = () => {
       const agora = new Date().getTime();
-      
-      // Timer de expiração do registro
       if (otpStatus.expiraEm) {
         const expira = new Date(otpStatus.expiraEm).getTime();
         const diff = Math.max(0, Math.floor((expira - agora) / 1000));
         setTimeLeft(diff);
       }
-
-      // Timer de bloqueio (Lockout)
       if (otpStatus.bloqueadoAte) {
         const bloqueio = new Date(otpStatus.bloqueadoAte).getTime();
         const diffLock = Math.max(0, Math.floor((bloqueio - agora) / 1000));
@@ -168,8 +154,6 @@ export function OtpModal({ isOpen, onClose, registroId, email, onSuccess }: OtpM
       } else {
         setLockoutTimeLeft(0);
       }
-
-      // Timer de reenvio
       if (otpStatus.proximoReenvioEm) {
         const reenvio = new Date(otpStatus.proximoReenvioEm).getTime();
         setCanResend(agora >= reenvio);
