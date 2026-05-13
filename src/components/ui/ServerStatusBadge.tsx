@@ -61,7 +61,13 @@ type HealthStatus = 'idle' | 'checking' | 'online' | 'offline';
 
 const HEALTH_TIMEOUT_MS = 8_000;
 
-export function ServerStatusBadge({ showLabel = true }: { showLabel?: boolean }) {
+export function ServerStatusBadge({ 
+  showLabel = true,
+  align = 'center'
+}: { 
+  showLabel?: boolean;
+  align?: 'center' | 'left' | 'right';
+}) {
   const [status, setStatus] = useState<HealthStatus>('idle');
   const lastCheckedAt = useRef<number | null>(null);
 
@@ -98,6 +104,18 @@ export function ServerStatusBadge({ showLabel = true }: { showLabel?: boolean })
 
   const cfg = statusConfig[status];
 
+  const alignmentClasses = {
+    center: 'left-1/2 -translate-x-1/2',
+    left: 'left-0',
+    right: 'right-0'
+  }[align];
+
+  const arrowAlignmentClasses = {
+    center: 'left-1/2 -translate-x-1/2',
+    left: 'left-6 translate-x-0',
+    right: 'right-6 translate-x-0'
+  }[align];
+
   return (
     <div className="relative group inline-flex items-center justify-center">
       <button
@@ -116,7 +134,14 @@ export function ServerStatusBadge({ showLabel = true }: { showLabel?: boolean })
       </button>
 
       {/* Tooltip Card */}
-      <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-3 w-[300px] sm:w-[350px] p-6 bg-card border border-border rounded-2xl shadow-2xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-300 z-50">
+      <div className={`
+        absolute bottom-full mb-3 z-50
+        w-[calc(100vw-3rem)] sm:w-[350px] 
+        p-6 bg-card border border-border rounded-2xl shadow-2xl 
+        opacity-0 invisible group-hover:opacity-100 group-hover:visible 
+        transition-all duration-300 
+        ${alignmentClasses}
+      `}>
         <h4 className="font-bold text-foreground mb-3 text-base text-center">Sobre nossas ferramentas</h4>
         
         {cfg.info && (
@@ -163,7 +188,7 @@ export function ServerStatusBadge({ showLabel = true }: { showLabel?: boolean })
         </div>
         
         {/* Seta do Tooltip */}
-        <div className="absolute -bottom-1.5 left-1/2 -translate-x-1/2 w-3 h-3 bg-card border-b border-r border-border rotate-45" />
+        <div className={`absolute -bottom-1.5 w-3 h-3 bg-card border-b border-r border-border rotate-45 ${arrowAlignmentClasses}`} />
       </div>
     </div>
   );

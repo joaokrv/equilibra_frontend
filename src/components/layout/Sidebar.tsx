@@ -140,7 +140,7 @@ export const Sidebar = () => {
         </nav>
 
         <div className={`px-4 mb-3 flex ${isOpen ? 'justify-start' : 'justify-center'}`}>
-          <ServerStatusBadge showLabel={isOpen} />
+          <ServerStatusBadge showLabel={isOpen} align={isOpen ? 'left' : 'center'} />
         </div>
 
         <div className="p-3 border-t border-white/5">
@@ -199,7 +199,7 @@ export const Sidebar = () => {
           </nav>
 
           <div className="px-4 mb-3 flex justify-start">
-            <ServerStatusBadge showLabel={true} />
+            <ServerStatusBadge showLabel={true} align="left" />
           </div>
 
           <div className="p-3 border-t border-white/5">
