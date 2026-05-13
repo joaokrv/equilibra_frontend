@@ -138,7 +138,7 @@ export function ServerStatusBadge({
         absolute bottom-full mb-3 z-50
         w-[calc(100vw-3rem)] sm:w-[350px] 
         p-6 bg-card border border-border rounded-2xl shadow-2xl 
-        opacity-0 invisible group-hover:opacity-100 group-hover:visible 
+        opacity-0 invisible group-hover:opacity-100 group-hover:visible group-focus-within:opacity-100 group-focus-within:visible
         transition-all duration-300 
         ${alignmentClasses}
       `}>
