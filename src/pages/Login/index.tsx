@@ -107,8 +107,8 @@ export function LoginPage() {
         />
         
         <h1 className="text-3xl sm:text-4xl font-bold text-gradient mb-2 tracking-tighter">Equilibra</h1>
-        <p className="text-muted-foreground mb-6 sm:mb-10 text-center text-sm font-medium">
-          {tr('Seu controle financeiro com estética e precisão.', 'Your financial control with style and precision.')}
+        <p className="text-muted-foreground mb-6 sm:mb-10 text-center text-sm font-medium px-4 leading-relaxed max-w-sm">
+          {tr('Equilibre suas contas com a simplicidade que você sempre quis e a clareza que suas metas precisam.', 'Balance your accounts with the simplicity you\'ve always wanted and the clarity your goals need.')}
         </p>
 
         <form onSubmit={handleSubmit(onSubmit)} className="w-full space-y-5">
