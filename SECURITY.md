@@ -8,8 +8,9 @@ Apenas a branch `main` recebe correções de segurança.
 
 Se você descobrir uma vulnerabilidade de segurança no Equilibra Frontend, **NÃO abra uma issue pública**. Use um dos canais privados abaixo:
 
-1. **GitHub Security Advisory** (preferencial): [Reportar uma vulnerabilidade](https://www.linkedin.com/in/joaokrv)
-2. **E-mail direto:** `joaovictooroc@gmail.com`
+1. **E-mail:** `joaovictooroc@gmail.com`
+2. **LinkedIn:** [linkedin.com/in/joaokrv](https://www.linkedin.com/in/joaokrv)
+3. **Instagram:** [@joaokrv](https://www.instagram.com/joaokrv)
 
 ### Informações úteis ao reportar
 
@@ -23,7 +24,6 @@ Se você descobrir uma vulnerabilidade de segurança no Equilibra Frontend, **N�
 - **Confirmação de recebimento:** até 72 horas
 - **Avaliação inicial e severidade (CVSS):** até 7 dias
 - **Correção e disclosure coordenado:** prazo combinado conforme severidade
-- **Crédito público** ao reporter no advisory (se desejado)
 
 ### Escopo
 
