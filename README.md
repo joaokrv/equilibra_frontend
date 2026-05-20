@@ -215,6 +215,36 @@ A aplicação está em produção utilizando plataforma de hospedagem estática 
 
 ---
 
+## Próximos Passos
+
+### 🤖 Bot WhatsApp com IA Integrada
+
+A próxima evolução do Equilibra é a **integração com WhatsApp via Bot inteligente**, permitindo ao usuário registrar movimentações sem abrir o app web.
+
+**Visão:**
+
+- Registrar **receitas**, **despesas** e **investimentos** por mensagem natural no WhatsApp
+- IA interpreta a intenção do usuário (ex: *"gastei 35 reais no almoço hoje no Nubank"*) e cria a transação na categoria correta
+- Consultar **saldo**, **fatura aberta** e **limite disponível** por chat
+- Alertas proativos: vencimento de fatura, meta atingida, gasto fora do padrão
+- Sincronização total: toda movimentação criada via WhatsApp aparece imediatamente no Dashboard web
+
+**Impacto no frontend:**
+
+- Nova seção no Perfil para vincular número de WhatsApp e gerenciar preferências de notificação
+- Indicador no Dashboard de movimentações criadas via bot (origem `WHATSAPP`)
+- Sem mudanças disruptivas no fluxo atual — o web continua sendo a interface primária
+
+> Status: **planejamento**. A interface web já consome a API REST que será compartilhada com o bot.
+
+---
+
+## Reportando Vulnerabilidades
+
+Consulte [`SECURITY.md`](SECURITY.md) para o procedimento de disclosure responsável.
+
+---
+
 ## Status do Projeto
 
 ### Progresso geral: ~98%
