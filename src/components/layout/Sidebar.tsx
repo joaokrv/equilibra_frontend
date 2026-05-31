@@ -67,10 +67,14 @@ const menuItems = [
   { icon: UserCircle, key: 'menuProfile', to: '/perfil' },
 ] as const;
 
-export const Sidebar = () => {
+interface SidebarProps {
+  mobileOpen: boolean;
+  onMobileClose: () => void;
+}
+
+export const Sidebar = ({ mobileOpen, onMobileClose }: SidebarProps) => {
   const language = useI18nStore((state) => state.language);
   const isTutorialCompleted = useTutorialStore((state) => state.isCompleted);
-  const [isMobileOpen, setIsMobileOpen] = useState(false);
   const [isOpen, setIsOpen] = useState(() => {
     const saved = localStorage.getItem('sidebar-open');
     return saved !== null ? saved === 'true' : true;
@@ -95,18 +99,10 @@ export const Sidebar = () => {
     });
   };
 
-  const closeMobileSidebar = () => setIsMobileOpen(false);
+  const closeMobileSidebar = onMobileClose;
 
   return (
     <>
-      <button
-        onClick={() => setIsMobileOpen(true)}
-        className="md:hidden fixed left-3 top-3 z-[85] p-2 rounded-lg bg-card/90 border border-white/10 text-muted-foreground"
-        aria-label={t(language, 'expandMenu')}
-      >
-        <Menu size={18} />
-      </button>
-
       <aside className={`
         hidden md:flex h-screen bg-card border-r border-white/5 transition-all duration-300 flex-col pt-6
         ${isOpen ? 'w-64' : 'w-20'}
@@ -120,7 +116,7 @@ export const Sidebar = () => {
           )}
           <button
             onClick={toggleSidebar}
-            className="p-2 hover:bg-white/5 rounded-lg text-muted-foreground hover:text-white transition-colors"
+            className="p-2 hover:bg-white/5 rounded-lg text-muted-foreground hover:text-white transition-colors inline-flex items-center justify-center min-h-11 min-w-11"
             aria-label={isOpen ? t(language, 'collapseMenu') : t(language, 'expandMenu')}
           >
             <Menu size={20} />
@@ -160,16 +156,16 @@ export const Sidebar = () => {
         </div>
       </aside>
 
-      <div className={`md:hidden fixed inset-0 z-[90] ${isMobileOpen ? 'pointer-events-auto' : 'pointer-events-none'}`}>
+      <div className={`md:hidden fixed inset-0 z-[90] ${mobileOpen ? 'pointer-events-auto' : 'pointer-events-none'}`}>
         <button
           onClick={closeMobileSidebar}
-          className={`absolute inset-0 bg-black/60 backdrop-blur-[1px] transition-opacity ${isMobileOpen ? 'opacity-100' : 'opacity-0'}`}
+          className={`absolute inset-0 bg-black/60 backdrop-blur-[1px] transition-opacity ${mobileOpen ? 'opacity-100' : 'opacity-0'}`}
           aria-label={t(language, 'collapseMenu')}
         />
 
         <aside className={`
-          absolute left-0 top-0 h-dvh w-[82%] max-w-[320px] bg-card border-r border-white/10 flex flex-col pt-5
-          transition-transform duration-300 ${isMobileOpen ? 'translate-x-0' : '-translate-x-full'}
+          absolute left-0 top-0 h-dvh w-[82%] max-w-[320px] bg-card border-r border-white/10 flex flex-col pt-5 pb-safe
+          transition-transform duration-300 ${mobileOpen ? 'translate-x-0' : '-translate-x-full'}
         `}>
           <div className="flex items-center justify-between px-4 mb-6">
             <NavLink to="/dashboard" className="flex items-center gap-2" onClick={closeMobileSidebar}>
@@ -178,7 +174,7 @@ export const Sidebar = () => {
             </NavLink>
             <button
               onClick={closeMobileSidebar}
-              className="p-2 hover:bg-white/5 rounded-lg text-muted-foreground hover:text-white transition-colors"
+              className="p-2 hover:bg-white/5 rounded-lg text-muted-foreground hover:text-white transition-colors inline-flex items-center justify-center min-h-11 min-w-11"
               aria-label={t(language, 'collapseMenu')}
             >
               <X size={18} />

@@ -95,7 +95,7 @@ export const PatrimonyChart = ({ dados, moeda, periodo, onPeriodoChange }: Patri
             key={option.value}
             type="button"
             onClick={() => onPeriodoChange(option.value)}
-            className={`w-full px-2.5 sm:px-3 py-1.5 text-[10px] sm:text-xs font-bold uppercase tracking-wider rounded-md transition-all ${
+            className={`w-full px-2.5 sm:px-3 py-1.5 text-2xs sm:text-xs font-bold uppercase tracking-wider rounded-md transition-all ${
               periodo === option.value
                 ? 'bg-primary text-primary-foreground'
                 : 'text-muted-foreground hover:text-white'
@@ -133,6 +133,8 @@ export const PatrimonyChart = ({ dados, moeda, periodo, onPeriodoChange }: Patri
               width={72}
             />
             <Tooltip
+              allowEscapeViewBox={{ x: false, y: false }}
+              wrapperStyle={{ zIndex: 20 }}
               formatter={(value) => {
                 const numericValue = Array.isArray(value)
                   ? Number(value[0] || 0)

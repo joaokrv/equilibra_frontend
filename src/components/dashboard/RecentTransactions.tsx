@@ -50,7 +50,7 @@ export const RecentTransactions = ({ transacoesList }: RecentTransactionsProps) 
               </div>
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-bold text-white mb-0.5 truncate">{transacao.descricao}</p>
-                <p className="text-[11px] uppercase text-muted-foreground tracking-[0.12em] font-bold truncate">
+                <p className="text-2xs uppercase text-muted-foreground tracking-[0.12em] font-bold truncate">
                   {transacao.nomeCategoria || translate(language, 'uncategorized')} •{' '}
                   {format(new Date(transacao.data!), 'dd MMM', { locale: dateLocale })}
                 </p>

@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Wallet, Plus, Trash2, X, Loader2, Pencil, Search } from 'lucide-react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { MainLayout } from '../../components/layout/MainLayout';
+import { ErrorState } from '../../components/ui/StateViews';
 import { DeleteConfirmationModal } from '../../components/modals/DeleteConfirmationModal';
 import { ContasService } from '../../api/services/ContasService';
 import { ContaResponseDTO } from '../../api/models/ContaResponseDTO';
@@ -35,7 +36,7 @@ export const ContasPage = () => {
     setBusca(buscaParam);
   }, [buscaParam]);
 
-  const { data: contas = [], isLoading } = useQuery({
+  const { data: contas = [], isLoading, isError, refetch } = useQuery({
     queryKey: ['contas'],
     queryFn: () => ContasService.listarContas(),
   });
@@ -232,7 +233,7 @@ export const ContasPage = () => {
         </div>
 
         <div className="glass rounded-2xl p-6">
-          <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Saldo Total (Contas + Investimentos)', 'Total Balance (Accounts + Investments)')}</p>
+          <p className="text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Saldo Total (Contas + Investimentos)', 'Total Balance (Accounts + Investments)')}</p>
           <p className={`text-2xl sm:text-3xl font-bold mt-1 ${saldoTotal >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
             {formatarMoeda(saldoTotal, moeda)}
           </p>
@@ -241,6 +242,13 @@ export const ContasPage = () => {
 
         {isLoading ? (
           <div className="flex items-center justify-center h-48"><Loader2 className="animate-spin text-primary" size={32} /></div>
+        ) : isError ? (
+          <ErrorState
+            title={tr('Não foi possível carregar as contas', 'Could not load accounts')}
+            description={tr('Verifique sua conexão e tente novamente.', 'Check your connection and try again.')}
+            retryLabel={tr('Tentar novamente', 'Try again')}
+            onRetry={() => refetch()}
+          />
         ) : contasFiltradas.length === 0 ? (
           <div className="glass rounded-2xl p-6 sm:p-10 lg:p-12 flex flex-col items-center justify-center gap-4 text-center">
             <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center text-primary/50"><Wallet size={32} /></div>
@@ -293,17 +301,17 @@ export const ContasPage = () => {
               {!editando && (
                 <>
                   <div className="space-y-1.5">
-                    <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Nome', 'Name')}</label>
+                    <label className="block text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Nome', 'Name')}</label>
                     <input type="text" value={nome} onChange={(e) => setNome(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleSalvar()} placeholder={tr('Ex: Nubank, Itaú...', 'e.g. Nubank, Chase...')} maxLength={50} autoFocus className="w-full bg-secondary/30 border border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium placeholder:text-muted-foreground/30" />
                   </div>
 
                   <div className="space-y-1.5">
-                    <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Investimento Inicial (Opcional)', 'Initial Investment (Optional)')}</label>
+                    <label className="block text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Investimento Inicial (Opcional)', 'Initial Investment (Optional)')}</label>
                     <input type="number" step="0.01" value={investimentoInicial} onChange={(e) => setInvestimentoInicial(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleSalvar()} placeholder="0.00" className="w-full bg-secondary/30 border border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium placeholder:text-muted-foreground/30" />
-                    <p className="text-[10px] text-muted-foreground/80 leading-relaxed">
+                    <p className="text-2xs text-muted-foreground/80 leading-relaxed">
                       {tr('Não precisa somar manualmente: informe o saldo em conta e o investimento inicial separados. O sistema envia o total e debita automaticamente o valor investido da conta.', 'No need to add manually: enter account balance and initial investment separately. The system sends the total and automatically debits the invested amount from the account.')}
                     </p>
-                    <p className="text-[10px] text-primary leading-relaxed font-semibold">
+                    <p className="text-2xs text-primary leading-relaxed font-semibold">
                       {tr('Patrimônio inicial esperado (conta + investimento):', 'Expected initial net worth (account + investment):')} {formatarMoeda(saldoTotalInicial, moeda)}
                     </p>
                   </div>
@@ -322,7 +330,7 @@ export const ContasPage = () => {
                 </>
               )}
               <div className="space-y-1.5">
-                <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">{editando ? tr('Novo Saldo', 'New Balance') : tr('Saldo em Conta (sem investimentos)', 'Account Balance (without investments)')}</label>
+                <label className="block text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">{editando ? tr('Novo Saldo', 'New Balance') : tr('Saldo em Conta (sem investimentos)', 'Account Balance (without investments)')}</label>
                 <input type="number" step="0.01" value={saldo} onChange={(e) => setSaldo(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleSalvar()} placeholder="0.00" autoFocus={!!editando} className="w-full bg-secondary/30 border border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium placeholder:text-muted-foreground/30" />
               </div>
             </div>

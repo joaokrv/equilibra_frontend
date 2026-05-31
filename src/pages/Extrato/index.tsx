@@ -5,9 +5,11 @@ import { useSearchParams } from 'react-router-dom';
 import { MainLayout } from '../../components/layout/MainLayout';
 import { SortIcon } from '../../components/icons/SortIcon';
 import { TransacoesService } from '../../api/services/TransacoesService';
+import { transacoesApi } from '../../lib/transacoesApi';
 import { TransacaoResponseDTO } from '../../api/models/TransacaoResponseDTO';
 import { TransactionModal } from '../../components/modals/TransactionModal';
 import { DeleteConfirmationModal } from '../../components/modals/DeleteConfirmationModal';
+import { ErrorState } from '../../components/ui/StateViews';
 import { ReportModal } from '../../components/modals/ReportModal';
 import { formatarMoeda } from '../../lib/formatters';
 import { METODO_PAGAMENTO_LABELS, STATUS_TRANSACAO_LABELS } from '../../lib/constants';
@@ -72,13 +74,13 @@ export const ExtratoPage = ({ filtroTipo, titulo, descricao }: ExtratoPageProps)
   const [modalEditarAberto, setModalEditarAberto] = useState(false);
   const [transacaoParaDeletar, setTransacaoParaDeletar] = useState<TransacaoResponseDTO | undefined>(undefined);
 
-  const { data: transacoes = [], isLoading } = useQuery({
+  const { data: transacoes = [], isLoading, isError, refetch } = useQuery({
     queryKey: ['transacoes', ano, mes],
     queryFn: () => TransacoesService.listarMensal(ano, mes),
   });
 
   const deletarMutation = useMutation({
-    mutationFn: (id: number) => TransacoesService.deletarTransacao(id),
+    mutationFn: ({ id, grupo }: { id: number; grupo: boolean }) => transacoesApi.excluir(id, grupo),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['transacoes'] });
       queryClient.invalidateQueries({ queryKey: ['accounts'] });
@@ -91,8 +93,8 @@ export const ExtratoPage = ({ filtroTipo, titulo, descricao }: ExtratoPageProps)
     },
   });
 
-  const lista = Array.isArray(transacoes) ? transacoes : (transacoes as any)?.content ?? [];
-  const totalElements: number = (transacoes as any)?.totalElements ?? 0;
+  const lista = transacoes;
+  const totalElements: number = transacoes.length;
   const listaSemTransferencias = lista.filter((t: TransacaoResponseDTO) => !t.isTransferencia);
   const listaBase = filtroTipo
     ? listaSemTransferencias.filter((t: TransacaoResponseDTO) => t.tipo === filtroTipo)
@@ -223,7 +225,7 @@ export const ExtratoPage = ({ filtroTipo, titulo, descricao }: ExtratoPageProps)
           {/* Relatório (Fixo na direita) */}
           <button 
             onClick={() => setModalRelatorioAberto(true)}
-            className="w-full sm:w-auto bg-primary/10 border-transparent text-primary hover:bg-primary/20 transition-all font-bold text-[11px] uppercase tracking-wider px-6 rounded-xl flex flex-row justify-center items-center gap-2 flex-shrink-0 h-[44px]"
+            className="w-full sm:w-auto bg-primary/10 border-transparent text-primary hover:bg-primary/20 transition-all font-bold text-2xs uppercase tracking-wider px-6 rounded-xl flex flex-row justify-center items-center gap-2 flex-shrink-0 h-[44px]"
           >
             <FileDown size={16} /> 
             {tr('Relatório', 'Report')}
@@ -234,15 +236,15 @@ export const ExtratoPage = ({ filtroTipo, titulo, descricao }: ExtratoPageProps)
         {!filtroTipo && (
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="glass rounded-2xl p-4">
-              <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Receitas', 'Income')}</p>
+              <p className="text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Receitas', 'Income')}</p>
               <p className="text-xl font-bold text-emerald-400 mt-1">{formatarMoeda(totalReceitas, moeda)}</p>
             </div>
             <div className="glass rounded-2xl p-4">
-              <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Despesas', 'Expenses')}</p>
+              <p className="text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Despesas', 'Expenses')}</p>
               <p className="text-xl font-bold text-rose-400 mt-1">{formatarMoeda(totalDespesas, moeda)}</p>
             </div>
             <div className="glass rounded-2xl p-4">
-              <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Balanço', 'Balance')}</p>
+              <p className="text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Balanço', 'Balance')}</p>
               <p className={`text-xl font-bold mt-1 ${totalReceitas - totalDespesas >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
                 {formatarMoeda(totalReceitas - totalDespesas, moeda)}
               </p>
@@ -253,7 +255,7 @@ export const ExtratoPage = ({ filtroTipo, titulo, descricao }: ExtratoPageProps)
         {filtroTipo && (
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="glass rounded-2xl p-4">
-              <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">
+              <p className="text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">
                 {tr('Total de', 'Total')} {filtroTipo === TransacaoResponseDTO.tipo.RECEITA ? tr('Receitas', 'Income') : tr('Despesas', 'Expenses')}
               </p>
               <p className={`text-xl sm:text-2xl font-bold mt-1 ${filtroTipo === TransacaoResponseDTO.tipo.RECEITA ? 'text-emerald-400' : 'text-rose-400'}`}>
@@ -267,7 +269,7 @@ export const ExtratoPage = ({ filtroTipo, titulo, descricao }: ExtratoPageProps)
             </div>
             
             <div className="glass rounded-2xl p-4">
-              <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">
+              <p className="text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">
                 {filtroTipo === TransacaoResponseDTO.tipo.RECEITA ? tr('Recebido', 'Received') : tr('Pago', 'Paid')}
               </p>
               <p className={`text-xl sm:text-2xl font-bold mt-1 ${filtroTipo === TransacaoResponseDTO.tipo.RECEITA ? 'text-emerald-400' : 'text-rose-400'}`}>
@@ -276,7 +278,7 @@ export const ExtratoPage = ({ filtroTipo, titulo, descricao }: ExtratoPageProps)
             </div>
             
             <div className="glass rounded-2xl p-4">
-              <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Pendente', 'Pending')}</p>
+              <p className="text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Pendente', 'Pending')}</p>
               <p className="text-xl sm:text-2xl font-bold mt-1 text-amber-400">
                 {formatarMoeda(totalPendentes, moeda)}
               </p>
@@ -287,6 +289,13 @@ export const ExtratoPage = ({ filtroTipo, titulo, descricao }: ExtratoPageProps)
         {/* Lista */}
         {isLoading ? (
           <div className="flex items-center justify-center h-48"><Loader2 className="animate-spin text-primary" size={32} /></div>
+        ) : isError ? (
+          <ErrorState
+            title={tr('Não foi possível carregar as transações', 'Could not load transactions')}
+            description={tr('Verifique sua conexão e tente novamente.', 'Check your connection and try again.')}
+            retryLabel={tr('Tentar novamente', 'Try again')}
+            onRetry={() => refetch()}
+          />
         ) : filtradasEOrdenadas.length === 0 ? (
           <div className="glass rounded-2xl p-6 sm:p-10 lg:p-12 flex flex-col items-center justify-center gap-4 text-center">
             <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center text-primary/50"><Receipt size={32} /></div>
@@ -301,7 +310,7 @@ export const ExtratoPage = ({ filtroTipo, titulo, descricao }: ExtratoPageProps)
               <div className="w-full xl:min-w-max">
                 
                 {/* Cabeçalho de Organização Expandida com Ações no Fim (Grid limpo e dividido com exatidão) */}
-                <div className="hidden xl:grid xl:grid-cols-[40px_minmax(120px,1fr)_90px_100px_80px_70px_100px_70px] items-center gap-4 px-4 sm:px-6 py-4 bg-white/5 border-b border-white/5 select-none font-bold text-[10px] uppercase text-muted-foreground tracking-widest z-10 w-full">
+                <div className="hidden xl:grid xl:grid-cols-[40px_minmax(120px,1fr)_90px_100px_80px_70px_100px_70px] items-center gap-4 px-4 sm:px-6 py-4 bg-white/5 border-b border-white/5 select-none font-bold text-2xs uppercase text-muted-foreground tracking-widest z-10 w-full">
                    
                    <div></div> {/* 40px Icon Spacer */}
                    
@@ -364,17 +373,22 @@ export const ExtratoPage = ({ filtroTipo, titulo, descricao }: ExtratoPageProps)
                       
                       {/* Nome da Transação e Tag Fixa */}
                       <div className="flex flex-col justify-center min-w-0 pr-1 xl:pr-2">
-                          <p className="text-[14px] xl:text-[15px] font-bold text-white truncate">{t.descricao}</p>
+                          <p className="text-sm xl:text-base font-bold text-white truncate">{t.descricao}</p>
                           {t.isRecorrente && (
-                            <span className="block mt-1 sm:mt-1 xl:mt-0 max-w-fit items-center gap-1 text-[9px] font-bold text-violet-400 bg-violet-500/10 px-2 py-0.5 rounded-md truncate">
+                            <span className="block mt-1 sm:mt-1 xl:mt-0 max-w-fit items-center gap-1 text-2xs font-bold text-violet-400 bg-violet-500/10 px-2 py-0.5 rounded-md truncate">
                               <Repeat size={10} className="inline mr-1 mb-0.5"/> {tr('Fixa', 'Recurring')}
+                            </span>
+                          )}
+                          {(t.totalParcelas ?? 0) > 1 && (
+                            <span className="block mt-1 xl:mt-0 max-w-fit items-center text-2xs font-bold text-sky-400 bg-sky-500/10 px-2 py-0.5 rounded-md truncate">
+                              {tr('Parcela', 'Installment')} {t.numeroParcela}/{t.totalParcelas}
                             </span>
                           )}
                       </div>
 
                       {/* Categoria */}
                       <div className="hidden xl:flex flex-col items-start gap-1 justify-center min-w-0 pr-1 xl:pr-2">
-                          <span className="text-[10px] text-muted-foreground bg-white/5 px-2 py-1 rounded w-full truncate uppercase tracking-wider font-semibold">
+                          <span className="text-2xs text-muted-foreground bg-white/5 px-2 py-1 rounded w-full truncate uppercase tracking-wider font-semibold">
                               {t.nomeCategoria || 'Sem cat'}
                           </span>
                       </div>
@@ -382,23 +396,23 @@ export const ExtratoPage = ({ filtroTipo, titulo, descricao }: ExtratoPageProps)
                       {/* Método */}
                       <div className="hidden xl:flex flex-col items-start gap-1 justify-center min-w-0 pr-1 xl:pr-2">
                           {t.metodoPagamento ? (
-                             <span className="text-[10px] text-muted-foreground/80 font-semibold px-1 truncate w-full">
+                             <span className="text-2xs text-muted-foreground/80 font-semibold px-1 truncate w-full">
                                {metodoLabel(t.metodoPagamento)}
                              </span>
                           ) : (
-                             <span className="text-[10px] text-muted-foreground/30 px-1">—</span>
+                             <span className="text-2xs text-muted-foreground/30 px-1">—</span>
                           )}
                       </div>
 
                           {/* Data (Substituído lugar com Status) */}
-                          <div className="hidden xl:flex justify-start text-[12px] text-muted-foreground font-medium min-w-0 truncate">
+                          <div className="hidden xl:flex justify-start text-xs text-muted-foreground font-medium min-w-0 truncate">
                             {t.data ? new Date(t.data + 'T12:00:00').toLocaleDateString(language, { day: '2-digit', month: '2-digit', year: 'numeric' }) : ''}
                           </div>
 
                       {/* Status */}
                       <div className="hidden xl:flex justify-start">
                           {t.status && (
-                            <span className={`text-[9px] uppercase tracking-wider font-bold px-1.5 xl:px-2 py-1 rounded w-[70px] text-center truncate ${
+                            <span className={`text-2xs uppercase tracking-wider font-bold px-1.5 xl:px-2 py-1 rounded w-[70px] text-center truncate ${
                               t.status === TransacaoResponseDTO.status.PAGO ? 'bg-emerald-500/10 text-emerald-400' : 'bg-amber-500/10 text-amber-400'
                             }`}>
                               {statusLabel(t.status)}
@@ -408,7 +422,7 @@ export const ExtratoPage = ({ filtroTipo, titulo, descricao }: ExtratoPageProps)
 
                       {/* Valor Fixo no Layout Grid */}
                       <div className="hidden xl:flex justify-end pr-1 xl:pr-3 truncate">
-                        <p className={`text-[14px] xl:text-base font-bold tabular-nums tracking-tight whitespace-nowrap truncate ${t.isTransferencia ? 'text-sky-400' : t.tipo === TransacaoResponseDTO.tipo.RECEITA ? 'text-emerald-400' : 'text-rose-400'}`}>
+                        <p className={`text-sm xl:text-base font-bold tabular-nums tracking-tight whitespace-nowrap truncate ${t.isTransferencia ? 'text-sky-400' : t.tipo === TransacaoResponseDTO.tipo.RECEITA ? 'text-emerald-400' : 'text-rose-400'}`}>
                           {t.isTransferencia ? '' : t.tipo === TransacaoResponseDTO.tipo.RECEITA ? '+' : ''} {formatarMoeda(t.valor ?? 0, moeda)}
                         </p>
                       </div>
@@ -436,22 +450,22 @@ export const ExtratoPage = ({ filtroTipo, titulo, descricao }: ExtratoPageProps)
                           {/* Valores, Categorias e Data resumidos inline para Mobile */}
                           <div className="flex items-center justify-between">
                              <div className="flex items-center gap-2">
-                               <span className="text-[11px] text-muted-foreground bg-white/5 px-2 py-1 rounded inline-flex uppercase tracking-wider font-semibold">
+                               <span className="text-2xs text-muted-foreground bg-white/5 px-2 py-1 rounded inline-flex uppercase tracking-wider font-semibold">
                                    {t.nomeCategoria || 'S/Categoria'}
                                </span>
                                {t.metodoPagamento && (
-                                  <span className="text-[10px] text-muted-foreground/80 font-semibold px-1 max-w-[80px] truncate">
+                                  <span className="text-2xs text-muted-foreground/80 font-semibold px-1 max-w-[80px] truncate">
                                     {metodoLabel(t.metodoPagamento)}
                                   </span>
                                )}
                              </div>
-                             <span className="text-[12px] text-muted-foreground font-medium whitespace-nowrap">
+                             <span className="text-xs text-muted-foreground font-medium whitespace-nowrap">
                                 {t.data ? new Date(t.data + 'T12:00:00').toLocaleDateString(language, { day: '2-digit', month: 'short' }) : ''}
                              </span>
                           </div>
                           <div className="flex items-center justify-between mt-1 pt-1">
                              {t.status && (
-                                <span className={`text-[10px] uppercase tracking-wider font-bold px-2 py-1 rounded ${
+                                <span className={`text-2xs uppercase tracking-wider font-bold px-2 py-1 rounded ${
                                   t.status === TransacaoResponseDTO.status.PAGO ? 'text-emerald-400 bg-emerald-500/10' : 'text-amber-400 bg-amber-500/10'
                                 }`}>
                                   {statusLabel(t.status)}
@@ -501,15 +515,30 @@ export const ExtratoPage = ({ filtroTipo, titulo, descricao }: ExtratoPageProps)
         isOpen={!!transacaoParaDeletar}
         title={tr('Excluir Transação?', 'Delete Transaction?')}
         description={
-          <>
-            {tr('Você está prestes a excluir', 'You are about to delete')} <span className="text-white font-semibold">"{transacaoParaDeletar?.descricao}"</span>.
-            <br />
-            {tr('Esta ação não pode ser desfeita e o impacto no saldo será revertido.', 'This action cannot be undone and the balance impact will be reverted.')}
-          </>
+          (transacaoParaDeletar?.totalParcelas ?? 0) > 1 ? (
+            <>
+              {tr('Esta é a parcela', 'This is installment')}{' '}
+              <span className="text-white font-semibold">{transacaoParaDeletar?.numeroParcela}/{transacaoParaDeletar?.totalParcelas}</span>{' '}
+              {tr('da compra', 'of the purchase')} <span className="text-white font-semibold">"{transacaoParaDeletar?.descricao}"</span>.
+              <br />
+              {tr('Escolha excluir apenas esta parcela ou a compra inteira (todas as parcelas).', 'Choose to delete only this installment or the entire purchase (all installments).')}
+            </>
+          ) : (
+            <>
+              {tr('Você está prestes a excluir', 'You are about to delete')} <span className="text-white font-semibold">"{transacaoParaDeletar?.descricao}"</span>.
+              <br />
+              {tr('Esta ação não pode ser desfeita e o impacto no saldo será revertido.', 'This action cannot be undone and the balance impact will be reverted.')}
+            </>
+          )
         }
-        confirmText={tr('CONFIRMAR', 'CONFIRM')}
+        confirmText={(transacaoParaDeletar?.totalParcelas ?? 0) > 1 ? tr('EXCLUIR ESTA PARCELA', 'DELETE THIS INSTALLMENT') : tr('CONFIRMAR', 'CONFIRM')}
         loadingText={tr('EXCLUINDO...', 'DELETING...')}
         isLoading={deletarMutation.isPending}
+        secondaryActionText={(transacaoParaDeletar?.totalParcelas ?? 0) > 1 ? tr('EXCLUIR A COMPRA INTEIRA', 'DELETE ENTIRE PURCHASE') : undefined}
+        onSecondary={() => {
+          if (!transacaoParaDeletar?.id) return;
+          deletarMutation.mutate({ id: transacaoParaDeletar.id, grupo: true });
+        }}
         onCancel={() => {
           if (!deletarMutation.isPending) {
             setTransacaoParaDeletar(undefined);
@@ -517,7 +546,7 @@ export const ExtratoPage = ({ filtroTipo, titulo, descricao }: ExtratoPageProps)
         }}
         onConfirm={() => {
           if (!transacaoParaDeletar?.id) return;
-          deletarMutation.mutate(transacaoParaDeletar.id);
+          deletarMutation.mutate({ id: transacaoParaDeletar.id, grupo: false });
         }}
       />
     </MainLayout>

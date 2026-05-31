@@ -149,7 +149,7 @@ export function RegisterPage() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             {/* Senha */}
             <div className="space-y-1.5 relative">
-              <label className="block text-[10px] font-bold text-muted-foreground ml-1 uppercase tracking-[0.2em]">{tr('Senha', 'Password')}</label>
+              <label className="block text-2xs font-bold text-muted-foreground ml-1 uppercase tracking-[0.2em]">{tr('Senha', 'Password')}</label>
               <div className="relative">
                 <input 
                   {...register('senha')}
@@ -167,12 +167,12 @@ export function RegisterPage() {
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
-              {errors.senha && <span className="text-[10px] text-destructive font-bold ml-1 uppercase">{errors.senha.message}</span>}
+              {errors.senha && <span className="text-2xs text-destructive font-bold ml-1 uppercase">{errors.senha.message}</span>}
             </div>
 
             {/* Confirmar Senha */}
             <div className="space-y-1.5 relative">
-              <label className="block text-[10px] font-bold text-muted-foreground ml-1 uppercase tracking-[0.2em]">{tr('Confirmar Senha', 'Confirm Password')}</label>
+              <label className="block text-2xs font-bold text-muted-foreground ml-1 uppercase tracking-[0.2em]">{tr('Confirmar Senha', 'Confirm Password')}</label>
               <div className="relative">
                 <input 
                   {...register('confirmSenha')}
@@ -190,7 +190,7 @@ export function RegisterPage() {
                   {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
                 </button>
               </div>
-              {errors.confirmSenha && <span className="text-[10px] text-destructive font-bold ml-1 uppercase">{errors.confirmSenha.message}</span>}
+              {errors.confirmSenha && <span className="text-2xs text-destructive font-bold ml-1 uppercase">{errors.confirmSenha.message}</span>}
             </div>
           </div>
 
@@ -203,7 +203,7 @@ export function RegisterPage() {
                 ) : (
                   <X size={12} className="text-muted-foreground/30" />
                 )}
-                <span className={`text-[10px] font-bold uppercase tracking-tight ${req.met ? 'text-emerald-500/80' : 'text-muted-foreground/50'}`}>
+                <span className={`text-2xs font-bold uppercase tracking-tight ${req.met ? 'text-emerald-500/80' : 'text-muted-foreground/50'}`}>
                   {req.label}
                 </span>
               </div>

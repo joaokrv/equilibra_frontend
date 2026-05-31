@@ -5,8 +5,10 @@ import { CategoryDistribution } from '../components/dashboard/CategoryDistributi
 import { RecentTransactions } from '../components/dashboard/RecentTransactions';
 import { InvestmentComposition } from '../components/dashboard/InvestmentComposition';
 import { useDashboardData } from '../hooks/useDashboardData';
+import { ErrorState } from '../components/ui/StateViews';
 import { Link } from 'react-router-dom';
 import { CircleHelp } from 'lucide-react';
+import { useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
 import { useI18nStore } from '../store/useI18nStore';
 import { useTutorialStore } from '../store/useTutorialStore';
@@ -38,10 +40,13 @@ export const Dashboard = () => {
     receitasPorCategoria,
     evolucaoPatrimonio,
     isLoadingTransactions,
+    isError,
     moeda,
     intervaloAtual,
     intervaloAnterior
   } = useDashboardData(periodoSelecionado, periodoPatrimonio);
+
+  const queryClient = useQueryClient();
 
   const periodOptions: Array<{ value: DashboardPeriodo; label: string }> = [
     { value: '1M', label: t(language, 'period1M') },
@@ -55,6 +60,25 @@ export const Dashboard = () => {
       <MainLayout>
         <div className="flex items-center justify-center min-h-[400px]">
           <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-primary" />
+        </div>
+      </MainLayout>
+    );
+  }
+
+  if (isError) {
+    return (
+      <MainLayout>
+        <div className="flex items-center justify-center min-h-[400px]">
+          <ErrorState
+            title={language === 'en-US' ? 'Could not load the dashboard' : 'Não foi possível carregar o dashboard'}
+            description={language === 'en-US' ? 'Check your connection and try again.' : 'Verifique sua conexão e tente novamente.'}
+            retryLabel={language === 'en-US' ? 'Try again' : 'Tentar novamente'}
+            onRetry={() => {
+              queryClient.invalidateQueries({ queryKey: ['dashboard-summary'] });
+              queryClient.invalidateQueries({ queryKey: ['transactions-period'] });
+              queryClient.invalidateQueries({ queryKey: ['patrimony-evolution'] });
+            }}
+          />
         </div>
       </MainLayout>
     );
@@ -76,7 +100,7 @@ export const Dashboard = () => {
                   key={option.value}
                   type="button"
                   onClick={() => setPeriodoSelecionado(option.value)}
-                  className={`px-3 py-1.5 text-[11px] sm:text-xs font-bold uppercase tracking-wider rounded-md transition-all ${
+                  className={`px-3 py-1.5 text-2xs sm:text-xs font-bold uppercase tracking-wider rounded-md transition-all ${
                     periodoSelecionado === option.value
                       ? 'bg-primary text-primary-foreground'
                       : 'text-muted-foreground hover:text-white'

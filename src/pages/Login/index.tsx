@@ -55,8 +55,8 @@ export function LoginPage() {
     onSuccess: (response) => {
       const user = response.usuario as User | undefined;
 
-      if (response.accessToken && user?.id && user?.nome && user?.email) {
-        setAuth(user, response.accessToken);
+      if (user?.id && user?.nome && user?.email) {
+        setAuth(user);
         toast.success(tr('Bem-vindo de volta ao Equilibra!', 'Welcome back to Equilibra!'));
       } else {
         setError('root', {
@@ -122,7 +122,7 @@ export function LoginPage() {
           />
 
           <div className="space-y-1.5">
-            <label htmlFor="senha" className="block text-[10px] font-bold text-muted-foreground ml-1 uppercase tracking-[0.2em]">{tr('Senha', 'Password')}</label>
+            <label htmlFor="senha" className="block text-2xs font-bold text-muted-foreground ml-1 uppercase tracking-[0.2em]">{tr('Senha', 'Password')}</label>
             <div className="relative">
               <input
                 {...register('senha')}
@@ -141,7 +141,7 @@ export function LoginPage() {
               </button>
             </div>
             {errors.senha && (
-              <span className="text-[10px] text-destructive font-bold ml-1 uppercase animate-in fade-in slide-in-from-top-1">
+              <span className="text-2xs text-destructive font-bold ml-1 uppercase animate-in fade-in slide-in-from-top-1">
                 {errors.senha.message}
               </span>
             )}

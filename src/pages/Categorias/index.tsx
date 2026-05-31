@@ -3,6 +3,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Tag, Plus, Trash2, X, TrendingUp, TrendingDown, Loader2, Pencil, Check, Search } from 'lucide-react';
 import { useSearchParams } from 'react-router-dom';
 import { MainLayout } from '../../components/layout/MainLayout';
+import { ErrorState } from '../../components/ui/StateViews';
 import { DeleteConfirmationModal } from '../../components/modals/DeleteConfirmationModal';
 import { CategoriasService } from '../../api/services/CategoriasService';
 import { CategoriaResponseDTO } from '../../api/models/CategoriaResponseDTO';
@@ -29,7 +30,7 @@ export const CategoriasPage = () => {
     setBusca(buscaParam);
   }, [buscaParam]);
 
-  const { data: categorias = [], isLoading } = useQuery({
+  const { data: categorias = [], isLoading, isError, refetch } = useQuery({
     queryKey: ['categorias'],
     queryFn: () => CategoriasService.listarCategorias(),
   });
@@ -143,6 +144,13 @@ export const CategoriasPage = () => {
           <div className="flex items-center justify-center h-48">
             <Loader2 className="animate-spin text-primary" size={32} />
           </div>
+        ) : isError ? (
+          <ErrorState
+            title={tr('Não foi possível carregar as categorias', 'Could not load categories')}
+            description={tr('Verifique sua conexão e tente novamente.', 'Check your connection and try again.')}
+            retryLabel={tr('Tentar novamente', 'Try again')}
+            onRetry={() => refetch()}
+          />
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
@@ -243,7 +251,7 @@ export const CategoriasPage = () => {
 
             <div className="space-y-4">
               <div className="space-y-1.5">
-                <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">
+                <label className="block text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">
                   {tr('Nome', 'Name')}
                 </label>
                 <input
@@ -259,7 +267,7 @@ export const CategoriasPage = () => {
               </div>
 
               <div className="space-y-1.5">
-                <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">
+                <label className="block text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">
                   {tr('Tipo', 'Type')}
                 </label>
                 <div className="grid grid-cols-2 gap-2">

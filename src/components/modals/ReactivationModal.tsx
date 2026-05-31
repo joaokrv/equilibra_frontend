@@ -14,6 +14,8 @@ interface ReactivationModalProps {
   onSuccess: () => void;
 }
 
+import { useModalA11y } from '../../hooks/useModalA11y';
+
 export function ReactivationModal({ isOpen, onClose, email, initialPassword = '', onSuccess }: ReactivationModalProps) {
   const language = useI18nStore((s) => s.language);
   const tr = (pt: string, en: string) => (language === 'en-US' ? en : pt);
@@ -52,11 +54,13 @@ export function ReactivationModal({ isOpen, onClose, email, initialPassword = ''
     },
   });
 
+  const dialogRef = useModalA11y(isOpen, onClose);
+
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="glass w-full max-w-md p-8 rounded-[2rem] border border-white/10 shadow-2xl relative overflow-hidden">
+      <div ref={dialogRef} className="glass w-full max-w-md p-8 rounded-[2rem] border border-white/10 shadow-2xl relative overflow-hidden">
         <div className="absolute -top-24 -right-24 w-48 h-48 bg-emerald-500/20 rounded-full blur-[80px]" />
 
         <button

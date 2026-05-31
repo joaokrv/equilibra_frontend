@@ -32,6 +32,10 @@
   --font-sans: "Outfit", "system-ui", "-apple-system", "sans-serif";
   --font-mono: "JetBrains Mono", "monospace";
 
+  /* Escala tipográfica — piso de 11px para legibilidade mobile (substitui os text-[8-13px] arbitrários) */
+  --text-2xs: 0.6875rem;        /* 11px */
+  --text-2xs--line-height: 1rem;
+
   --radius-lg: 1rem;
   --radius-md: 0.75rem;
   --radius-sm: 0.5rem;
@@ -72,6 +76,13 @@
   .text-gradient {
     @apply bg-clip-text text-transparent bg-gradient-to-br from-white to-white/50;
   }
+
+  /* Safe areas iOS (notch / home indicator). env() retorna 0 em telas sem recorte. */
+  .pb-safe { padding-bottom: env(safe-area-inset-bottom); }
+  .pt-safe { padding-top: env(safe-area-inset-top); }
+  .mb-safe { margin-bottom: env(safe-area-inset-bottom); }
+  /* FAB e elementos com offset fixo: soma o inset ao espaçamento base. */
+  .bottom-safe-4 { bottom: calc(1rem + env(safe-area-inset-bottom)); }
 
   /* Custom Scrollbar for Obsidian Style */
   ::-webkit-scrollbar {

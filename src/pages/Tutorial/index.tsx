@@ -162,7 +162,7 @@ export const TutorialPage = () => {
               </p>
             </div>
             <div className="glass rounded-xl p-4 border border-primary/20 min-w-[200px]">
-              <p className="text-[10px] uppercase tracking-[0.2em] font-bold text-muted-foreground">{tr('Progresso', 'Progress')}</p>
+              <p className="text-2xs uppercase tracking-[0.2em] font-bold text-muted-foreground">{tr('Progresso', 'Progress')}</p>
               <p className="text-2xl font-black text-primary mt-1">{progresso}%</p>
               <div className="w-full h-2 bg-white/10 rounded-full mt-2 overflow-hidden">
                 <div className="h-full bg-primary rounded-full transition-all" style={{ width: `${progresso}%` }} />
@@ -186,12 +186,12 @@ export const TutorialPage = () => {
                   <div className="flex flex-wrap items-center gap-2">
                     <h3 className="text-sm sm:text-base font-bold text-white">{step.title}</h3>
                     {step.optional && (
-                      <span className="text-[10px] uppercase tracking-wide font-bold px-2 py-0.5 rounded bg-white/10 text-muted-foreground">
+                      <span className="text-2xs uppercase tracking-wide font-bold px-2 py-0.5 rounded bg-white/10 text-muted-foreground">
                         {tr('Opcional', 'Optional')}
                       </span>
                     )}
                     {step.completed && (
-                      <span className="text-[10px] uppercase tracking-wide font-bold px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-400">
+                      <span className="text-2xs uppercase tracking-wide font-bold px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-400">
                         {tr('Concluído', 'Done')}
                       </span>
                     )}

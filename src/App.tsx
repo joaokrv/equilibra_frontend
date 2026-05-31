@@ -83,9 +83,9 @@ export default function App() {
 
     axios
       .post(`${API_BASE_URL}/api/auth/refresh`, {}, { withCredentials: true })
-      .then(({ data }) => {
-        if (user && data.accessToken) {
-          setAuth(user, data.accessToken);
+      .then(() => {
+        if (user) {
+          setAuth(user);
         }
       })
       .catch(() => {

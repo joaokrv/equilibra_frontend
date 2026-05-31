@@ -10,6 +10,8 @@ import { Input, Select } from '../ui/Input';
 import { toast } from '../../store/useToastStore';
 import { getApiErrorMessage } from '../../lib/errorMessage';
 import { useI18nStore } from '../../store/useI18nStore';
+import { useAuthStore } from '../../store/useAuthStore';
+import { formatarMoeda } from '../../lib/formatters';
 import { InvestmentQuickSection } from './InvestmentQuickSection';
 import {
   TransacoesService,
@@ -18,6 +20,7 @@ import {
   CategoriasService,
 } from '../../api';
 import type { TransacaoResponseDTO } from '../../api/models/TransacaoResponseDTO';
+import { useModalA11y } from '../../hooks/useModalA11y';
 
 type ModalSection = 'receita' | 'despesa' | 'investimento';
 type TipoFixo = 'RECEITA' | 'DESPESA';
@@ -109,6 +112,13 @@ export const TransactionModal = ({
 
   const tipo = watch('tipo');
   const metodo = watch('metodoPagamento');
+  const valorWatch = watch('valor');
+  const totalParcelasWatch = watch('totalParcelas');
+  const moeda = (useAuthStore((s) => s.user?.moeda) as 'BRL' | 'USD' | 'EUR') || 'BRL';
+
+  const nParcelas = Number(totalParcelasWatch) || 1;
+  const valorTotalNum = Number(valorWatch) || 0;
+  const mostrarPreviewParcelas = metodo === 'CARTAO_CREDITO' && !isEditMode && nParcelas > 1 && valorTotalNum > 0;
 
   useEffect(() => {
     if (isOpen) {
@@ -143,9 +153,9 @@ export const TransactionModal = ({
       setValue('descricao', transacaoParaEditar.descricao ?? '');
       setValue('valor', String(transacaoParaEditar.valor ?? ''));
       setValue('data', transacaoParaEditar.data ?? new Date().toISOString().split('T')[0]);
-      setValue('tipo', (transacaoParaEditar.tipo as any) ?? 'DESPESA');
-      setValue('status', (transacaoParaEditar.status as any) ?? 'PAGO');
-      setValue('metodoPagamento', (transacaoParaEditar.metodoPagamento as any) ?? 'PIX');
+      setValue('tipo', (transacaoParaEditar.tipo ?? 'DESPESA') as 'RECEITA' | 'DESPESA');
+      setValue('status', (transacaoParaEditar.status ?? 'PAGO') as 'PAGO' | 'PENDENTE');
+      setValue('metodoPagamento', (transacaoParaEditar.metodoPagamento ?? 'PIX') as TransactionFormValues['metodoPagamento']);
       setValue('categoriaId', transacaoParaEditar.categoriaId ? String(transacaoParaEditar.categoriaId) : '');
       setValue('contaId', transacaoParaEditar.contaId ? String(transacaoParaEditar.contaId) : '');
       setValue('cartaoId', transacaoParaEditar.cartaoId ? String(transacaoParaEditar.cartaoId) : '');
@@ -270,6 +280,8 @@ export const TransactionModal = ({
     }
   };
 
+  const dialogRef = useModalA11y(isOpen, onClose);
+
   if (!isOpen) return null;
 
   const isInvestmentSection = activeSection === 'investimento' && !isEditMode;
@@ -297,24 +309,24 @@ export const TransactionModal = ({
   // ─── Opções dinâmicas para os selects ─────────────────────────────
   const contaOptions = [
     { label: tr(language, 'Selecione a Conta', 'Select Account'), value: '' },
-    ...(contas as any[]).map((c: any) => ({
-      label: c.nome,
+    ...contas.map((c) => ({
+      label: c.nome ?? '',
       value: String(c.id),
     })),
   ];
 
   const cartaoOptions = [
     { label: tr(language, 'Selecione o Cartão', 'Select Card'), value: '' },
-    ...(cartoes as any[]).map((c: any) => ({
-      label: c.nome,
+    ...cartoes.map((c) => ({
+      label: c.nome ?? '',
       value: String(c.id),
     })),
   ];
 
   const categoriaOptions = [
     { label: tr(language, 'Selecione a Categoria', 'Select Category'), value: '' },
-    ...(categorias as any[]).map((c: any) => ({
-      label: c.nome,
+    ...categorias.map((c) => ({
+      label: c.nome ?? '',
       value: String(c.id),
     })),
   ];
@@ -323,7 +335,7 @@ export const TransactionModal = ({
     <div className="fixed inset-0 z-50 flex items-start justify-center p-2 sm:items-center sm:p-4 animate-in fade-in duration-300">
       <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" onClick={onClose} />
 
-      <div className="glass relative z-10 w-full max-w-xl max-h-[94dvh] overflow-y-auto rounded-2xl p-4 sm:rounded-3xl sm:p-8 animate-in zoom-in-95 duration-300">
+      <div ref={dialogRef} className="glass relative z-10 w-full max-w-xl max-h-[94dvh] overflow-y-auto rounded-2xl p-4 sm:rounded-3xl sm:p-8 animate-in zoom-in-95 duration-300">
         <div className="mb-6 flex items-start justify-between gap-3 sm:mb-8 sm:items-center">
           <div className="flex items-center gap-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary sm:h-12 sm:w-12 sm:rounded-2xl">
@@ -333,7 +345,7 @@ export const TransactionModal = ({
               <h3 className="text-lg font-bold leading-tight text-white sm:text-xl">
                 {headerTitle}
               </h3>
-              <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+              <p className="text-2xs font-bold uppercase tracking-widest text-muted-foreground">
                 {headerDescription}
               </p>
             </div>
@@ -399,7 +411,9 @@ export const TransactionModal = ({
               />
               <Input
                 {...register('valor')}
-                label={tr(language, 'Valor', 'Amount')}
+                label={metodo === 'CARTAO_CREDITO' && !isEditMode
+                  ? tr(language, 'Valor total da compra', 'Total purchase amount')
+                  : tr(language, 'Valor', 'Amount')}
                 id="val-trans"
                 type="number"
                 step="0.01"
@@ -472,27 +486,35 @@ export const TransactionModal = ({
               />
             </div>
 
-            {metodo === 'CARTAO_CREDITO' && (
-              <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                <Input
-                  {...register('numeroParcela')}
-                  label={tr(language, 'Parcela', 'Installment Number')}
-                  id="num-parcela-trans"
-                  type="number"
-                  min="1"
-                  placeholder={tr(language, '1', '1')}
-                  error={errors.numeroParcela?.message}
-                />
+            {metodo === 'CARTAO_CREDITO' && !isEditMode && (
+              <div className="space-y-3">
                 <Input
                   {...register('totalParcelas')}
-                  label={tr(language, 'Total de Parcelas', 'Total Installments')}
+                  label={tr(language, 'Número de parcelas', 'Number of installments')}
                   id="total-parcelas-trans"
                   type="number"
                   min="1"
                   placeholder={tr(language, '1', '1')}
                   error={errors.totalParcelas?.message}
                 />
+                {mostrarPreviewParcelas && (
+                  <p className="text-xs font-semibold text-sky-400 bg-sky-500/10 rounded-lg px-3 py-2">
+                    {nParcelas}x {tr(language, 'de', 'of')} {formatarMoeda(valorTotalNum / nParcelas, moeda)}{' '}
+                    <span className="text-muted-foreground font-normal">
+                      ({tr(language, 'uma parcela por mês, na fatura correspondente', 'one installment per month, on the matching invoice')})
+                    </span>
+                  </p>
+                )}
               </div>
+            )}
+
+            {metodo === 'CARTAO_CREDITO' && isEditMode && (totalParcelasWatch ? Number(totalParcelasWatch) > 1 : false) && (
+              <p className="text-xs font-semibold text-sky-400 bg-sky-500/10 rounded-lg px-3 py-2">
+                {tr(language, 'Parcela', 'Installment')} {watch('numeroParcela')}/{totalParcelasWatch}.{' '}
+                <span className="text-muted-foreground font-normal">
+                  {tr(language, 'Para alterar valor ou nº de parcelas, exclua a compra e registre novamente.', 'To change amount or number of installments, delete the purchase and register again.')}
+                </span>
+              </p>
             )}
 
             <input type="hidden" {...register('idempotencyKey')} />

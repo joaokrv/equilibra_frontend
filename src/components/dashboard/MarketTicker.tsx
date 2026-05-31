@@ -189,7 +189,7 @@ export const MarketTicker: React.FC = () => {
       <span className="text-xs font-semibold text-white/50 uppercase tracking-wider">{item.label}</span>
       <span className="text-sm font-bold text-white">{item.value}</span>
       {item.change && (
-        <span className={`text-[10px] font-bold ${item.changePositive ? 'text-emerald-400' : 'text-rose-400'}`}>
+        <span className={`text-2xs font-bold ${item.changePositive ? 'text-emerald-400' : 'text-rose-400'}`}>
           {item.change}
         </span>
       )}

@@ -3,16 +3,13 @@ import { createRoot } from 'react-dom/client'
 import { BrowserRouter } from 'react-router-dom'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import { OpenAPI } from './api'
-import { useAuthStore } from './store/useAuthStore'
 import { ToastContainer } from './components/ui/Toast'
 import { API_BASE_URL } from './lib/apiBaseUrl'
 import './index.css'
 import App from './App.tsx'
 OpenAPI.BASE = API_BASE_URL
 OpenAPI.WITH_CREDENTIALS = true
-OpenAPI.TOKEN = async () => {
-  return useAuthStore.getState().token || '';
-}
+// Token agora é enviado via httpOnly cookie (não em store)
 
 const queryClient = new QueryClient({
   defaultOptions: {

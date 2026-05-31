@@ -37,6 +37,7 @@ const BANDEIRA_IMAGENS: Record<string, string> = {
   OUTROS: imgOutros,
 };
 import { MainLayout } from '../../components/layout/MainLayout';
+import { ErrorState } from '../../components/ui/StateViews';
 import { DeleteConfirmationModal } from '../../components/modals/DeleteConfirmationModal';
 import { CartoesService } from '../../api/services/CartoesService';
 import { FaturasService } from '../../api/services/FaturasService';
@@ -78,7 +79,7 @@ export const CartoesPage = () => {
   const [bandeira, setBandeira] = useState<CartaoRegistroRequestDTO.bandeira>(CartaoRegistroRequestDTO.bandeira.VISA);
   const [contaVinculadaId, setContaVinculadaId] = useState('');
 
-  const { data: cartoes = [], isLoading } = useQuery({
+  const { data: cartoes = [], isLoading, isError, refetch } = useQuery({
     queryKey: ['cartoes'],
     queryFn: () => CartoesService.listarCartoes(),
   });
@@ -221,15 +222,15 @@ export const CartoesPage = () => {
         {/* Resumo */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="glass rounded-2xl p-4">
-            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Limite Total', 'Total Limit')}</p>
+            <p className="text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Limite Total', 'Total Limit')}</p>
             <p className="text-xl font-bold text-white mt-1">{formatarMoeda(limiteTotal, moeda)}</p>
           </div>
           <div className="glass rounded-2xl p-4">
-            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Usado', 'Used')}</p>
+            <p className="text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Usado', 'Used')}</p>
             <p className="text-xl font-bold text-rose-400 mt-1">{formatarMoeda(limiteUsado, moeda)}</p>
           </div>
           <div className="glass rounded-2xl p-4">
-            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Disponível', 'Available')}</p>
+            <p className="text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Disponível', 'Available')}</p>
             <p className="text-xl font-bold text-emerald-400 mt-1">{formatarMoeda(limiteTotal - limiteUsado, moeda)}</p>
           </div>
         </div>
@@ -237,6 +238,13 @@ export const CartoesPage = () => {
         {/* Lista de cartões */}
         {isLoading ? (
           <div className="flex items-center justify-center h-48"><Loader2 className="animate-spin text-primary" size={32} /></div>
+        ) : isError ? (
+          <ErrorState
+            title={tr('Não foi possível carregar os cartões', 'Could not load cards')}
+            description={tr('Verifique sua conexão e tente novamente.', 'Check your connection and try again.')}
+            retryLabel={tr('Tentar novamente', 'Try again')}
+            onRetry={() => refetch()}
+          />
         ) : cartoes.length === 0 ? (
           <div className="glass rounded-2xl p-6 sm:p-10 lg:p-12 flex flex-col items-center justify-center gap-4 text-center">
             <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center text-primary/50"><CreditCard size={32} /></div>
@@ -264,7 +272,7 @@ export const CartoesPage = () => {
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
                       <p className="text-sm font-bold text-white">{cartao.nome}</p>
-                      <span className="text-[10px] text-muted-foreground bg-white/5 px-2 py-0.5 rounded-full">
+                      <span className="text-2xs text-muted-foreground bg-white/5 px-2 py-0.5 rounded-full">
                         {cartao.bandeira ? BANDEIRA_CARTAO_LABELS[cartao.bandeira] : ''}
                       </span>
                     </div>
@@ -296,7 +304,7 @@ export const CartoesPage = () => {
                   <div className="border-t border-white/5 px-5 py-4 space-y-3 animate-in fade-in slide-in-from-top-2 duration-200">
                     {/* Ciclo de vida da fatura */}
                     <div className="flex items-center gap-2 flex-wrap mb-1">
-                      <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">{tr('Ciclo', 'Cycle')}:</span>
+                      <span className="text-2xs font-bold text-muted-foreground uppercase tracking-widest">{tr('Ciclo', 'Cycle')}:</span>
                       {[
                         { label: tr('Aberta', 'Open'), color: 'text-blue-400 bg-blue-500/10' },
                         { label: '→', color: 'text-muted-foreground' },
@@ -308,11 +316,11 @@ export const CartoesPage = () => {
                       ].map((step, i) => (
                         step.label === '→'
                           ? <span key={i} className="text-xs text-muted-foreground">{step.label}</span>
-                          : <span key={i} className={`text-[10px] font-bold px-2 py-0.5 rounded ${step.color}`}>{step.label}</span>
+                          : <span key={i} className={`text-2xs font-bold px-2 py-0.5 rounded ${step.color}`}>{step.label}</span>
                       ))}
                     </div>
                     {cartao.nomeConta && (
-                      <p className="text-[10px] text-muted-foreground">
+                      <p className="text-2xs text-muted-foreground">
                         {tr('Conta vinculada', 'Linked account')}: <span className="text-white font-semibold">{cartao.nomeConta}</span>
                       </p>
                     )}
@@ -330,17 +338,17 @@ export const CartoesPage = () => {
                                 <p className="text-xs font-bold text-white">
                                   {String(f.mes).padStart(2, '0')}/{f.ano}
                                 </p>
-                                <p className="text-[10px] text-muted-foreground">
+                                <p className="text-2xs text-muted-foreground">
                                   {tr('Vencimento', 'Due date')}: {f.dataVencimento ? new Date(f.dataVencimento + 'T00:00:00').toLocaleDateString(language) : '—'}
                                 </p>
                               </div>
                               <div className="text-right">
                                 <p className="text-xs font-bold text-white">{formatarMoeda(f.valorTotal ?? 0, moeda)}</p>
                                 {(f.valorPago ?? 0) > 0 && (
-                                  <p className="text-[10px] text-emerald-400">{tr('Pago', 'Paid')}: {formatarMoeda(f.valorPago ?? 0, moeda)}</p>
+                                  <p className="text-2xs text-emerald-400">{tr('Pago', 'Paid')}: {formatarMoeda(f.valorPago ?? 0, moeda)}</p>
                                 )}
                               </div>
-                              <span className={`text-[10px] font-bold px-2 py-0.5 rounded ${cfg.color}`}>{cfg.label}</span>
+                              <span className={`text-2xs font-bold px-2 py-0.5 rounded ${cfg.color}`}>{cfg.label}</span>
                               <button
                                 onClick={() => navigate(`/faturas/${cartao.id}?mes=${f.mes}&ano=${f.ano}`)}
                                 className="p-1 rounded-lg text-muted-foreground hover:text-white hover:bg-white/10 transition-all"
@@ -355,7 +363,7 @@ export const CartoesPage = () => {
                                     setValorPagamento(String(f.valorRestante ?? 0));
                                     if (cartao.contaId) setContaPagamentoId(String(cartao.contaId));
                                   }}
-                                  className="text-[10px] font-bold text-primary hover:text-primary/80 transition-colors bg-primary/10 px-2 py-1 rounded-lg"
+                                  className="text-2xs font-bold text-primary hover:text-primary/80 transition-colors bg-primary/10 px-2 py-1 rounded-lg"
                                 >
                                   {tr('Pagar', 'Pay')}
                                 </button>
@@ -383,11 +391,11 @@ export const CartoesPage = () => {
             </div>
             <div className="space-y-4">
               <div className="space-y-1.5">
-                <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Nome', 'Name')}</label>
+                <label className="block text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Nome', 'Name')}</label>
                 <input type="text" value={nome} onChange={(e) => setNome(e.target.value)} placeholder={tr('Ex: Nubank, Inter...', 'Ex: Chase, Capital One...')} maxLength={50} autoFocus className="w-full bg-secondary/30 border border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium placeholder:text-muted-foreground/30" />
               </div>
               <div className="space-y-1.5">
-                <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Bandeira', 'Brand')}</label>
+                <label className="block text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Bandeira', 'Brand')}</label>
                 <select value={bandeira} onChange={(e) => setBandeira(e.target.value as CartaoRegistroRequestDTO.bandeira)} className="w-full bg-secondary/30 border border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium appearance-none">
                   {Object.entries(BANDEIRA_CARTAO_LABELS).map(([val, label]) => (
                     <option key={val} value={val} className="bg-card text-white">{label}</option>
@@ -395,21 +403,21 @@ export const CartoesPage = () => {
                 </select>
               </div>
               <div className="space-y-1.5">
-                <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Limite', 'Limit')}</label>
+                <label className="block text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Limite', 'Limit')}</label>
                 <input type="number" step="0.01" value={limite} onChange={(e) => setLimite(e.target.value)} placeholder="5000,00" className="w-full bg-secondary/30 border border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium placeholder:text-muted-foreground/30" />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1.5">
-                  <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Dia Fechamento', 'Closing Day')}</label>
+                  <label className="block text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Dia Fechamento', 'Closing Day')}</label>
                   <input type="number" min={1} max={31} value={diaFechamento} onChange={(e) => setDiaFechamento(e.target.value)} placeholder="25" className="w-full bg-secondary/30 border border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium placeholder:text-muted-foreground/30" />
                 </div>
                 <div className="space-y-1.5">
-                  <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Dia Vencimento', 'Due Day')}</label>
+                  <label className="block text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Dia Vencimento', 'Due Day')}</label>
                   <input type="number" min={1} max={31} value={diaVencimento} onChange={(e) => setDiaVencimento(e.target.value)} placeholder="5" className="w-full bg-secondary/30 border border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium placeholder:text-muted-foreground/30" />
                 </div>
               </div>
               <div className="space-y-1.5">
-                <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Conta Vinculada', 'Linked Account')} <span className="normal-case text-muted-foreground/60 font-normal">{tr('(opcional — pré-selecionada ao pagar fatura)', '(optional - preselected when paying invoice)')}</span></label>
+                <label className="block text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Conta Vinculada', 'Linked Account')} <span className="normal-case text-muted-foreground/60 font-normal">{tr('(opcional — pré-selecionada ao pagar fatura)', '(optional - preselected when paying invoice)')}</span></label>
                 <select value={contaVinculadaId} onChange={(e) => setContaVinculadaId(e.target.value)} className="w-full bg-secondary/30 border border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium appearance-none">
                   <option value="" className="bg-card text-white">{tr('Nenhuma', 'None')}</option>
                   {contas.map((c) => (
@@ -444,7 +452,7 @@ export const CartoesPage = () => {
             </div>
             <div className="space-y-4">
               <div className="space-y-1.5">
-                <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Conta de Débito', 'Debit Account')}</label>
+                <label className="block text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Conta de Débito', 'Debit Account')}</label>
                 <select value={contaPagamentoId} onChange={(e) => setContaPagamentoId(e.target.value)} className="w-full bg-secondary/30 border border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium appearance-none">
                   <option value="" className="bg-card text-white">{tr('Selecione...', 'Select...')}</option>
                   {contas.map((c) => (
@@ -453,7 +461,7 @@ export const CartoesPage = () => {
                 </select>
               </div>
               <div className="space-y-1.5">
-                <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Valor', 'Amount')}</label>
+                <label className="block text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Valor', 'Amount')}</label>
                 <input type="number" step="0.01" value={valorPagamento} onChange={(e) => setValorPagamento(e.target.value)} className="w-full bg-secondary/30 border border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium placeholder:text-muted-foreground/30" />
               </div>
             </div>

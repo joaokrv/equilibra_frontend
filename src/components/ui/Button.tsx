@@ -18,10 +18,10 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
     };
 
     const sizes = {
-      sm: 'px-3 py-1.5 text-xs',
-      md: 'px-6 py-3 text-sm',
-      lg: 'px-8 py-4 text-base',
-      icon: 'p-2',
+      sm: 'px-3 py-1.5 text-xs min-h-10',
+      md: 'px-6 py-3 text-sm min-h-11',
+      lg: 'px-8 py-4 text-base min-h-12',
+      icon: 'p-2 min-h-11 min-w-11',
     };
 
     const combinedClassName = `${baseStyles} ${variants[variant]} ${sizes[size]} ${className}`;

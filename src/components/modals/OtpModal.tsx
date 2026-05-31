@@ -57,6 +57,8 @@ const extrairOtpStatus = (value: unknown): OtpStatusResponseDTO | null => {
   return null;
 };
 
+import { useModalA11y } from '../../hooks/useModalA11y';
+
 export function OtpModal({ isOpen, onClose, registroId, email, onSuccess }: OtpModalProps) {
   const language = useI18nStore((s) => s.language);
   const tr = (pt: string, en: string) => (language === 'en-US' ? en : pt);
@@ -180,6 +182,8 @@ export function OtpModal({ isOpen, onClose, registroId, email, onSuccess }: OtpM
     return `${mins}:${secs.toString().padStart(2, '0')}`;
   };
 
+  const dialogRef = useModalA11y(isOpen, onClose);
+
   if (!isOpen) return null;
 
   const isLocked = otpStatus?.status === 'BLOQUEADO';
@@ -187,7 +191,7 @@ export function OtpModal({ isOpen, onClose, registroId, email, onSuccess }: OtpM
 
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm animate-in fade-in duration-200">
-      <div className="glass w-full max-w-md p-8 rounded-[2rem] border border-white/10 shadow-2xl relative overflow-hidden">
+      <div ref={dialogRef} className="glass w-full max-w-md p-8 rounded-[2rem] border border-white/10 shadow-2xl relative overflow-hidden">
         {/* Glow Decorativo */}
         <div className="absolute -top-24 -right-24 w-48 h-48 bg-primary/20 rounded-full blur-[80px]" />
         
@@ -231,7 +235,7 @@ export function OtpModal({ isOpen, onClose, registroId, email, onSuccess }: OtpM
                 <div className="bg-destructive/10 border border-destructive/20 rounded-2xl p-6 flex flex-col items-center gap-3 animate-in zoom-in-95 duration-300">
                   <Timer size={32} className="text-destructive animate-pulse" />
                   <div className="text-center">
-                    <p className="text-[10px] font-bold text-destructive uppercase tracking-widest mb-1">
+                    <p className="text-2xs font-bold text-destructive uppercase tracking-widest mb-1">
                       {tr('Tente novamente em:', 'Try again in:') }
                     </p>
                     <p className="text-3xl font-black text-destructive tabular-nums">
@@ -243,7 +247,7 @@ export function OtpModal({ isOpen, onClose, registroId, email, onSuccess }: OtpM
                 <div className="bg-amber-500/5 border border-amber-500/20 rounded-2xl p-6 flex flex-col items-center gap-3 animate-in zoom-in-95 duration-300">
                   <AlertCircle size={32} className="text-amber-500" />
                   <div className="text-center">
-                    <p className="text-[10px] font-bold text-amber-500 uppercase tracking-widest">
+                    <p className="text-2xs font-bold text-amber-500 uppercase tracking-widest">
                       {tr('Tempo esgotado', 'Time is up') }
                     </p>
                   </div>
@@ -265,13 +269,13 @@ export function OtpModal({ isOpen, onClose, registroId, email, onSuccess }: OtpM
               <div className="flex justify-between items-center px-1">
                 <div className="flex items-center gap-1.5">
                   <Timer size={14} className={timeLeft < 60 ? 'text-destructive' : 'text-muted-foreground'} />
-                  <span className={`text-[10px] font-bold uppercase tracking-wider ${timeLeft < 60 ? 'text-destructive' : 'text-muted-foreground'}`}>
+                  <span className={`text-2xs font-bold uppercase tracking-wider ${timeLeft < 60 ? 'text-destructive' : 'text-muted-foreground'}`}>
                     {timeLeft > 0 ? formatTime(timeLeft) : tr('EXPIRADO', 'EXPIRED')}
                   </span>
                 </div>
                 
                 {otpStatus?.tentativasRestantes !== undefined && (
-                  <span className={`text-[10px] font-bold uppercase tracking-wider ${otpStatus.tentativasRestantes <= 1 ? 'text-destructive' : 'text-muted-foreground'}`}>
+                  <span className={`text-2xs font-bold uppercase tracking-wider ${otpStatus.tentativasRestantes <= 1 ? 'text-destructive' : 'text-muted-foreground'}`}>
                     {otpStatus.tentativasRestantes} {tr('tentativas restantes', 'attempts remaining')}
                   </span>
                 )}

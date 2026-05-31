@@ -170,7 +170,7 @@ export function PerfilPage() {
           <div className="hidden md:flex items-center gap-4 bg-white/5 border border-white/10 px-6 py-3 rounded-2xl backdrop-blur-md">
             <Coins className="text-primary" size={24} />
             <div>
-              <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-widest">{tr('Moeda Preferencial', 'Preferred Currency')}</p>
+              <p className="text-2xs uppercase font-bold text-muted-foreground tracking-widest">{tr('Moeda Preferencial', 'Preferred Currency')}</p>
               <p className="text-sm font-bold text-white">
                 {moeda === 'BRL' && tr('Real (R$)', 'Brazilian Real (R$)')}
                 {moeda === 'USD' && tr('Dolar (USD)', 'US Dollar (USD)')}
@@ -202,7 +202,7 @@ export function PerfilPage() {
                   {/* Overlay Upload */}
                   <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center text-white gap-1 backdrop-blur-sm">
                     <Camera size={24} />
-                    <span className="text-[10px] font-bold uppercase tracking-tighter">{tr('Alterar', 'Change')}</span>
+                    <span className="text-2xs font-bold uppercase tracking-tighter">{tr('Alterar', 'Change')}</span>
                   </div>
                 </div>
                 {/* Badge Status */}
@@ -265,7 +265,7 @@ export function PerfilPage() {
                     type="button"
                     onClick={() => reenviarCodigoMutation.mutate()}
                     disabled={reenviarCodigoMutation.isPending || cooldown > 0}
-                    className="w-full text-[10px] font-bold uppercase tracking-widest text-amber-500/60 hover:text-amber-500 transition-colors disabled:opacity-50"
+                    className="w-full text-2xs font-bold uppercase tracking-widest text-amber-500/60 hover:text-amber-500 transition-colors disabled:opacity-50"
                   >
                     {reenviarCodigoMutation.isPending ? tr('Enviando...', 'Sending...') : cooldown > 0 ? tr(`Aguarde ${cooldown}s`, `Wait ${cooldown}s`) : tr('Nao recebeu o codigo? Reenviar', 'Did not receive the code? Resend')}
                   </button>
@@ -286,7 +286,7 @@ export function PerfilPage() {
                       <ArrowUpCircle size={16} className="md:hidden" />
                       <ArrowUpCircle size={20} className="hidden md:block" />
                     </div>
-                    <span className="text-[9px] sm:text-[10px] font-black uppercase text-muted-foreground tracking-wider sm:tracking-widest leading-tight truncate">{tr('Receitas', 'Income')}</span>
+                    <span className="text-2xs sm:text-2xs font-black uppercase text-muted-foreground tracking-wider sm:tracking-widest leading-tight truncate">{tr('Receitas', 'Income')}</span>
                   </div>
                   <p className="text-sm sm:text-lg xl:text-xl font-bold text-white truncate">
                     {isLoadingResumo ? '---' : formatarMoeda(resumo?.totalReceitas || 0, moeda as UsuarioAtualizacaoRequestDTO.moeda)}
@@ -300,7 +300,7 @@ export function PerfilPage() {
                       <ArrowDownCircle size={16} className="md:hidden" />
                       <ArrowDownCircle size={20} className="hidden md:block" />
                     </div>
-                    <span className="text-[9px] sm:text-[10px] font-black uppercase text-muted-foreground tracking-wider sm:tracking-widest leading-tight truncate">{tr('Despesas', 'Expenses')}</span>
+                    <span className="text-2xs sm:text-2xs font-black uppercase text-muted-foreground tracking-wider sm:tracking-widest leading-tight truncate">{tr('Despesas', 'Expenses')}</span>
                   </div>
                   <p className="text-sm sm:text-lg xl:text-xl font-bold text-white truncate">
                     {isLoadingResumo ? '---' : formatarMoeda(resumo?.totalDespesas || 0, moeda as UsuarioAtualizacaoRequestDTO.moeda)}
@@ -314,7 +314,7 @@ export function PerfilPage() {
                       <Wallet size={16} className="md:hidden" />
                       <Wallet size={20} className="hidden md:block" />
                     </div>
-                    <span className="text-[9px] sm:text-[10px] font-black uppercase text-muted-foreground tracking-wider sm:tracking-widest leading-tight truncate">{tr('Saldo Atual', 'Balance')}</span>
+                    <span className="text-2xs sm:text-2xs font-black uppercase text-muted-foreground tracking-wider sm:tracking-widest leading-tight truncate">{tr('Saldo Atual', 'Balance')}</span>
                   </div>
                   <p className="text-sm sm:text-lg xl:text-xl font-bold text-white truncate">
                     {isLoadingResumo ? '---' : formatarMoeda(resumo?.saldoContas || 0, moeda as UsuarioAtualizacaoRequestDTO.moeda)}
@@ -328,7 +328,7 @@ export function PerfilPage() {
                       <TrendingUp size={16} className="md:hidden" />
                       <TrendingUp size={20} className="hidden md:block" />
                     </div>
-                    <span className="text-[9px] sm:text-[10px] font-black uppercase text-muted-foreground tracking-wider sm:tracking-widest leading-tight truncate">{tr('Investido', 'Invested')}</span>
+                    <span className="text-2xs sm:text-2xs font-black uppercase text-muted-foreground tracking-wider sm:tracking-widest leading-tight truncate">{tr('Investido', 'Invested')}</span>
                   </div>
                   <p className="text-sm sm:text-lg xl:text-xl font-bold text-white truncate">
                     {isLoadingResumo ? '---' : formatarMoeda(resumo?.totalInvestido || 0, moeda as UsuarioAtualizacaoRequestDTO.moeda)}
@@ -343,7 +343,7 @@ export function PerfilPage() {
               <form onSubmit={handleUpdatePerfil} className="relative z-10 space-y-6 sm:space-y-8">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-8">
                     <div className="space-y-2">
-                        <label className="text-[10px] font-black uppercase text-muted-foreground tracking-[0.2em] ml-1">{tr('Nome Completo', 'Full Name')}</label>
+                        <label className="text-2xs font-black uppercase text-muted-foreground tracking-[0.2em] ml-1">{tr('Nome Completo', 'Full Name')}</label>
                        <div className="relative">
                           <UserIcon size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
                           <input 
@@ -356,7 +356,7 @@ export function PerfilPage() {
                     </div>
 
                     <div className="space-y-2">
-                        <label className="text-[10px] font-black uppercase text-muted-foreground tracking-[0.2em] ml-1">{tr('Telefone Celular', 'Mobile Phone')}</label>
+                        <label className="text-2xs font-black uppercase text-muted-foreground tracking-[0.2em] ml-1">{tr('Telefone Celular', 'Mobile Phone')}</label>
                        <div className="relative">
                           <Phone size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
                           <input 
@@ -372,7 +372,7 @@ export function PerfilPage() {
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-5 sm:gap-8">
                     <div className="space-y-2">
-                        <label className="text-[10px] font-black uppercase text-muted-foreground tracking-[0.2em] ml-1">{tr('Sistema de Moeda', 'Currency System')}</label>
+                        <label className="text-2xs font-black uppercase text-muted-foreground tracking-[0.2em] ml-1">{tr('Sistema de Moeda', 'Currency System')}</label>
                        <div className="relative">
                           <Coins size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
                           <select
@@ -387,7 +387,7 @@ export function PerfilPage() {
                     </div>
 
                       <div className="space-y-2">
-                        <label className="text-[10px] font-black uppercase text-muted-foreground tracking-[0.2em] ml-1">{tr('Idioma da Interface', 'Interface Language')}</label>
+                        <label className="text-2xs font-black uppercase text-muted-foreground tracking-[0.2em] ml-1">{tr('Idioma da Interface', 'Interface Language')}</label>
                         <div className="relative">
                           <select
                             value={idioma}

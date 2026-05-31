@@ -19,9 +19,8 @@ export interface User {
 
 interface AuthState {
   user: User | null;
-  token: string | null;
   isAuthenticated: boolean;
-  setAuth: (user: User, token: string) => void;
+  setAuth: (user: User) => void;
   updateIsEmailVerificado: (verificado: boolean) => void;
   updateProfile: (profileData: Partial<User>) => void;
   logout: () => void;
@@ -31,10 +30,9 @@ export const useAuthStore = create<AuthState>()(
   persist(
     (set) => ({
       user: null,
-      token: null,
       isAuthenticated: false,
-      setAuth: (user, token) =>
-        set({ user, token, isAuthenticated: true }),
+      setAuth: (user) =>
+        set({ user, isAuthenticated: true }),
       updateIsEmailVerificado: (verificado) =>
         set((state) => ({
           user: state.user ? { ...state.user, isEmailVerificado: verificado } : null,
@@ -46,7 +44,6 @@ export const useAuthStore = create<AuthState>()(
       logout: () =>
         set({
           user: null,
-          token: null,
           isAuthenticated: false,
         }),
     }),

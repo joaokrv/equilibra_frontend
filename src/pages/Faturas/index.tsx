@@ -6,6 +6,7 @@ import {
   DollarSign, X, Calendar, CreditCard,
 } from 'lucide-react';
 import { MainLayout } from '../../components/layout/MainLayout';
+import { ErrorState } from '../../components/ui/StateViews';
 import { CartoesService } from '../../api/services/CartoesService';
 import { ContasService } from '../../api/services/ContasService';
 import { useFaturasPorCartao, useTransacoesPorFatura, usePagarFatura } from '../../hooks/useFaturas';
@@ -36,7 +37,7 @@ export const FaturasPage = () => {
   const [valorPagamento, setValorPagamento] = useState('');
   const [contaPagamentoId, setContaPagamentoId] = useState('');
 
-  const { data: cartoes = [], isLoading: cartoesLoading } = useQuery({
+  const { data: cartoes = [], isLoading: cartoesLoading, isError: cartoesError, refetch: refetchCartoes } = useQuery({
     queryKey: ['cartoes'],
     queryFn: () => CartoesService.listarCartoes(),
   });
@@ -108,6 +109,13 @@ export const FaturasPage = () => {
             <div className="flex items-center justify-center h-48">
               <Loader2 className="animate-spin text-primary" size={32} />
             </div>
+          ) : cartoesError ? (
+            <ErrorState
+              title={tr('Não foi possível carregar os cartões', 'Could not load cards')}
+              description={tr('Verifique sua conexão e tente novamente.', 'Check your connection and try again.')}
+              retryLabel={tr('Tentar novamente', 'Try again')}
+              onRetry={() => refetchCartoes()}
+            />
           ) : cartoes.length === 0 ? (
             <div className="glass rounded-2xl p-6 sm:p-10 flex flex-col items-center justify-center gap-4 text-center">
               <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center text-primary/50">
@@ -205,15 +213,15 @@ export const FaturasPage = () => {
                 {/* Valores */}
                 <div className="grid grid-cols-3 gap-3">
                   <div className="bg-white/5 rounded-xl p-3">
-                    <p className="text-[10px] text-muted-foreground uppercase tracking-widest">{tr('Total', 'Total')}</p>
+                    <p className="text-2xs text-muted-foreground uppercase tracking-widest">{tr('Total', 'Total')}</p>
                     <p className="text-base font-bold text-white mt-1">{formatarMoeda(faturaAtual.valorTotal ?? 0, moeda)}</p>
                   </div>
                   <div className="bg-white/5 rounded-xl p-3">
-                    <p className="text-[10px] text-muted-foreground uppercase tracking-widest">{tr('Pago', 'Paid')}</p>
+                    <p className="text-2xs text-muted-foreground uppercase tracking-widest">{tr('Pago', 'Paid')}</p>
                     <p className="text-base font-bold text-emerald-400 mt-1">{formatarMoeda(faturaAtual.valorPago ?? 0, moeda)}</p>
                   </div>
                   <div className="bg-white/5 rounded-xl p-3">
-                    <p className="text-[10px] text-muted-foreground uppercase tracking-widest">{tr('Restante', 'Remaining')}</p>
+                    <p className="text-2xs text-muted-foreground uppercase tracking-widest">{tr('Restante', 'Remaining')}</p>
                     <p className="text-base font-bold text-rose-400 mt-1">{formatarMoeda(faturaAtual.valorRestante ?? 0, moeda)}</p>
                   </div>
                 </div>
@@ -221,7 +229,7 @@ export const FaturasPage = () => {
                 {/* Datas */}
                 <div className="grid grid-cols-2 gap-4 pt-3 border-t border-white/5">
                   <div>
-                    <p className="text-[10px] text-muted-foreground uppercase tracking-widest">{tr('Fecha em', 'Closes on')}</p>
+                    <p className="text-2xs text-muted-foreground uppercase tracking-widest">{tr('Fecha em', 'Closes on')}</p>
                     <p className="text-sm font-bold text-white mt-1">
                       {faturaAtual.dataFechamento
                         ? new Date(faturaAtual.dataFechamento + 'T00:00:00').toLocaleDateString(language)
@@ -229,7 +237,7 @@ export const FaturasPage = () => {
                     </p>
                   </div>
                   <div>
-                    <p className="text-[10px] text-muted-foreground uppercase tracking-widest">{tr('Vence em', 'Due on')}</p>
+                    <p className="text-2xs text-muted-foreground uppercase tracking-widest">{tr('Vence em', 'Due on')}</p>
                     <p className="text-sm font-bold text-white mt-1">
                       {faturaAtual.dataVencimento
                         ? new Date(faturaAtual.dataVencimento + 'T00:00:00').toLocaleDateString(language)
@@ -242,11 +250,11 @@ export const FaturasPage = () => {
                 {cartaoAtual && (
                   <div className="grid grid-cols-2 gap-4 pt-3 border-t border-white/5">
                     <div>
-                      <p className="text-[10px] text-muted-foreground uppercase tracking-widest">{tr('Limite Total', 'Total Limit')}</p>
+                      <p className="text-2xs text-muted-foreground uppercase tracking-widest">{tr('Limite Total', 'Total Limit')}</p>
                       <p className="text-sm font-bold text-white mt-1">{formatarMoeda(cartaoAtual.limite ?? 0, moeda)}</p>
                     </div>
                     <div>
-                      <p className="text-[10px] text-muted-foreground uppercase tracking-widest">{tr('Disponível', 'Available')}</p>
+                      <p className="text-2xs text-muted-foreground uppercase tracking-widest">{tr('Disponível', 'Available')}</p>
                       <p className="text-sm font-bold text-emerald-400 mt-1">{formatarMoeda(cartaoAtual.limiteDisponivel ?? 0, moeda)}</p>
                     </div>
                   </div>
@@ -283,7 +291,7 @@ export const FaturasPage = () => {
                       <div key={t.id} className="flex items-center gap-3 bg-white/5 rounded-xl px-4 py-3">
                         <div className="flex-1 min-w-0">
                           <p className="text-xs font-bold text-white truncate">{t.descricao}</p>
-                          <p className="text-[10px] text-muted-foreground">
+                          <p className="text-2xs text-muted-foreground">
                             {t.data ? new Date(t.data + 'T00:00:00').toLocaleDateString(language) : '—'}
                             {t.nomeCategoria && <span> · {t.nomeCategoria}</span>}
                           </p>
@@ -322,7 +330,7 @@ export const FaturasPage = () => {
             </div>
             <div className="space-y-4">
               <div className="space-y-1.5">
-                <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">
+                <label className="block text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">
                   {tr('Conta de Débito', 'Debit Account')}
                 </label>
                 <select
@@ -339,7 +347,7 @@ export const FaturasPage = () => {
                 </select>
               </div>
               <div className="space-y-1.5">
-                <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">
+                <label className="block text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">
                   {tr('Valor', 'Amount')}
                 </label>
                 <input

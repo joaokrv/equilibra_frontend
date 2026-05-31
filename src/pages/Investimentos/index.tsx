@@ -4,6 +4,7 @@ import {
   Target, Plus, Trash2, X, Loader2, ArrowUpCircle, ArrowDownCircle, Pencil,
 } from 'lucide-react';
 import { MainLayout } from '../../components/layout/MainLayout';
+import { ErrorState } from '../../components/ui/StateViews';
 import { DeleteConfirmationModal } from '../../components/modals/DeleteConfirmationModal';
 import { ContasService } from '../../api/services/ContasService';
 import { investimentosApi, InvestimentoItem, TipoInvestimento } from '../../lib/investimentosApi';
@@ -55,7 +56,7 @@ export const InvestimentosPage = () => {
   const [tipoInvestimento, setTipoInvestimento] = useState<TipoInvestimento>('CDB');
   const [tipoPersonalizado, setTipoPersonalizado] = useState('');
 
-  const { data: investimentos = [], isLoading } = useQuery({
+  const { data: investimentos = [], isLoading, isError, refetch } = useQuery({
     queryKey: ['investimentos'],
     queryFn: () => investimentosApi.listar(),
   });
@@ -196,15 +197,15 @@ export const InvestimentosPage = () => {
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="glass rounded-2xl p-4">
-            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Total Investido', 'Total Invested')}</p>
+            <p className="text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Total Investido', 'Total Invested')}</p>
             <p className="text-xl font-bold text-primary mt-1">{formatarMoeda(totalInvestido, moeda)}</p>
           </div>
           <div className="glass rounded-2xl p-4">
-            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Meta Total', 'Total Goal')}</p>
+            <p className="text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Meta Total', 'Total Goal')}</p>
             <p className="text-xl font-bold text-white mt-1">{formatarMoeda(totalMeta, moeda)}</p>
           </div>
           <div className="glass rounded-2xl p-4">
-            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Progresso Geral', 'Overall Progress')}</p>
+            <p className="text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Progresso Geral', 'Overall Progress')}</p>
             <p className="text-xl font-bold text-amber-400 mt-1">{progressoGeral.toFixed(1)}%</p>
             <div className="w-full h-1.5 bg-white/10 rounded-full mt-2 overflow-hidden">
               <div className="h-full bg-amber-400 rounded-full transition-all" style={{ width: `${progressoGeral}%` }} />
@@ -214,6 +215,13 @@ export const InvestimentosPage = () => {
 
         {isLoading ? (
           <div className="flex items-center justify-center h-48"><Loader2 className="animate-spin text-primary" size={32} /></div>
+        ) : isError ? (
+          <ErrorState
+            title={tr('Não foi possível carregar os investimentos', 'Could not load investments')}
+            description={tr('Verifique sua conexão e tente novamente.', 'Check your connection and try again.')}
+            retryLabel={tr('Tentar novamente', 'Try again')}
+            onRetry={() => refetch()}
+          />
         ) : investimentosList.length === 0 ? (
           <div className="glass rounded-2xl p-6 sm:p-10 lg:p-12 flex flex-col items-center justify-center gap-4 text-center">
             <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center text-primary/50"><Target size={32} /></div>
@@ -238,7 +246,7 @@ export const InvestimentosPage = () => {
                           Inicial: {formatarMoeda(inv.valorInicial ?? 0, moeda)}
                           {inv.nomeContaOrigem && <span className="ml-2 text-primary/60">via {inv.nomeContaOrigem}</span>}
                         </p>
-                        <p className="text-[10px] text-muted-foreground mt-0.5 uppercase tracking-wide">
+                        <p className="text-2xs text-muted-foreground mt-0.5 uppercase tracking-wide">
                           {formatarTipoInvestimento(inv.tipoInvestimento, inv.tipoPersonalizado)}
                         </p>
                       </div>
@@ -259,7 +267,7 @@ export const InvestimentosPage = () => {
                     <div className="w-full h-2 bg-white/10 rounded-full overflow-hidden">
                       <div className={`h-full rounded-full transition-all ${(possuiMeta && atingiu) ? 'bg-emerald-400' : 'bg-primary'}`} style={{ width: `${possuiMeta ? progresso : 0}%` }} />
                     </div>
-                    <p className={`text-[10px] font-bold mt-1 ${(possuiMeta && atingiu) ? 'text-emerald-400' : 'text-muted-foreground'}`}>
+                    <p className={`text-2xs font-bold mt-1 ${(possuiMeta && atingiu) ? 'text-emerald-400' : 'text-muted-foreground'}`}>
                       {possuiMeta ? (atingiu ? tr('Meta atingida!', 'Goal achieved!') : `${progresso.toFixed(1)}% ${tr('concluído', 'completed')}`) : tr('Sem meta definida', 'No goal defined')}
                     </p>
                   </div>
@@ -288,11 +296,11 @@ export const InvestimentosPage = () => {
             </div>
             <div className="space-y-4">
               <div className="space-y-1.5">
-                <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Nome da Meta', 'Goal Name')}</label>
+                <label className="block text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Nome da Meta', 'Goal Name')}</label>
                 <input type="text" value={descricao} onChange={(e) => setDescricao(e.target.value)} placeholder="Ex: Reserva de emergência" maxLength={100} autoFocus className="w-full bg-secondary/30 border border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium placeholder:text-muted-foreground/30" />
               </div>
               <div className="space-y-1.5">
-                <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Tipo de Investimento', 'Investment Type')}</label>
+                <label className="block text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Tipo de Investimento', 'Investment Type')}</label>
                 <select value={tipoInvestimento} onChange={(e) => setTipoInvestimento(e.target.value as TipoInvestimento)} className="w-full bg-secondary/30 border border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium appearance-none">
                   {TIPOS_INVESTIMENTO.map((tipo) => (
                     <option key={tipo.value} value={tipo.value} className="bg-card text-white">{labelTipo(tipo.value)}</option>
@@ -301,12 +309,12 @@ export const InvestimentosPage = () => {
               </div>
               {tipoInvestimento === 'OUTRO' && (
                 <div className="space-y-1.5">
-                  <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Tipo Personalizado', 'Custom Type')}</label>
+                  <label className="block text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Tipo Personalizado', 'Custom Type')}</label>
                   <input type="text" value={tipoPersonalizado} onChange={(e) => setTipoPersonalizado(e.target.value)} placeholder="Ex: Debenture, CRA, Coe" maxLength={60} className="w-full bg-secondary/30 border border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium placeholder:text-muted-foreground/30" />
                 </div>
               )}
               <div className="space-y-1.5">
-                <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Conta de Origem', 'Source Account')}</label>
+                <label className="block text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Conta de Origem', 'Source Account')}</label>
                 <select value={contaId} onChange={(e) => setContaId(e.target.value)} className="w-full bg-secondary/30 border border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium appearance-none">
                   <option value="" className="bg-card text-white">{tr('Selecione a conta...', 'Select account...')}</option>
                   {contasList.map((c) => (
@@ -315,15 +323,15 @@ export const InvestimentosPage = () => {
                 </select>
               </div>
               <div className="space-y-1.5">
-                <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Valor Inicial', 'Initial Amount')}</label>
+                <label className="block text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Valor Inicial', 'Initial Amount')}</label>
                 <input type="number" step="0.01" value={valorInicial} onChange={(e) => setValorInicial(e.target.value)} placeholder="0,00" className="w-full bg-secondary/30 border border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium placeholder:text-muted-foreground/30" />
               </div>
               <div className="space-y-1.5">
-                <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Meta (Opcional)', 'Goal (Optional)')}</label>
+                <label className="block text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Meta (Opcional)', 'Goal (Optional)')}</label>
                 <input type="number" step="0.01" value={meta} onChange={(e) => setMeta(e.target.value)} placeholder="10000,00" className="w-full bg-secondary/30 border border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium placeholder:text-muted-foreground/30" />
               </div>
               <div className="space-y-1.5">
-                <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Conta de Destino', 'Destination Account')}</label>
+                <label className="block text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Conta de Destino', 'Destination Account')}</label>
                 <select value={contaDestinoId} onChange={(e) => setContaDestinoId(e.target.value)} className="w-full bg-secondary/30 border border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium appearance-none">
                   <option value="" className="bg-card text-white">{tr('Mesma da origem', 'Same as source')}</option>
                   {contasList.map((c) => (
@@ -355,7 +363,7 @@ export const InvestimentosPage = () => {
             </div>
             <div className="space-y-4">
               <div className="space-y-1.5">
-                <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">
+                <label className="block text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">
                   {modal === 'depositar' ? tr('Conta de Origem', 'Source Account') : tr('Conta de Destino', 'Destination Account')}
                 </label>
                 <select value={contaId} onChange={(e) => setContaId(e.target.value)} className="w-full bg-secondary/30 border border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium appearance-none">
@@ -366,7 +374,7 @@ export const InvestimentosPage = () => {
                 </select>
               </div>
               <div className="space-y-1.5">
-                <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Valor', 'Amount')}</label>
+                <label className="block text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Valor', 'Amount')}</label>
                 <input type="number" step="0.01" value={valor} onChange={(e) => setValor(e.target.value)} placeholder="500,00" autoFocus className="w-full bg-secondary/30 border border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium placeholder:text-muted-foreground/30" />
               </div>
             </div>
@@ -400,11 +408,11 @@ export const InvestimentosPage = () => {
               <p className="text-sm font-bold text-white mt-1">{investimentoSelecionado.metaAtual != null ? formatarMoeda(investimentoSelecionado.metaAtual, moeda) : tr('Sem meta definida', 'No goal defined')}</p>
             </div>
             <div className="space-y-1.5">
-              <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Nome da Meta', 'Goal Name')}</label>
+              <label className="block text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Nome da Meta', 'Goal Name')}</label>
               <input type="text" value={descricao} onChange={(e) => setDescricao(e.target.value)} autoFocus maxLength={100} className="w-full bg-secondary/30 border border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium placeholder:text-muted-foreground/30" />
             </div>
             <div className="space-y-1.5">
-              <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Tipo de Investimento', 'Investment Type')}</label>
+              <label className="block text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Tipo de Investimento', 'Investment Type')}</label>
               <select value={tipoInvestimento} onChange={(e) => setTipoInvestimento(e.target.value as TipoInvestimento)} className="w-full bg-secondary/30 border border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium appearance-none">
                 {TIPOS_INVESTIMENTO.map((tipo) => (
                   <option key={tipo.value} value={tipo.value} className="bg-card text-white">{labelTipo(tipo.value)}</option>
@@ -413,12 +421,12 @@ export const InvestimentosPage = () => {
             </div>
             {tipoInvestimento === 'OUTRO' && (
               <div className="space-y-1.5">
-                <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Tipo Personalizado', 'Custom Type')}</label>
+                <label className="block text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Tipo Personalizado', 'Custom Type')}</label>
                 <input type="text" value={tipoPersonalizado} onChange={(e) => setTipoPersonalizado(e.target.value)} maxLength={60} className="w-full bg-secondary/30 border border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium placeholder:text-muted-foreground/30" />
               </div>
             )}
             <div className="space-y-1.5">
-              <label className="block text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Meta (Opcional)', 'Goal (Optional)')}</label>
+              <label className="block text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Meta (Opcional)', 'Goal (Optional)')}</label>
               <input type="number" step="0.01" value={meta} onChange={(e) => setMeta(e.target.value)} placeholder={tr('Deixe em branco para sem meta', 'Leave blank for no goal')} className="w-full bg-secondary/30 border border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium placeholder:text-muted-foreground/30" />
             </div>
             <button onClick={() => metaMutation.mutate()} disabled={!descricao.trim() || (meta && Number(meta) <= 0) || (tipoInvestimento === 'OUTRO' && !tipoPersonalizado.trim()) || metaMutation.isPending} className="w-full bg-primary hover:bg-primary/90 text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-primary/20 active:scale-[0.98] text-sm disabled:opacity-50 flex items-center justify-center gap-2">

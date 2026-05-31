@@ -28,6 +28,8 @@ interface ReportModalProps {
   tipoContextoFixo: 'RECEITA' | 'DESPESA' | 'GERAL'; 
 }
 
+import { useModalA11y } from '../../hooks/useModalA11y';
+
 export const ReportModal = ({ isOpen, onClose, tipoContextoFixo }: ReportModalProps) => {
   const language = useI18nStore((state) => state.language);
   const schema = useMemo(() => buildReportSchema(language), [language]);
@@ -116,13 +118,15 @@ export const ReportModal = ({ isOpen, onClose, tipoContextoFixo }: ReportModalPr
     }
   };
 
+  const dialogRef = useModalA11y(isOpen, onClose);
+
   if (!isOpen) return null;
 
   return (
     <div className="fixed inset-0 z-50 flex items-start sm:items-center justify-center p-2 sm:p-4 animate-in fade-in duration-300">
       <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" onClick={onClose} />
 
-      <div className="glass w-full max-w-xl max-h-[94dvh] overflow-y-auto rounded-2xl sm:rounded-3xl p-4 sm:p-8 relative z-10 animate-in zoom-in-95 duration-300">
+      <div ref={dialogRef} className="glass w-full max-w-xl max-h-[94dvh] overflow-y-auto rounded-2xl sm:rounded-3xl p-4 sm:p-8 relative z-10 animate-in zoom-in-95 duration-300">
          <div className="flex items-start sm:items-center justify-between mb-6 sm:mb-8 gap-3">
             <div className="flex items-center gap-3">
               <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
@@ -132,7 +136,7 @@ export const ReportModal = ({ isOpen, onClose, tipoContextoFixo }: ReportModalPr
                 <h3 className="text-lg sm:text-xl font-bold text-white leading-tight">
                   {tr(language, 'Exportar Relatório', 'Export Report')}
                 </h3>
-                <p className="text-[10px] uppercase font-bold text-muted-foreground tracking-widest">
+                <p className="text-2xs uppercase font-bold text-muted-foreground tracking-widest">
                   {tipoContextoFixo}
                 </p>
               </div>

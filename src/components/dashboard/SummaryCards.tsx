@@ -77,7 +77,7 @@ const SummaryCard = ({
             onClick={() => showTooltip && setTooltipOpen(!tooltipOpen)}
             onMouseEnter={() => showTooltip && setTooltipOpen(true)}
             onMouseLeave={() => showTooltip && setTooltipOpen(false)}
-            className={`inline-flex items-center gap-1 text-[10px] font-bold px-2 py-1 rounded-full ${deltaClass} cursor-pointer transition-all`}
+            className={`inline-flex items-center gap-1 text-2xs font-bold px-2 py-1 rounded-full ${deltaClass} cursor-pointer transition-all`}
           >
             {isTrendUp === null ? <Minus size={12} /> : isTrendUp ? <ArrowUpRight size={12} /> : <ArrowDownRight size={12} />}
             {deltaLabel}
@@ -107,7 +107,7 @@ const SummaryCard = ({
         <p className="text-xs font-bold text-muted-foreground uppercase tracking-[0.2em] mb-1">{title}</p>
         <h3 className="text-2xl font-bold text-gradient">{formatarMoeda(value, moeda)}</h3>
         {secondaryLabel && typeof secondaryValue === 'number' && (
-          <p className="mt-1.5 text-[11px] font-medium text-muted-foreground">
+          <p className="mt-1.5 text-2xs font-medium text-muted-foreground">
             {secondaryLabel}:{' '}
             <span className="text-foreground/80 font-semibold">{formatarMoeda(secondaryValue, moeda)}</span>
           </p>

@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Sidebar } from './Sidebar';
 import { Topbar } from './Topbar';
+import { BottomNav } from './BottomNav';
 import { MarketTicker } from '../dashboard/MarketTicker';
 import { Plus, AlertTriangle, ArrowRight } from 'lucide-react';
 import { TransactionModal } from '../modals/TransactionModal';
@@ -21,6 +22,7 @@ export const MainLayout = ({ children }: MainLayoutProps) => {
   const location = useLocation();
   const navigate = useNavigate();
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [drawerOpen, setDrawerOpen] = useState(false);
   const [modalContext, setModalContext] = useState<{
     initialSection: 'receita' | 'despesa' | 'investimento';
     allowSectionSwitch: boolean;
@@ -95,8 +97,8 @@ export const MainLayout = ({ children }: MainLayoutProps) => {
 
   return (
     <div className="flex h-dvh bg-background overflow-hidden relative">
-      <Sidebar />
-      
+      <Sidebar mobileOpen={drawerOpen} onMobileClose={() => setDrawerOpen(false)} />
+
       <div className="flex-1 flex flex-col min-w-0">
         <Topbar />
         <MarketTicker />
@@ -114,14 +116,14 @@ export const MainLayout = ({ children }: MainLayoutProps) => {
             </div>
             <button 
               onClick={() => navigate('/perfil')}
-              className="w-full sm:w-auto flex items-center justify-center gap-2 text-[11px] font-bold uppercase tracking-wider bg-amber-500 hover:bg-amber-400 text-amber-950 px-4 py-2 rounded-lg transition-colors"
+              className="w-full sm:w-auto flex items-center justify-center gap-2 text-2xs font-bold uppercase tracking-wider bg-amber-500 hover:bg-amber-400 text-amber-950 px-4 py-2 rounded-lg transition-colors"
             >
               {tr('Ativar Minha Conta', 'Activate My Account')} <ArrowRight size={14} />
             </button>
           </div>
         )}
 
-        <main className="flex-1 overflow-y-auto p-3 sm:p-4 lg:p-8 pb-24 sm:pb-28 custom-scrollbar">
+        <main className="flex-1 overflow-y-auto p-3 sm:p-4 lg:p-8 pb-28 custom-scrollbar">
           <div className="max-w-7xl mx-auto h-full">
             {children}
           </div>
@@ -134,16 +136,16 @@ export const MainLayout = ({ children }: MainLayoutProps) => {
           <button 
             onClick={abrirModal}
             className="
-              fixed bottom-4 right-4 sm:bottom-8 sm:right-8 bg-primary text-white p-3 sm:p-4 rounded-xl sm:rounded-2xl 
+              hidden md:flex fixed bottom-safe-4 right-4 sm:bottom-8 sm:right-8 bg-primary text-white p-3 sm:p-4 rounded-xl sm:rounded-2xl
               shadow-[0_10px_40px_-10px_rgba(124,58,237,0.5)] transition-all duration-300 transform hover:scale-105 active:scale-95
-              flex items-center group z-40 animate-in fade-in slide-in-from-bottom-8 duration-1000
+              items-center group z-40 animate-in fade-in slide-in-from-bottom-8 duration-1000
               hover:bg-primary/90 hover:shadow-[0_20px_60px_-10px_rgba(124,58,237,0.6)]
             "
           >
             <div className="bg-white/20 p-1.5 sm:p-2 rounded-xl shadow-inner group-hover:rotate-90 transition-transform duration-300 shrink-0">
               <Plus size={20} strokeWidth={3} />
             </div>
-            <span className="font-black uppercase tracking-widest text-[10px] sm:text-xs drop-shadow-md overflow-hidden whitespace-nowrap transition-all duration-500 ease-out max-w-0 opacity-0 group-hover:max-w-[200px] group-hover:opacity-100 group-hover:ml-3">
+            <span className="font-black uppercase tracking-widest text-2xs sm:text-xs drop-shadow-md overflow-hidden whitespace-nowrap transition-all duration-500 ease-out max-w-0 opacity-0 group-hover:max-w-[200px] group-hover:opacity-100 group-hover:ml-3">
               {contextoBotao.label}
             </span>
           </button>
@@ -159,6 +161,11 @@ export const MainLayout = ({ children }: MainLayoutProps) => {
           />
         </>
       )}
+
+      <BottomNav
+        onAdd={isVerified ? abrirModal : () => navigate('/perfil')}
+        onMore={() => setDrawerOpen(true)}
+      />
     </div>
   );
 };

@@ -9,7 +9,7 @@ import { toast } from '../store/useToastStore';
  * Instância Axios centralizada para toda a aplicação.
  *
  * Responsabilidades:
- * - Injetar token JWT em cada request
+ * - Enviar tokens automaticamente via cookie httpOnly (withCredentials)
  * - Renovar access token silenciosamente via refresh token (interceptor 401)
  * - Fazer logout e redirecionar quando todas as tentativas falharem
  */
@@ -25,35 +25,28 @@ const apiClient = axios.create({
 let isRefreshing = false;
 let coldStartToastShown = false;
 let failedQueue: Array<{
-  resolve: (token: string) => void;
+  resolve: () => void;
   reject: (error: unknown) => void;
 }> = [];
 
 /**
- * Processa a fila de requests que falharam durante o refresh.
+ * Libera a fila de requests que aguardavam o refresh.
+ * Com cookie httpOnly, basta sinalizar conclusão — o novo token já está no cookie.
  */
-const processQueue = (error: unknown, token: string | null = null) => {
+const processQueue = (error: unknown) => {
   failedQueue.forEach(({ resolve, reject }) => {
     if (error) {
       reject(error);
     } else {
-      resolve(token!);
+      resolve();
     }
   });
   failedQueue = [];
 };
 
-// ─── Interceptor de Request: Injetar token JWT ──────────────────────
-apiClient.interceptors.request.use(
-  (config) => {
-    const token = useAuthStore.getState().token;
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
-  },
-  (error) => Promise.reject(error),
-);
+// ─── Interceptor de Request: Tokens agora são enviados via httpOnly cookie ──────────────────────
+// Nenhuma injeção manual necessária — o browser envia cookies automaticamente
+// com withCredentials: true (configurado na criação do client).
 
 // ─── Interceptor de Response: Refresh silencioso em 401 ─────────────
 apiClient.interceptors.response.use(
@@ -87,34 +80,30 @@ apiClient.interceptors.response.use(
       return Promise.reject(error);
     }
     if (isRefreshing) {
-      return new Promise<string>((resolve, reject) => {
+      return new Promise<void>((resolve, reject) => {
         failedQueue.push({ resolve, reject });
-      }).then((token) => {
-        originalRequest.headers.Authorization = `Bearer ${token}`;
-        return apiClient(originalRequest);
-      });
+      }).then(() => apiClient(originalRequest));
     }
 
     originalRequest._retry = true;
     isRefreshing = true;
 
     try {
-      const { data } = await axios.post(
+      await axios.post(
         `${API_BASE_URL}/api/auth/refresh`,
         {},
         { withCredentials: true },
       );
 
-      const newAccessToken = data.accessToken;
+      // Access token renovado já está no cookie httpOnly (enviado automaticamente).
       const currentUser = useAuthStore.getState().user;
-      if (currentUser && newAccessToken) {
-        useAuthStore.getState().setAuth(currentUser, newAccessToken);
+      if (currentUser) {
+        useAuthStore.getState().setAuth(currentUser);
       }
-      processQueue(null, newAccessToken);
-      originalRequest.headers.Authorization = `Bearer ${newAccessToken}`;
+      processQueue(null);
       return apiClient(originalRequest);
     } catch (refreshError) {
-      processQueue(refreshError, null);
+      processQueue(refreshError);
       window.dispatchEvent(new CustomEvent('auth:force-logout'));
       return Promise.reject(refreshError);
     } finally {

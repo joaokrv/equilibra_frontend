@@ -145,7 +145,7 @@ export const Topbar = () => {
                     onClick={() => handleSelect(r)}
                     className="w-full flex items-center gap-3 px-4 py-2.5 hover:bg-white/10 transition-all text-left"
                   >
-                    <span className={`text-[9px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded ${
+                    <span className={`text-2xs font-bold uppercase tracking-wider px-1.5 py-0.5 rounded ${
                       r.tipo === 'conta' ? 'bg-primary/10 text-primary' :
                       r.tipo === 'categoria' ? 'bg-amber-500/10 text-amber-400' :
                       'bg-emerald-500/10 text-emerald-400'
@@ -168,7 +168,7 @@ export const Topbar = () => {
           onClick={toggleHideValues}
           aria-label={hideValues ? t(language, 'privacyShowValues') : t(language, 'privacyHideValues')}
           title={hideValues ? t(language, 'privacyShowValues') : t(language, 'privacyHideValues')}
-          className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-secondary/50 border border-white/10 hover:border-primary/50 text-muted-foreground hover:text-white transition-all flex items-center justify-center"
+          className="w-11 h-11 sm:w-10 sm:h-10 rounded-full bg-secondary/50 border border-white/10 hover:border-primary/50 text-muted-foreground hover:text-white transition-all flex items-center justify-center"
         >
           {hideValues ? <EyeOff size={17} /> : <Eye size={17} />}
         </button>
@@ -178,11 +178,11 @@ export const Topbar = () => {
             <p className="text-sm font-semibold group-hover:text-primary transition-colors">
               {user?.nome || t(language, 'userFallback')}
             </p>
-            <p className="text-[10px] text-muted-foreground uppercase tracking-widest font-bold truncate max-w-[180px] lg:max-w-[260px]">
+            <p className="text-2xs text-muted-foreground uppercase tracking-widest font-bold truncate max-w-[180px] lg:max-w-[260px]">
               {user?.email || ''}
             </p>
           </div>
-          <div className="w-9 h-9 sm:w-10 sm:h-10 rounded-full bg-secondary border border-white/10 flex items-center justify-center overflow-hidden group-hover:border-primary/50 transition-all shadow-inner">
+          <div className="w-11 h-11 sm:w-10 sm:h-10 rounded-full bg-secondary border border-white/10 flex items-center justify-center overflow-hidden group-hover:border-primary/50 transition-all shadow-inner">
             {user?.fotoBase64 ? (
               <img
                 src={`data:image/png;base64,${user.fotoBase64}`}

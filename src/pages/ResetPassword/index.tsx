@@ -155,7 +155,7 @@ export function ResetPasswordPage() {
 
         <form onSubmit={handleSubmit(onSubmit)} className="w-full space-y-5">
           <div className="space-y-1.5">
-            <label htmlFor="nova-senha" className="block text-[10px] font-bold text-muted-foreground ml-1 uppercase tracking-[0.2em]">
+            <label htmlFor="nova-senha" className="block text-2xs font-bold text-muted-foreground ml-1 uppercase tracking-[0.2em]">
               {tr('Nova Senha', 'New Password')}
             </label>
             <div className="relative">
@@ -176,14 +176,14 @@ export function ResetPasswordPage() {
               </button>
             </div>
             {errors.novaSenha && (
-              <span className="text-[10px] text-destructive font-bold ml-1 uppercase animate-in fade-in slide-in-from-top-1">
+              <span className="text-2xs text-destructive font-bold ml-1 uppercase animate-in fade-in slide-in-from-top-1">
                 {errors.novaSenha.message}
               </span>
             )}
           </div>
 
           <div className="space-y-1.5">
-            <label htmlFor="confirmar-senha" className="block text-[10px] font-bold text-muted-foreground ml-1 uppercase tracking-[0.2em]">
+            <label htmlFor="confirmar-senha" className="block text-2xs font-bold text-muted-foreground ml-1 uppercase tracking-[0.2em]">
               {tr('Confirmar Nova Senha', 'Confirm New Password')}
             </label>
             <div className="relative">
@@ -204,7 +204,7 @@ export function ResetPasswordPage() {
               </button>
             </div>
             {errors.confirmarSenha && (
-              <span className="text-[10px] text-destructive font-bold ml-1 uppercase animate-in fade-in slide-in-from-top-1">
+              <span className="text-2xs text-destructive font-bold ml-1 uppercase animate-in fade-in slide-in-from-top-1">
                 {errors.confirmarSenha.message}
               </span>
             )}
@@ -218,7 +218,7 @@ export function ResetPasswordPage() {
                 ) : (
                   <X size={12} className="text-muted-foreground/30" />
                 )}
-                <span className={`text-[10px] font-bold uppercase tracking-tight ${req.met ? 'text-emerald-500/80' : 'text-muted-foreground/50'}`}>
+                <span className={`text-2xs font-bold uppercase tracking-tight ${req.met ? 'text-emerald-500/80' : 'text-muted-foreground/50'}`}>
                   {req.label}
                 </span>
               </div>

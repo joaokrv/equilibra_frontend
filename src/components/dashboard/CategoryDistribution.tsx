@@ -77,7 +77,7 @@ export const CategoryDistribution = ({
             key={item.id}
             type="button"
             onClick={() => setFiltro(item.id as 'DESPESA' | 'RECEITA' | 'AMBOS')}
-            className={`px-3 py-1.5 text-[11px] sm:text-xs font-bold uppercase tracking-wider rounded-md transition-all ${
+            className={`px-3 py-1.5 text-2xs sm:text-xs font-bold uppercase tracking-wider rounded-md transition-all ${
               filtro === item.id
                 ? 'bg-primary text-primary-foreground'
                 : 'text-muted-foreground hover:text-white'
