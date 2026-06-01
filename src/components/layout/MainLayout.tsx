@@ -124,7 +124,7 @@ export const MainLayout = ({ children }: MainLayoutProps) => {
         )}
 
         <main className="flex-1 overflow-y-auto p-3 sm:p-4 lg:p-8 pb-28 custom-scrollbar">
-          <div className="max-w-7xl mx-auto h-full">
+          <div className="max-w-7xl mx-auto min-h-full">
             {children}
           </div>
         </main>
