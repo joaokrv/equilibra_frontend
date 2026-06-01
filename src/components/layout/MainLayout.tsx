@@ -123,8 +123,8 @@ export const MainLayout = ({ children }: MainLayoutProps) => {
           </div>
         )}
 
-        <main className="flex-1 overflow-y-auto p-3 sm:p-4 lg:p-8 pb-28 custom-scrollbar">
-          <div className="max-w-7xl mx-auto min-h-full">
+        <main className="flex-1 overflow-y-auto p-3 sm:p-4 lg:p-8 custom-scrollbar">
+          <div className="max-w-7xl mx-auto min-h-full pb-32 md:pb-8">
             {children}
           </div>
         </main>
