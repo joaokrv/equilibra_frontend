@@ -47,11 +47,13 @@ import { CartaoResponseDTO } from '../../api/models/CartaoResponseDTO';
 import { FaturaResponseDTO } from '../../api/models/FaturaResponseDTO';
 import { formatarMoeda } from '../../lib/formatters';
 import { BANDEIRA_CARTAO_LABELS } from '../../lib/constants';
+import { useModalA11y } from '../../hooks/useModalA11y';
 import { cartoesApi } from '../../lib/cartoesApi';
 import { getApiErrorMessage } from '../../lib/errorMessage';
 import { toast } from '../../store/useToastStore';
 import { useAuthStore } from '../../store/useAuthStore';
 import { useI18nStore } from '../../store/useI18nStore';
+import { useEffect } from 'react';
 
 export const CartoesPage = () => {
   const navigate = useNavigate();
@@ -78,6 +80,32 @@ export const CartoesPage = () => {
   const [diaVencimento, setDiaVencimento] = useState('');
   const [bandeira, setBandeira] = useState<CartaoRegistroRequestDTO.bandeira>(CartaoRegistroRequestDTO.bandeira.VISA);
   const [contaVinculadaId, setContaVinculadaId] = useState('');
+
+  function fecharModal() {
+    setModalAberto(false);
+    setCartaoEditando(null);
+    setNome('');
+    setLimite('');
+    setDiaFechamento('');
+    setDiaVencimento('');
+    setBandeira(CartaoRegistroRequestDTO.bandeira.VISA);
+    setContaVinculadaId('');
+  }
+
+  const modalNovoRef = useModalA11y(modalAberto, fecharModal);
+  const modalPagarRef = useModalA11y(!!modalPagar, () => {
+    setModalPagar(null);
+    setValorPagamento('');
+    setContaPagamentoId('');
+  });
+
+  useEffect(() => {
+    const handleAbrir = () => {
+      setModalAberto(true);
+    };
+    window.addEventListener('abrir-modal-cartao', handleAbrir);
+    return () => window.removeEventListener('abrir-modal-cartao', handleAbrir);
+  }, []);
 
   const { data: cartoes = [], isLoading, isError, refetch } = useQuery({
     queryKey: ['cartoes'],
@@ -165,17 +193,6 @@ export const CartoesPage = () => {
       toast.error(getApiErrorMessage(error, tr('Não foi possível registrar o pagamento da fatura. Confira saldo e valor informado.', 'Could not register invoice payment. Please review account balance and amount.'))),
   });
 
-  const fecharModal = () => {
-    setModalAberto(false);
-    setCartaoEditando(null);
-    setNome('');
-    setLimite('');
-    setDiaFechamento('');
-    setDiaVencimento('');
-    setBandeira(CartaoRegistroRequestDTO.bandeira.VISA);
-    setContaVinculadaId('');
-  };
-
   const abrirModalEdicao = (cartao: CartaoResponseDTO) => {
     setCartaoEditando(cartao);
     setNome(cartao.nome ?? '');
@@ -214,9 +231,6 @@ export const CartoesPage = () => {
             <h1 className="text-2xl font-bold text-white">{tr('Meus Cartões', 'My Cards')}</h1>
             <p className="text-sm text-muted-foreground mt-1">{tr('Gerencie seus cartões de crédito e acompanhe faturas.', 'Manage your credit cards and track invoices.')}</p>
           </div>
-          <button onClick={() => setModalAberto(true)} className="w-full sm:w-auto flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-white font-bold px-4 py-2.5 rounded-xl transition-all shadow-lg shadow-primary/20 active:scale-[0.98] text-sm">
-            <Plus size={16} /> {tr('Novo Cartão', 'New Card')}
-          </button>
         </div>
 
         {/* Resumo */}
@@ -289,10 +303,10 @@ export const CartoesPage = () => {
                         style={{ width: `${Math.min(100, ((cartao.limite ?? 0) - (cartao.limiteDisponivel ?? 0)) / (cartao.limite || 1) * 100)}%` }}
                       />
                     </div>
-                    <button onClick={(e) => { e.stopPropagation(); handleDeletar(cartao.id!, cartao.nome!); }} className="p-1.5 rounded-lg text-muted-foreground hover:text-rose-400 hover:bg-rose-500/10 transition-all">
+                    <button onClick={(e) => { e.stopPropagation(); handleDeletar(cartao.id!, cartao.nome!); }} className="min-h-11 min-w-11 sm:min-h-0 sm:min-w-0 p-2.5 sm:p-1.5 rounded-lg text-muted-foreground hover:text-rose-400 hover:bg-rose-500/10 transition-all flex items-center justify-center">
                       <Trash2 size={14} />
                     </button>
-                    <button onClick={(e) => { e.stopPropagation(); abrirModalEdicao(cartao); }} className="p-1.5 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all" aria-label={tr('Editar cartão', 'Edit card')}>
+                    <button onClick={(e) => { e.stopPropagation(); abrirModalEdicao(cartao); }} className="min-h-11 min-w-11 sm:min-h-0 sm:min-w-0 p-2.5 sm:p-1.5 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all flex items-center justify-center" aria-label={tr('Editar cartão', 'Edit card')}>
                       <Pencil size={14} />
                     </button>
                     {cartaoExpandido === cartao.id ? <ChevronDown size={16} className="text-muted-foreground" /> : <ChevronRight size={16} className="text-muted-foreground" />}
@@ -351,7 +365,7 @@ export const CartoesPage = () => {
                               <span className={`text-2xs font-bold px-2 py-0.5 rounded ${cfg.color}`}>{cfg.label}</span>
                               <button
                                 onClick={() => navigate(`/faturas/${cartao.id}?mes=${f.mes}&ano=${f.ano}`)}
-                                className="p-1 rounded-lg text-muted-foreground hover:text-white hover:bg-white/10 transition-all"
+                                className="min-h-11 min-w-11 sm:min-h-0 sm:min-w-0 p-2.5 sm:p-1 rounded-lg text-muted-foreground hover:text-white hover:bg-white/10 transition-all flex items-center justify-center"
                                 aria-label={tr('Ver detalhes', 'View details')}
                               >
                                 <Eye size={14} />
@@ -363,7 +377,7 @@ export const CartoesPage = () => {
                                     setValorPagamento(String(f.valorRestante ?? 0));
                                     if (cartao.contaId) setContaPagamentoId(String(cartao.contaId));
                                   }}
-                                  className="text-2xs font-bold text-primary hover:text-primary/80 transition-colors bg-primary/10 px-2 py-1 rounded-lg"
+                                  className="min-h-11 min-w-11 sm:min-h-0 sm:min-w-0 px-3 py-2 sm:px-2 sm:py-1 text-2xs font-bold text-primary hover:text-primary/80 transition-colors bg-primary/10 rounded-lg flex items-center justify-center"
                                 >
                                   {tr('Pagar', 'Pay')}
                                 </button>
@@ -383,8 +397,8 @@ export const CartoesPage = () => {
 
       {/* Modal Novo Cartão */}
       {modalAberto && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="glass w-full max-w-md rounded-2xl p-6 space-y-5 animate-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200" role="dialog" aria-modal="true">
+          <div ref={modalNovoRef} className="glass w-full max-w-md rounded-2xl p-6 space-y-5 animate-in zoom-in-95 duration-200">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2"><CreditCard size={18} className="text-primary" /><h3 className="font-bold text-white">{cartaoEditando ? tr('Editar Cartão', 'Edit Card') : tr('Novo Cartão', 'New Card')}</h3></div>
               <button onClick={fecharModal} className="text-muted-foreground hover:text-white transition-colors"><X size={18} /></button>
@@ -440,8 +454,8 @@ export const CartoesPage = () => {
 
       {/* Modal Pagar Fatura */}
       {modalPagar && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="glass w-full max-w-sm rounded-2xl p-6 space-y-5 animate-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200" role="dialog" aria-modal="true">
+          <div ref={modalPagarRef} className="glass w-full max-w-sm rounded-2xl p-6 space-y-5 animate-in zoom-in-95 duration-200">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2"><DollarSign size={18} className="text-emerald-400" /><h3 className="font-bold text-white">{tr('Pagar Fatura', 'Pay Invoice')}</h3></div>
               <button onClick={() => { setModalPagar(null); setValorPagamento(''); setContaPagamentoId(''); }} className="text-muted-foreground hover:text-white transition-colors"><X size={18} /></button>

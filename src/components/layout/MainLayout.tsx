@@ -60,8 +60,44 @@ export const MainLayout = ({ children }: MainLayoutProps) => {
 
     if (pathname.startsWith('/investimentos')) {
       return {
-        label: tr('Registrar investimento', 'Add investment'),
+        label: tr('Novo investimento', 'New investment'),
         initialSection: 'investimento' as const,
+        allowSectionSwitch: false,
+      };
+    }
+
+    if (pathname.startsWith('/recorrentes')) {
+      const searchParams = new URLSearchParams(location.search);
+      const tipo = searchParams.get('tipo') || 'DESPESA';
+      return {
+        label: tipo === 'RECEITA'
+          ? tr('Registrar receita fixa', 'Add recurring income')
+          : tr('Registrar despesa fixa', 'Add recurring expense'),
+        initialSection: tipo === 'RECEITA' ? ('receita' as const) : ('despesa' as const),
+        allowSectionSwitch: false,
+      };
+    }
+
+    if (pathname.startsWith('/categorias')) {
+      return {
+        label: tr('Nova categoria', 'New category'),
+        initialSection: 'despesa' as const,
+        allowSectionSwitch: false,
+      };
+    }
+
+    if (pathname.startsWith('/contas')) {
+      return {
+        label: tr('Nova conta', 'New account'),
+        initialSection: 'despesa' as const,
+        allowSectionSwitch: false,
+      };
+    }
+
+    if (pathname.startsWith('/cartoes')) {
+      return {
+        label: tr('Novo cartão', 'New card'),
+        initialSection: 'despesa' as const,
         allowSectionSwitch: false,
       };
     }
@@ -77,6 +113,26 @@ export const MainLayout = ({ children }: MainLayoutProps) => {
   const contextoBotao = getContextoDoBotao();
 
   const abrirModal = () => {
+    if (pathname.startsWith('/recorrentes')) {
+      window.dispatchEvent(new CustomEvent('abrir-modal-recorrente'));
+      return;
+    }
+    if (pathname.startsWith('/categorias')) {
+      window.dispatchEvent(new CustomEvent('abrir-modal-categoria'));
+      return;
+    }
+    if (pathname.startsWith('/contas')) {
+      window.dispatchEvent(new CustomEvent('abrir-modal-conta'));
+      return;
+    }
+    if (pathname.startsWith('/cartoes')) {
+      window.dispatchEvent(new CustomEvent('abrir-modal-cartao'));
+      return;
+    }
+    if (pathname.startsWith('/investimentos')) {
+      window.dispatchEvent(new CustomEvent('abrir-modal-investimento'));
+      return;
+    }
     setModalContext({
       initialSection: contextoBotao.initialSection,
       allowSectionSwitch: contextoBotao.allowSectionSwitch,

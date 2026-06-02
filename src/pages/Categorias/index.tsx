@@ -5,6 +5,7 @@ import { useSearchParams } from 'react-router-dom';
 import { MainLayout } from '../../components/layout/MainLayout';
 import { ErrorState } from '../../components/ui/StateViews';
 import { DeleteConfirmationModal } from '../../components/modals/DeleteConfirmationModal';
+import { useModalA11y } from '../../hooks/useModalA11y';
 import { CategoriasService } from '../../api/services/CategoriasService';
 import { CategoriaResponseDTO } from '../../api/models/CategoriaResponseDTO';
 import { CategoriaRegistroRequestDTO } from '../../api/models/CategoriaRegistroRequestDTO';
@@ -20,6 +21,11 @@ export const CategoriasPage = () => {
   const buscaParam = searchParams.get('busca') ?? '';
   const [modalAberto, setModalAberto] = useState(false);
   const [novoNome, setNovoNome] = useState('');
+  const fecharModal = () => {
+    setModalAberto(false);
+    setNovoNome('');
+  };
+  const modalRef = useModalA11y(modalAberto, fecharModal);
   const [novoTipo, setNovoTipo] = useState<CategoriaRegistroRequestDTO.tipo>(CategoriaRegistroRequestDTO.tipo.DESPESA);
   const [busca, setBusca] = useState(buscaParam);
   const [editandoId, setEditandoId] = useState<number | null>(null);
@@ -29,6 +35,14 @@ export const CategoriasPage = () => {
   useEffect(() => {
     setBusca(buscaParam);
   }, [buscaParam]);
+
+  useEffect(() => {
+    const handleAbrir = () => {
+      setModalAberto(true);
+    };
+    window.addEventListener('abrir-modal-categoria', handleAbrir);
+    return () => window.removeEventListener('abrir-modal-categoria', handleAbrir);
+  }, []);
 
   const { data: categorias = [], isLoading, isError, refetch } = useQuery({
     queryKey: ['categorias'],
@@ -41,8 +55,7 @@ export const CategoriasPage = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['categorias'] });
       toast.success(tr(`Categoria "${novoNome.trim()}" criada com sucesso.`, `Category "${novoNome.trim()}" created successfully.`));
-      setNovoNome('');
-      setModalAberto(false);
+      fecharModal();
     },
     onError: (error: unknown) =>
       toast.error(getApiErrorMessage(error, tr('Não foi possível criar a categoria agora. Tente novamente.', 'Could not create the category right now. Please try again.'))),
@@ -113,20 +126,11 @@ export const CategoriasPage = () => {
       <div className="p-6 space-y-6 animate-in fade-in duration-500">
 
         {/* Header */}
-        <div className="flex items-center justify-between">
-          <div>
-            <h1 className="text-2xl font-bold text-white">{tr('Categorias', 'Categories')}</h1>
-            <p className="text-sm text-muted-foreground mt-1">
-              {tr('Organize suas transações com categorias personalizadas.', 'Organize your transactions with custom categories.')}
-            </p>
-          </div>
-          <button
-            onClick={() => setModalAberto(true)}
-            className="flex items-center gap-2 bg-primary hover:bg-primary/90 text-white font-bold px-4 py-2.5 rounded-xl transition-all shadow-lg shadow-primary/20 active:scale-[0.98] text-sm"
-          >
-            <Plus size={16} />
-            {tr('Nova Categoria', 'New Category')}
-          </button>
+        <div>
+          <h1 className="text-2xl font-bold text-white">{tr('Categorias', 'Categories')}</h1>
+          <p className="text-sm text-muted-foreground mt-1">
+            {tr('Organize suas transações com categorias personalizadas.', 'Organize your transactions with custom categories.')}
+          </p>
         </div>
 
         <div className="relative max-w-sm">
@@ -234,16 +238,17 @@ export const CategoriasPage = () => {
 
       {/* Modal Nova Categoria */}
       {modalAberto && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="glass w-full max-w-sm rounded-2xl p-6 space-y-5 animate-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200" role="dialog" aria-modal="true">
+          <div ref={modalRef} className="glass w-full max-w-sm rounded-2xl p-6 space-y-5 animate-in zoom-in-95 duration-200">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Tag size={18} className="text-primary" />
                 <h3 className="font-bold text-white">{tr('Nova Categoria', 'New Category')}</h3>
               </div>
               <button
-                onClick={() => { setModalAberto(false); setNovoNome(''); }}
+                onClick={fecharModal}
                 className="text-muted-foreground hover:text-white transition-colors"
+                aria-label={tr('Fechar modal', 'Close modal')}
               >
                 <X size={18} />
               </button>
@@ -391,14 +396,14 @@ const CategoriaItem = ({
             <button
               onClick={onConfirmarEdicao}
               disabled={salvando}
-              className="p-1.5 rounded-lg hover:bg-emerald-500/10 text-muted-foreground hover:text-emerald-400 transition-all"
+              className="min-h-11 min-w-11 sm:min-h-0 sm:min-w-0 p-2.5 sm:p-1.5 rounded-lg hover:bg-emerald-500/10 text-muted-foreground hover:text-emerald-400 transition-all flex items-center justify-center"
               title={tr('Confirmar', 'Confirm')}
             >
               {salvando ? <Loader2 size={13} className="animate-spin" /> : <Check size={13} />}
             </button>
             <button
               onClick={onCancelarEdicao}
-              className="p-1.5 rounded-lg hover:bg-white/10 text-muted-foreground hover:text-white transition-all"
+              className="min-h-11 min-w-11 sm:min-h-0 sm:min-w-0 p-2.5 sm:p-1.5 rounded-lg hover:bg-white/10 text-muted-foreground hover:text-white transition-all flex items-center justify-center"
               title={tr('Cancelar', 'Cancel')}
             >
               <X size={13} />
@@ -408,14 +413,14 @@ const CategoriaItem = ({
           <>
             <button
               onClick={onIniciarEdicao}
-              className="opacity-100 sm:opacity-0 sm:group-hover:opacity-100 p-1.5 rounded-lg hover:bg-white/10 text-muted-foreground hover:text-primary transition-all"
+              className="opacity-100 sm:opacity-0 sm:group-hover:opacity-100 min-h-11 min-w-11 sm:min-h-0 sm:min-w-0 p-2.5 sm:p-1.5 rounded-lg hover:bg-white/10 text-muted-foreground hover:text-primary transition-all flex items-center justify-center"
               title={tr('Editar nome', 'Edit name')}
             >
               <Pencil size={13} />
             </button>
             <button
               onClick={onDeletar}
-              className="opacity-100 sm:opacity-0 sm:group-hover:opacity-100 p-1.5 rounded-lg hover:bg-rose-500/10 text-muted-foreground hover:text-rose-400 transition-all"
+              className="opacity-100 sm:opacity-0 sm:group-hover:opacity-100 min-h-11 min-w-11 sm:min-h-0 sm:min-w-0 p-2.5 sm:p-1.5 rounded-lg hover:bg-rose-500/10 text-muted-foreground hover:text-rose-400 transition-all flex items-center justify-center"
               title={tr(`Remover ${categoria.nome}`, `Remove ${categoria.nome}`)}
             >
               <Trash2 size={13} />

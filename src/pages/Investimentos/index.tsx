@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   Target, Plus, Trash2, X, Loader2, ArrowUpCircle, ArrowDownCircle, Pencil,
@@ -6,6 +6,7 @@ import {
 import { MainLayout } from '../../components/layout/MainLayout';
 import { ErrorState } from '../../components/ui/StateViews';
 import { DeleteConfirmationModal } from '../../components/modals/DeleteConfirmationModal';
+import { useModalA11y } from '../../hooks/useModalA11y';
 import { ContasService } from '../../api/services/ContasService';
 import { investimentosApi, InvestimentoItem, TipoInvestimento } from '../../lib/investimentosApi';
 import { formatarMoeda } from '../../lib/formatters';
@@ -47,7 +48,7 @@ export const InvestimentosPage = () => {
   const [modal, setModal] = useState<ModalTipo>(null);
   const [investimentoSelecionado, setInvestimentoSelecionado] = useState<InvestimentoItem | null>(null);
   const [investimentoParaDeletar, setInvestimentoParaDeletar] = useState<{ id: number; descricao: string } | null>(null);
-  const [deletandoId, setDeletandoId] = useState<number | null>(null);  const [descricao, setDescricao] = useState('');
+  const [deletandoId, setDeletandoId] = useState<number | null>(null);  const [descricao, setDescricao] = useState('');
   const [valorInicial, setValorInicial] = useState('');
   const [meta, setMeta] = useState('');
   const [valor, setValor] = useState('');
@@ -56,7 +57,32 @@ export const InvestimentosPage = () => {
   const [tipoInvestimento, setTipoInvestimento] = useState<TipoInvestimento>('CDB');
   const [tipoPersonalizado, setTipoPersonalizado] = useState('');
 
-  const { data: investimentos = [], isLoading, isError, refetch } = useQuery({
+  function fecharModal() {
+    setModal(null);
+    setInvestimentoSelecionado(null);
+    setDescricao('');
+    setValorInicial('');
+    setMeta('');
+    setValor('');
+    setContaId('');
+    setContaDestinoId('');
+    setTipoInvestimento('CDB');
+    setTipoPersonalizado('');
+  }
+
+  const modalCriarRef = useModalA11y(modal === 'criar', fecharModal);
+  const modalAporteResgateRef = useModalA11y(modal === 'depositar' || modal === 'resgatar', fecharModal);
+  const modalMetaRef = useModalA11y(modal === 'meta', fecharModal);
+
+  useEffect(() => {
+    const handleAbrir = () => {
+      setModal('criar');
+    };
+    window.addEventListener('abrir-modal-investimento', handleAbrir);
+    return () => window.removeEventListener('abrir-modal-investimento', handleAbrir);
+  }, []);
+
+  const { data: investimentos = [], isLoading, isError, refetch } = useQuery({y({
     queryKey: ['investimentos'],
     queryFn: () => investimentosApi.listar(),
   });
@@ -142,19 +168,6 @@ export const InvestimentosPage = () => {
     },
   });
 
-  const fecharModal = () => {
-    setModal(null);
-    setInvestimentoSelecionado(null);
-    setDescricao('');
-    setValorInicial('');
-    setMeta('');
-    setValor('');
-    setContaId('');
-    setContaDestinoId('');
-    setTipoInvestimento('CDB');
-    setTipoPersonalizado('');
-  };
-
   const abrirDepositar = (inv: InvestimentoItem) => {
     setInvestimentoSelecionado(inv);
     setModal('depositar');
@@ -190,9 +203,6 @@ export const InvestimentosPage = () => {
             <h1 className="text-2xl font-bold text-white">{tr('Investimentos', 'Investments')}</h1>
             <p className="text-sm text-muted-foreground mt-1">{tr('Acompanhe suas metas e faça aportes ou resgates.', 'Track your goals and make deposits or withdrawals.')}</p>
           </div>
-          <button onClick={() => setModal('criar')} className="w-full sm:w-auto flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-white font-bold px-4 py-2.5 rounded-xl transition-all shadow-lg shadow-primary/20 active:scale-[0.98] text-sm">
-            <Plus size={16} /> {tr('Novo Investimento', 'New Investment')}
-          </button>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -252,8 +262,8 @@ export const InvestimentosPage = () => {
                       </div>
                     </div>
                     <div className="flex gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
-                      <button onClick={() => abrirMeta(inv)} className="p-1.5 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all" title={tr('Editar meta', 'Edit goal')}><Pencil size={14} /></button>
-                      <button onClick={() => handleDeletar(inv.id!, inv.descricao || '')} disabled={deletandoId === inv.id} className="p-1.5 rounded-lg text-muted-foreground hover:text-rose-400 hover:bg-rose-500/10 transition-all disabled:opacity-50" title={tr('Remover', 'Remove')}>
+                      <button onClick={() => abrirMeta(inv)} className="min-h-11 min-w-11 sm:min-h-0 sm:min-w-0 p-2.5 sm:p-1.5 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all flex items-center justify-center" title={tr('Editar meta', 'Edit goal')}><Pencil size={14} /></button>
+                      <button onClick={() => handleDeletar(inv.id!, inv.descricao || '')} disabled={deletandoId === inv.id} className="min-h-11 min-w-11 sm:min-h-0 sm:min-w-0 p-2.5 sm:p-1.5 rounded-lg text-muted-foreground hover:text-rose-400 hover:bg-rose-500/10 transition-all disabled:opacity-50 flex items-center justify-center" title={tr('Remover', 'Remove')}>
                         {deletandoId === inv.id ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
                       </button>
                     </div>
@@ -273,10 +283,10 @@ export const InvestimentosPage = () => {
                   </div>
 
                   <div className="flex gap-2">
-                    <button onClick={() => abrirDepositar(inv)} className="flex-1 flex items-center justify-center gap-1.5 bg-primary/10 hover:bg-primary/20 text-primary font-bold py-2 rounded-xl transition-all text-xs">
+                    <button onClick={() => abrirDepositar(inv)} className="min-h-11 sm:min-h-0 flex-1 flex items-center justify-center gap-1.5 bg-primary/10 hover:bg-primary/20 text-primary font-bold py-3 sm:py-2 rounded-xl transition-all text-xs">
                       <ArrowUpCircle size={14} /> {tr('Depositar', 'Deposit')}
                     </button>
-                    <button onClick={() => abrirResgatar(inv)} disabled={(inv.valorAtual ?? 0) === 0} className="flex-1 flex items-center justify-center gap-1.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 font-bold py-2 rounded-xl transition-all text-xs disabled:opacity-30">
+                    <button onClick={() => abrirResgatar(inv)} disabled={(inv.valorAtual ?? 0) === 0} className="min-h-11 sm:min-h-0 flex-1 flex items-center justify-center gap-1.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 font-bold py-3 sm:py-2 rounded-xl transition-all text-xs disabled:opacity-30">
                       <ArrowDownCircle size={14} /> {tr('Resgatar', 'Withdraw')}
                     </button>
                   </div>
@@ -288,8 +298,8 @@ export const InvestimentosPage = () => {
       </div>
 
       {modal === 'criar' && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="glass w-full max-w-sm rounded-2xl p-6 space-y-5 animate-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200" role="dialog" aria-modal="true">
+          <div ref={modalCriarRef} className="glass w-full max-w-sm rounded-2xl p-6 space-y-5 animate-in zoom-in-95 duration-200">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2"><Target size={18} className="text-primary" /><h3 className="font-bold text-white">{tr('Novo Investimento', 'New Investment')}</h3></div>
               <button onClick={fecharModal} className="text-muted-foreground hover:text-white transition-colors"><X size={18} /></button>
@@ -348,8 +358,8 @@ export const InvestimentosPage = () => {
       )}
 
       {(modal === 'depositar' || modal === 'resgatar') && investimentoSelecionado && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="glass w-full max-w-sm rounded-2xl p-6 space-y-5 animate-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200" role="dialog" aria-modal="true">
+          <div ref={modalAporteResgateRef} className="glass w-full max-w-sm rounded-2xl p-6 space-y-5 animate-in zoom-in-95 duration-200">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 {modal === 'depositar' ? <ArrowUpCircle size={18} className="text-primary" /> : <ArrowDownCircle size={18} className="text-rose-400" />}
@@ -397,8 +407,8 @@ export const InvestimentosPage = () => {
       )}
 
       {modal === 'meta' && investimentoSelecionado && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="glass w-full max-w-sm rounded-2xl p-6 space-y-5 animate-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200" role="dialog" aria-modal="true">
+          <div ref={modalMetaRef} className="glass w-full max-w-sm rounded-2xl p-6 space-y-5 animate-in zoom-in-95 duration-200">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2"><Pencil size={18} className="text-primary" /><h3 className="font-bold text-white">{tr('Editar Meta', 'Edit Goal')}</h3></div>
               <button onClick={fecharModal} className="text-muted-foreground hover:text-white transition-colors"><X size={18} /></button>

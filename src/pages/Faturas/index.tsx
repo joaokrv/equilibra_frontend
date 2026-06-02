@@ -7,6 +7,7 @@ import {
 } from 'lucide-react';
 import { MainLayout } from '../../components/layout/MainLayout';
 import { ErrorState } from '../../components/ui/StateViews';
+import { useModalA11y } from '../../hooks/useModalA11y';
 import { CartoesService } from '../../api/services/CartoesService';
 import { ContasService } from '../../api/services/ContasService';
 import { useFaturasPorCartao, useTransacoesPorFatura, usePagarFatura } from '../../hooks/useFaturas';
@@ -36,6 +37,12 @@ export const FaturasPage = () => {
   const [modalPagar, setModalPagar] = useState(false);
   const [valorPagamento, setValorPagamento] = useState('');
   const [contaPagamentoId, setContaPagamentoId] = useState('');
+
+  const modalRef = useModalA11y(modalPagar, () => {
+    setModalPagar(false);
+    setValorPagamento('');
+    setContaPagamentoId('');
+  });
 
   const { data: cartoes = [], isLoading: cartoesLoading, isError: cartoesError, refetch: refetchCartoes } = useQuery({
     queryKey: ['cartoes'],
@@ -131,9 +138,9 @@ export const FaturasPage = () => {
                 <div
                   key={cartao.id}
                   onClick={() => cartao.id && navigate(`/faturas/${cartao.id}`)}
-                  className="glass rounded-2xl p-4 sm:p-5 cursor-pointer hover:bg-white/10 transition-all active:scale-[0.99]"
+                  className="glass rounded-2xl p-4 sm:p-5 cursor-pointer hover:bg-white/10 transition-all active:scale-[0.99] min-h-11 flex items-center"
                 >
-                  <div className="flex items-center gap-4">
+                  <div className="flex items-center gap-4 w-full">
                     <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary flex-shrink-0">
                       <CreditCard size={18} />
                     </div>
@@ -168,9 +175,9 @@ export const FaturasPage = () => {
         {/* Navegação de mês */}
         {faturas.length > 0 && (
           <div className="flex items-center justify-between gap-3 glass rounded-xl px-3 py-2 flex-shrink-0 h-[44px] w-fit">
-            <button onClick={() => navMes(-1)} className="p-1 rounded-lg hover:bg-white/10 text-muted-foreground hover:text-white transition-all"><ChevronLeft size={18} /></button>
-            <span className="text-sm font-bold text-white capitalize min-w-[120px] text-center">{new Date(ano, mes - 1).toLocaleDateString(language, { month: 'long', year: 'numeric' })}</span>
-            <button onClick={() => navMes(1)} className="p-1 rounded-lg hover:bg-white/10 text-muted-foreground hover:text-white transition-all"><ChevronRight size={18} /></button>
+            <button onClick={() => navMes(-1)} className="min-h-11 min-w-11 sm:min-h-0 sm:min-w-0 p-2.5 sm:p-1 rounded-lg hover:bg-white/10 text-muted-foreground hover:text-white transition-all flex items-center justify-center"><ChevronLeft size={18} /></button>
+            <span className="text-sm font-bold text-white capitalize min-w-[120px] text-center flex items-center justify-center">{new Date(ano, mes - 1).toLocaleDateString(language, { month: 'long', year: 'numeric' })}</span>
+            <button onClick={() => navMes(1)} className="min-h-11 min-w-11 sm:min-h-0 sm:min-w-0 p-2.5 sm:p-1 rounded-lg hover:bg-white/10 text-muted-foreground hover:text-white transition-all flex items-center justify-center"><ChevronRight size={18} /></button>
           </div>
         )}
 
@@ -267,7 +274,7 @@ export const FaturasPage = () => {
                       if (cartaoAtual?.contaId) setContaPagamentoId(String(cartaoAtual.contaId));
                       setModalPagar(true);
                     }}
-                    className="w-full bg-emerald-500 hover:bg-emerald-500/90 text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-emerald-500/20 active:scale-[0.98] text-sm flex items-center justify-center gap-2"
+                    className="w-full bg-emerald-500 hover:bg-emerald-500/90 text-white font-bold py-3.5 sm:py-3 rounded-xl transition-all shadow-lg shadow-emerald-500/20 active:scale-[0.98] text-sm flex items-center justify-center gap-2 min-h-11"
                   >
                     <DollarSign size={16} /> {tr('Pagar Fatura', 'Pay Invoice')}
                   </button>
@@ -309,8 +316,8 @@ export const FaturasPage = () => {
 
       {/* Modal Pagar */}
       {modalPagar && faturaAtual && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="glass w-full max-w-sm rounded-2xl p-6 space-y-5 animate-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200" role="dialog" aria-modal="true">
+          <div ref={modalRef} className="glass w-full max-w-sm rounded-2xl p-6 space-y-5 animate-in zoom-in-95 duration-200">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <DollarSign size={18} className="text-emerald-400" />

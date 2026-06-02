@@ -5,6 +5,7 @@ import { useNavigate, useSearchParams } from 'react-router-dom';
 import { MainLayout } from '../../components/layout/MainLayout';
 import { ErrorState } from '../../components/ui/StateViews';
 import { DeleteConfirmationModal } from '../../components/modals/DeleteConfirmationModal';
+import { useModalA11y } from '../../hooks/useModalA11y';
 import { ContasService } from '../../api/services/ContasService';
 import { ContaResponseDTO } from '../../api/models/ContaResponseDTO';
 import { investimentosApi } from '../../lib/investimentosApi';
@@ -32,9 +33,28 @@ export const ContasPage = () => {
   const [deletandoId, setDeletandoId] = useState<number | null>(null);
   const [busca, setBusca] = useState(buscaParam);
 
+  function fecharModal() {
+    setModalAberto(false);
+    setEditando(null);
+    setNome('');
+    setSaldo('');
+    setInvestimentoInicial('');
+    setMaisDeUmInvestimento(false);
+  }
+
+  const modalRef = useModalA11y(modalAberto, fecharModal);
+
   useEffect(() => {
     setBusca(buscaParam);
   }, [buscaParam]);
+
+  useEffect(() => {
+    const handleAbrir = () => {
+      setModalAberto(true);
+    };
+    window.addEventListener('abrir-modal-conta', handleAbrir);
+    return () => window.removeEventListener('abrir-modal-conta', handleAbrir);
+  }, []);
 
   const { data: contas = [], isLoading, isError, refetch } = useQuery({
     queryKey: ['contas'],
@@ -151,15 +171,6 @@ export const ContasPage = () => {
     },
   });
 
-  const fecharModal = () => {
-    setModalAberto(false);
-    setEditando(null);
-    setNome('');
-    setSaldo('');
-    setInvestimentoInicial('');
-    setMaisDeUmInvestimento(false);
-  };
-
   const abrirEdicao = (conta: ContaResponseDTO) => {
     setEditando(conta);
     setNome(conta.nome || '');
@@ -213,12 +224,6 @@ export const ContasPage = () => {
             <h1 className="text-2xl font-bold text-white">Minhas Contas</h1>
             <p className="text-sm text-muted-foreground mt-1">{tr('Gerencie suas contas bancárias e acompanhe seus saldos.', 'Manage your bank accounts and track your balances.')}</p>
           </div>
-          <button
-            onClick={() => setModalAberto(true)}
-            className="w-full sm:w-auto flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-white font-bold px-4 py-2.5 rounded-xl transition-all shadow-lg shadow-primary/20 active:scale-[0.98] text-sm"
-          >
-            <Plus size={16} /> {tr('Nova Conta', 'New Account')}
-          </button>
         </div>
 
         <div className="relative max-w-sm">
@@ -277,8 +282,8 @@ export const ContasPage = () => {
                       </div>
                     </div>
                     <div className="flex gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
-                      <button onClick={() => abrirEdicao(conta)} className="p-1.5 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all" aria-label={tr('Editar', 'Edit')}><Pencil size={14} /></button>
-                      <button onClick={() => handleDeletar(conta.id!, conta.nome!)} disabled={deletandoId === conta.id} className="p-1.5 rounded-lg text-muted-foreground hover:text-rose-400 hover:bg-rose-500/10 transition-all disabled:opacity-50" aria-label={tr('Remover', 'Remove')}>
+                      <button onClick={() => abrirEdicao(conta)} className="min-h-11 min-w-11 sm:min-h-0 sm:min-w-0 p-2.5 sm:p-1.5 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all flex items-center justify-center" aria-label={tr('Editar', 'Edit')}><Pencil size={14} /></button>
+                      <button onClick={() => handleDeletar(conta.id!, conta.nome!)} disabled={deletandoId === conta.id} className="min-h-11 min-w-11 sm:min-h-0 sm:min-w-0 p-2.5 sm:p-1.5 rounded-lg text-muted-foreground hover:text-rose-400 hover:bg-rose-500/10 transition-all disabled:opacity-50 flex items-center justify-center" aria-label={tr('Remover', 'Remove')}>
                         {deletandoId === conta.id ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
                       </button>
                     </div>
@@ -291,8 +296,8 @@ export const ContasPage = () => {
       </div>
 
       {modalAberto && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="glass w-full max-w-sm rounded-2xl p-6 space-y-5 animate-in zoom-in-95 duration-200">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200" role="dialog" aria-modal="true">
+          <div ref={modalRef} className="glass w-full max-w-sm rounded-2xl p-6 space-y-5 animate-in zoom-in-95 duration-200">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2"><Wallet size={18} className="text-primary" /><h3 className="font-bold text-white">{editando ? tr('Editar Saldo', 'Edit Balance') : tr('Nova Conta', 'New Account')}</h3></div>
               <button onClick={fecharModal} className="text-muted-foreground hover:text-white transition-colors"><X size={18} /></button>

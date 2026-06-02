@@ -1,5 +1,7 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { useSearchParams } from 'react-router-dom';
+import { useModalA11y } from '../../hooks/useModalA11y';
 import {
   Repeat, Plus, Trash2, X, Loader2, Pencil, Calendar, TrendingUp, TrendingDown,
 } from 'lucide-react';
@@ -21,8 +23,13 @@ export const RecorrentesPage = () => {
   const moeda = (useAuthStore((s) => s.user?.moeda) as 'BRL' | 'USD' | 'EUR') || 'BRL';
   const language = useI18nStore((s) => s.language);
   const tr = (pt: string, en: string) => (language === 'en-US' ? en : pt);
-  const [aba, setAba] = useState<AbaAtiva>('DESPESA');
+  const [searchParams, setSearchParams] = useSearchParams();
+  const aba = (searchParams.get('tipo') === 'RECEITA' ? 'RECEITA' : 'DESPESA') as AbaAtiva;
+  const setAba = (novaAba: AbaAtiva) => {
+    setSearchParams({ tipo: novaAba });
+  };
   const [modalAberto, setModalAberto] = useState(false);
+  const modalRef = useModalA11y(modalAberto, fecharModal);
   const [editando, setEditando] = useState<TransacaoRecorrenteResponseDTO | null>(null);
   const [recorrenteParaDeletar, setRecorrenteParaDeletar] = useState<{ id: number; descricao: string } | null>(null);
   const [deletandoId, setDeletandoId] = useState<number | null>(null);
@@ -49,37 +56,53 @@ export const RecorrentesPage = () => {
 
   const invalidar = () => queryClient.invalidateQueries({ queryKey: ['recorrentes'] });
 
+  useEffect(() => {
+    const handleAbrir = () => {
+      setModalAberto(true);
+    };
+    window.addEventListener('abrir-modal-recorrente', handleAbrir);
+    return () => window.removeEventListener('abrir-modal-recorrente', handleAbrir);
+  }, []);
+
   const criarMutation = useMutation({
-    mutationFn: () => TransacoesRecorrentesService.criar({
-      descricao: descricao.trim(),
-      valor: Number(valor),
-      tipo: aba as TransacaoRecorrenteRequestDTO.tipo,
-      metodoPagamento: metodoPagamento || undefined,
-      contaId: Number(contaId),
-      cartaoId: cartaoId ? Number(cartaoId) : undefined,
-      categoriaId: categoriaId ? Number(categoriaId) : undefined,
-      diaLancamento: Number(diaLancamento),
-      dataInicio: dataInicio || undefined,
-      dataFim: dataFim || undefined,
-    }),
+    mutationFn: () => {
+      const finalContaId = metodoPagamento === 'CARTAO_CREDITO' ? undefined : (contaId ? Number(contaId) : undefined);
+      const finalCartaoId = metodoPagamento === 'CARTAO_CREDITO' ? (cartaoId ? Number(cartaoId) : undefined) : undefined;
+      return TransacoesRecorrentesService.criar({
+        descricao: descricao.trim(),
+        valor: Number(valor),
+        tipo: aba as TransacaoRecorrenteRequestDTO.tipo,
+        metodoPagamento: metodoPagamento || undefined,
+        contaId: finalContaId as any,
+        cartaoId: finalCartaoId,
+        categoriaId: categoriaId ? Number(categoriaId) : undefined,
+        diaLancamento: Number(diaLancamento),
+        dataInicio: dataInicio || undefined,
+        dataFim: dataFim || undefined,
+      });
+    },
     onSuccess: () => { invalidar(); toast.success(tr('Recorrência criada.', 'Recurring transaction created.')); fecharModal(); },
     onError: (error: unknown) =>
       toast.error(getApiErrorMessage(error, tr('Não foi possível criar a recorrência. Confira os dados informados.', 'Could not create recurring transaction. Please review input values.'))),
   });
 
   const editarMutation = useMutation({
-    mutationFn: () => TransacoesRecorrentesService.atualizar(editando!.id!, {
-      descricao: descricao.trim(),
-      valor: Number(valor),
-      tipo: aba as TransacaoRecorrenteRequestDTO.tipo,
-      metodoPagamento: metodoPagamento || undefined,
-      contaId: Number(contaId),
-      cartaoId: cartaoId ? Number(cartaoId) : undefined,
-      categoriaId: categoriaId ? Number(categoriaId) : undefined,
-      diaLancamento: Number(diaLancamento),
-      dataInicio: dataInicio || undefined,
-      dataFim: dataFim || undefined,
-    }),
+    mutationFn: () => {
+      const finalContaId = metodoPagamento === 'CARTAO_CREDITO' ? undefined : (contaId ? Number(contaId) : undefined);
+      const finalCartaoId = metodoPagamento === 'CARTAO_CREDITO' ? (cartaoId ? Number(cartaoId) : undefined) : undefined;
+      return TransacoesRecorrentesService.atualizar(editando!.id!, {
+        descricao: descricao.trim(),
+        valor: Number(valor),
+        tipo: aba as TransacaoRecorrenteRequestDTO.tipo,
+        metodoPagamento: metodoPagamento || undefined,
+        contaId: finalContaId as any,
+        cartaoId: finalCartaoId,
+        categoriaId: categoriaId ? Number(categoriaId) : undefined,
+        diaLancamento: Number(diaLancamento),
+        dataInicio: dataInicio || undefined,
+        dataFim: dataFim || undefined,
+      });
+    },
     onSuccess: () => { invalidar(); toast.success(tr('Recorrência atualizada.', 'Recurring transaction updated.')); fecharModal(); },
     onError: (error: unknown) =>
       toast.error(getApiErrorMessage(error, tr('Não foi possível salvar a edição da recorrência. Tente novamente.', 'Could not save recurring transaction changes. Please try again.'))),
@@ -100,7 +123,7 @@ export const RecorrentesPage = () => {
     },
   });
 
-  const fecharModal = () => {
+  function fecharModal() {
     setModalAberto(false);
     setEditando(null);
     setDescricao('');
@@ -112,7 +135,7 @@ export const RecorrentesPage = () => {
     setDiaLancamento('');
     setDataInicio('');
     setDataFim('');
-  };
+  }
 
   const abrirEdicao = (rec: TransacaoRecorrenteResponseDTO) => {
     setEditando(rec);
@@ -122,6 +145,19 @@ export const RecorrentesPage = () => {
     setDataInicio(rec.dataInicio || '');
     setDataFim(rec.dataFim || '');
     setMetodoPagamento((rec.metodoPagamento as unknown as TransacaoRecorrenteRequestDTO.metodoPagamento | '') || '');
+    
+    const c = contas.find((x) => x.nome === rec.nomeConta);
+    if (c) setContaId(String(c.id));
+    else setContaId('');
+
+    const card = cartoes.find((x) => x.nome === rec.nomeCartao);
+    if (card) setCartaoId(String(card.id));
+    else setCartaoId('');
+
+    const cat = categorias.find((x) => x.nome === rec.nomeCategoria);
+    if (cat) setCategoriaId(String(cat.id));
+    else setCategoriaId('');
+
     setModalAberto(true);
   };
 
@@ -140,14 +176,9 @@ export const RecorrentesPage = () => {
   return (
     <MainLayout>
       <div className="p-3 sm:p-4 lg:p-6 space-y-5 sm:space-y-6 animate-in fade-in duration-500">
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
-          <div>
-            <h1 className="text-2xl font-bold text-white">{tr('Receitas & Despesas Fixas', 'Recurring Income & Expenses')}</h1>
-            <p className="text-sm text-muted-foreground mt-1">{tr('Gerencie suas transações recorrentes mensais.', 'Manage your monthly recurring transactions.')}</p>
-          </div>
-          <button onClick={() => setModalAberto(true)} className="w-full sm:w-auto flex items-center justify-center gap-2 bg-primary hover:bg-primary/90 text-white font-bold px-4 py-2.5 rounded-xl transition-all shadow-lg shadow-primary/20 active:scale-[0.98] text-sm">
-            <Plus size={16} /> {tr('Nova Fixa', 'New Recurring')}
-          </button>
+        <div>
+          <h1 className="text-2xl font-bold text-white">{tr('Receitas & Despesas Fixas', 'Recurring Income & Expenses')}</h1>
+          <p className="text-sm text-muted-foreground mt-1">{tr('Gerencie suas transações recorrentes mensais.', 'Manage your monthly recurring transactions.')}</p>
         </div>
 
         {/* Abas */}
@@ -219,8 +250,8 @@ export const RecorrentesPage = () => {
                   <p className="text-2xs text-muted-foreground">{tr('/mês', '/month')}</p>
                 </div>
                 <div className="flex gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity flex-shrink-0">
-                  <button onClick={() => abrirEdicao(rec)} className="p-1.5 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all"><Pencil size={14} /></button>
-                  <button onClick={() => handleDeletar(rec.id!, rec.descricao!)} disabled={deletandoId === rec.id} className="p-1.5 rounded-lg text-muted-foreground hover:text-rose-400 hover:bg-rose-500/10 transition-all disabled:opacity-50">
+                  <button onClick={() => abrirEdicao(rec)} className="min-h-11 min-w-11 sm:min-h-0 sm:min-w-0 p-2 sm:p-1.5 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all flex items-center justify-center" aria-label={tr('Editar recorrência', 'Edit recurring')}><Pencil size={14} /></button>
+                  <button onClick={() => handleDeletar(rec.id!, rec.descricao!)} disabled={deletandoId === rec.id} className="min-h-11 min-w-11 sm:min-h-0 sm:min-w-0 p-2 sm:p-1.5 rounded-lg text-muted-foreground hover:text-rose-400 hover:bg-rose-500/10 transition-all disabled:opacity-50 flex items-center justify-center" aria-label={tr('Deletar recorrência', 'Delete recurring')}>
                     {deletandoId === rec.id ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
                   </button>
                 </div>
@@ -229,11 +260,11 @@ export const RecorrentesPage = () => {
           </div>
         )}
       </div>
-
+ 
       {/* Modal Criar/Editar */}
       {modalAberto && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200">
-          <div className="glass w-full max-w-md rounded-2xl p-6 space-y-5 animate-in zoom-in-95 duration-200 max-h-[90vh] overflow-y-auto">
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200" role="dialog" aria-modal="true">
+          <div ref={modalRef} className="glass w-full max-w-md rounded-2xl p-6 space-y-5 animate-in zoom-in-95 duration-200 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2"><Repeat size={18} className="text-primary" /><h3 className="font-bold text-white">{editando ? tr('Editar', 'Edit') : tr('Nova', 'New')} {aba === 'DESPESA' ? tr('Despesa', 'Expense') : tr('Receita', 'Income')} {tr('Fixa', 'Recurring')}</h3></div>
               <button onClick={fecharModal} className="text-muted-foreground hover:text-white transition-colors"><X size={18} /></button>
