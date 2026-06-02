@@ -82,7 +82,7 @@ export const InvestimentosPage = () => {
     return () => window.removeEventListener('abrir-modal-investimento', handleAbrir);
   }, []);
 
-  const { data: investimentos = [], isLoading, isError, refetch } = useQuery({y({
+  const { data: investimentos = [], isLoading, isError, refetch } = useQuery({
     queryKey: ['investimentos'],
     queryFn: () => investimentosApi.listar(),
   });
