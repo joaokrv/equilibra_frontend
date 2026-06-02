@@ -25,7 +25,19 @@ export function useModalA11y(isOpen: boolean, onClose: () => void) {
         ),
       ).filter((node) => node.offsetParent !== null);
 
-    (getFocusables()[0] ?? el).focus();
+    const focusables = getFocusables();
+    const autofocusElement = focusables.find((node) => node.hasAttribute('autofocus') || (node as any).autofocus);
+    const firstInput = focusables.find((node) => node.tagName === 'INPUT' || node.tagName === 'TEXTAREA' || node.tagName === 'SELECT');
+
+    if (autofocusElement) {
+      autofocusElement.focus();
+    } else if (firstInput) {
+      firstInput.focus();
+    } else if (focusables.length > 0) {
+      focusables[0].focus();
+    } else {
+      el.focus();
+    }
 
     const onKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {

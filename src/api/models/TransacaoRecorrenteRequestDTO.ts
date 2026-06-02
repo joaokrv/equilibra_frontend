@@ -7,7 +7,7 @@ export type TransacaoRecorrenteRequestDTO = {
     valor: number;
     tipo: TransacaoRecorrenteRequestDTO.tipo;
     metodoPagamento?: TransacaoRecorrenteRequestDTO.metodoPagamento;
-    contaId: number;
+    contaId?: number;
     cartaoId?: number;
     categoriaId?: number;
     diaLancamento: number;
