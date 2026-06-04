@@ -2,18 +2,32 @@ import { useState, useEffect } from 'react';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import {
   Target, Plus, Trash2, X, Loader2, ArrowUpCircle, ArrowDownCircle, Pencil,
+  TrendingDown, TrendingUp, Sparkles, ChevronRight,
 } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { MainLayout } from '../../components/layout/MainLayout';
 import { ErrorState } from '../../components/ui/StateViews';
 import { DeleteConfirmationModal } from '../../components/modals/DeleteConfirmationModal';
 import { useModalA11y } from '../../hooks/useModalA11y';
 import { ContasService } from '../../api/services/ContasService';
 import { investimentosApi, InvestimentoItem, TipoInvestimento } from '../../lib/investimentosApi';
+import { movimentacoesInvestimentoApi, TipoMovimentacao } from '../../lib/movimentacoesInvestimentoApi';
 import { formatarMoeda } from '../../lib/formatters';
 import { getApiErrorMessage } from '../../lib/errorMessage';
 import { toast } from '../../store/useToastStore';
 import { useAuthStore } from '../../store/useAuthStore';
 import { useI18nStore } from '../../store/useI18nStore';
+
+const TIPO_ICON_MAP: Record<TipoMovimentacao, React.ReactNode> = {
+  APORTE: <TrendingDown size={12} className="text-blue-400" />,
+  RESGATE: <TrendingUp size={12} className="text-emerald-400" />,
+  RENDIMENTO: <Sparkles size={12} className="text-purple-400" />,
+};
+const TIPO_COLOR_MAP: Record<TipoMovimentacao, string> = {
+  APORTE: 'text-blue-400',
+  RESGATE: 'text-emerald-400',
+  RENDIMENTO: 'text-purple-400',
+};
 
 type ModalTipo = 'criar' | 'depositar' | 'resgatar' | 'meta' | null;
 
@@ -471,5 +485,60 @@ export const InvestimentosPage = () => {
         }}
       />
     </MainLayout>
+  );
+};
+
+/** Seção de preview das últimas movimentações — renderizada dentro da InvestimentosPage */
+export const PreviewMovimentacoes = () => {
+  const moeda = (useAuthStore((s) => s.user?.moeda) as 'BRL' | 'USD' | 'EUR') || 'BRL';
+  const language = useI18nStore((s) => s.language);
+  const tr = (pt: string, en: string) => (language === 'en-US' ? en : pt);
+  const navigate = useNavigate();
+
+  const { data: preview = [], isLoading } = useQuery({
+    queryKey: ['mov-investimentos-preview'],
+    queryFn: () => movimentacoesInvestimentoApi.preview(),
+  });
+
+  if (isLoading || preview.length === 0) return null;
+
+  return (
+    <div className="mt-6">
+      <div className="flex items-center justify-between mb-3">
+        <h3 className="text-sm font-semibold text-white">
+          {tr('Últimas Movimentações', 'Recent Movements')}
+        </h3>
+        <button
+          onClick={() => navigate('/investimentos/extrato')}
+          className="flex items-center gap-1 text-xs text-[#b794f4] hover:text-white transition-colors"
+        >
+          {tr('Ver extrato completo', 'View full statement')}
+          <ChevronRight size={12} />
+        </button>
+      </div>
+      <div className="flex flex-col gap-2">
+        {preview.map((m) => (
+          <div
+            key={m.id}
+            onClick={() => navigate('/investimentos/extrato')}
+            className="bg-[#15161e] border border-[#232431] rounded-xl px-4 py-3 flex items-center justify-between cursor-pointer hover:border-[#3b2566] transition-colors"
+          >
+            <div className="flex items-center gap-2">
+              {TIPO_ICON_MAP[m.tipo]}
+              <div>
+                <p className="text-sm text-white font-medium">{m.descricaoInvestimento}</p>
+                <p className="text-xs text-[#718096]">
+                  {new Date(m.data + 'T00:00:00').toLocaleDateString('pt-BR')}
+                </p>
+              </div>
+            </div>
+            <span className={`text-sm font-semibold ${m.valor < 0 ? 'text-red-400' : TIPO_COLOR_MAP[m.tipo]}`}>
+              {m.valor < 0 ? '−' : m.tipo === 'RESGATE' ? '−' : '+'}
+              {formatarMoeda(Math.abs(m.valor), moeda)}
+            </span>
+          </div>
+        ))}
+      </div>
+    </div>
   );
 };

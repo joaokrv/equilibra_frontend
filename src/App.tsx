@@ -18,6 +18,7 @@ import { CartoesPage } from './pages/Cartoes';
 import { FaturasPage } from './pages/Faturas';
 import { CategoriasPage } from './pages/Categorias';
 import { InvestimentosPage } from './pages/Investimentos';
+import { InvestimentoExtratoPage } from './pages/Investimentos/Extrato';
 import { RecorrentesPage } from './pages/Recorrentes';
 import { PerfilPage } from './pages/Perfil';
 import { TutorialPage } from './pages/Tutorial';
@@ -141,6 +142,7 @@ export default function App() {
       <Route path="/faturas/:cartaoId" element={<ProtectedRoute><VerifiedRoute><FaturasPage /></VerifiedRoute></ProtectedRoute>} />
       <Route path="/categorias" element={<ProtectedRoute><VerifiedRoute><CategoriasPage /></VerifiedRoute></ProtectedRoute>} />
       <Route path="/investimentos" element={<ProtectedRoute><VerifiedRoute><InvestimentosPage /></VerifiedRoute></ProtectedRoute>} />
+      <Route path="/investimentos/extrato" element={<ProtectedRoute><VerifiedRoute><InvestimentoExtratoPage /></VerifiedRoute></ProtectedRoute>} />
       <Route path="/recorrentes" element={<ProtectedRoute><VerifiedRoute><RecorrentesPage /></VerifiedRoute></ProtectedRoute>} />
 
       {/* Redirecionamento Padrão */}
