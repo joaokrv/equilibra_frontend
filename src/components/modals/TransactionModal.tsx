@@ -332,7 +332,7 @@ export const TransactionModal = ({
   ];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-start justify-center p-2 sm:items-center sm:p-4 animate-in fade-in duration-300">
+    <div className="fixed inset-0 z-[100] flex items-start justify-center p-2 sm:items-center sm:p-4 animate-in fade-in duration-300">
       <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" onClick={onClose} />
 
       <div ref={dialogRef} className="glass relative z-10 w-full max-w-xl max-h-[94dvh] overflow-y-auto rounded-2xl p-4 sm:rounded-3xl sm:p-8 animate-in zoom-in-95 duration-300">

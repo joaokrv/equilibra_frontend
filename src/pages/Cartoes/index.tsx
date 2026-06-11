@@ -397,7 +397,7 @@ export const CartoesPage = () => {
 
       {/* Modal Novo Cartão */}
       {modalAberto && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200" role="dialog" aria-modal="true">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200" role="dialog" aria-modal="true">
           <div ref={modalNovoRef} className="glass w-full max-w-md rounded-2xl p-6 space-y-5 animate-in zoom-in-95 duration-200">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2"><CreditCard size={18} className="text-primary" /><h3 className="font-bold text-white">{cartaoEditando ? tr('Editar Cartão', 'Edit Card') : tr('Novo Cartão', 'New Card')}</h3></div>
@@ -454,7 +454,7 @@ export const CartoesPage = () => {
 
       {/* Modal Pagar Fatura */}
       {modalPagar && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200" role="dialog" aria-modal="true">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200" role="dialog" aria-modal="true">
           <div ref={modalPagarRef} className="glass w-full max-w-sm rounded-2xl p-6 space-y-5 animate-in zoom-in-95 duration-200">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2"><DollarSign size={18} className="text-emerald-400" /><h3 className="font-bold text-white">{tr('Pagar Fatura', 'Pay Invoice')}</h3></div>

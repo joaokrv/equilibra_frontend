@@ -100,7 +100,7 @@ export function AccountActionModal({ isOpen, onClose, onSuccess }: AccountAction
     confirmarDesativarMutation.isPending;
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm animate-in fade-in duration-200">
       <div ref={dialogRef} className="glass w-full max-w-md p-8 rounded-[2rem] border border-white/10 shadow-2xl relative overflow-hidden">
         <div
           className={`absolute -top-24 -right-24 w-48 h-48 bg-${accentColor}-500/20 rounded-full blur-[80px]`}

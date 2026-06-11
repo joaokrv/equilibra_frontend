@@ -40,7 +40,7 @@ export const DeleteConfirmationModal = ({
   }
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 animate-in fade-in duration-200">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-3 sm:p-4 animate-in fade-in duration-200">
       <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" onClick={onCancel} />
       <div ref={dialogRef} className="glass w-full max-w-sm rounded-2xl sm:rounded-3xl p-5 sm:p-8 relative z-10 animate-in zoom-in-95 duration-200">
         <div className="w-12 h-12 sm:w-14 sm:h-14 rounded-xl sm:rounded-2xl bg-rose-500/10 flex items-center justify-center text-rose-400 mx-auto mb-4 sm:mb-5">

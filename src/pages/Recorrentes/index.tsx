@@ -263,7 +263,7 @@ export const RecorrentesPage = () => {
  
       {/* Modal Criar/Editar */}
       {modalAberto && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200" role="dialog" aria-modal="true">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200" role="dialog" aria-modal="true">
           <div ref={modalRef} className="glass w-full max-w-md rounded-2xl p-6 space-y-5 animate-in zoom-in-95 duration-200 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2"><Repeat size={18} className="text-primary" /><h3 className="font-bold text-white">{editando ? tr('Editar', 'Edit') : tr('Nova', 'New')} {aba === 'DESPESA' ? tr('Despesa', 'Expense') : tr('Receita', 'Income')} {tr('Fixa', 'Recurring')}</h3></div>
