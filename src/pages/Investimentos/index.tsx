@@ -460,6 +460,8 @@ export const InvestimentosPage = () => {
         </div>
       )}
 
+      <PreviewMovimentacoes />
+
       <DeleteConfirmationModal
         isOpen={!!investimentoParaDeletar}
         title={tr('Remover Investimento?', 'Remove Investment?')}
@@ -521,6 +523,9 @@ export const PreviewMovimentacoes = () => {
           <div
             key={m.id}
             onClick={() => navigate('/investimentos/extrato')}
+            onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') navigate('/investimentos/extrato'); }}
+            role="button"
+            tabIndex={0}
             className="bg-[#15161e] border border-[#232431] rounded-xl px-4 py-3 flex items-center justify-between cursor-pointer hover:border-[#3b2566] transition-colors"
           >
             <div className="flex items-center gap-2">

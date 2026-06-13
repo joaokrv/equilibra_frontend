@@ -40,9 +40,10 @@ type QuickInvestmentFormValues = z.infer<ReturnType<typeof buildQuickInvestmentS
 interface InvestmentQuickSectionProps {
   onSuccess?: () => void;
   onCancel: () => void;
+  defaultOperacao?: 'APORTE' | 'RESGATE';
 }
 
-export const InvestmentQuickSection = ({ onSuccess, onCancel }: InvestmentQuickSectionProps) => {
+export const InvestmentQuickSection = ({ onSuccess, onCancel, defaultOperacao }: InvestmentQuickSectionProps) => {
   const queryClient = useQueryClient();
   const language = useI18nStore((state) => state.language);
   const schema = useMemo(() => buildQuickInvestmentSchema(language), [language]);
@@ -58,7 +59,7 @@ export const InvestmentQuickSection = ({ onSuccess, onCancel }: InvestmentQuickS
     resolver: zodResolver(schema),
     defaultValues: {
       investimentoId: '',
-      operacao: 'APORTE',
+      operacao: defaultOperacao ?? 'APORTE',
       valor: '',
       contaId: '',
     },

@@ -68,7 +68,17 @@
   .glass {
     @apply bg-card/50 backdrop-blur-md border border-white/5;
   }
-  
+
+  /* Mobile: backdrop-blur trava o scroll na GPU. Troca o blur por opacidade
+     maior em telas pequenas — mantém legibilidade, elimina o jank. */
+  @media (max-width: 767px) {
+    .glass {
+      backdrop-filter: none;
+      -webkit-backdrop-filter: none;
+      background-color: rgb(15 15 15 / 0.92);
+    }
+  }
+
   .glass-hover {
     @apply hover:bg-white/10 transition-colors duration-200;
   }
@@ -97,5 +107,34 @@
   }
   ::-webkit-scrollbar-thumb:hover {
     background: #2a2a2a;
+  }
+}
+
+/* Acessibilidade + performance: respeita "reduzir movimento" do SO.
+   Neutraliza transições e animações de entrada, mas preserva indicadores
+   contínuos de carregamento (spinner, pulse, ping). */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+  .animate-spin {
+    animation: spin 0.7s linear infinite !important;
+  }
+  .animate-pulse,
+  .animate-pulse-subtle {
+    animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite !important;
+  }
+  .animate-ping {
+    animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite !important;
+  }
+  /* Ticker de mercado: rolagem contínua é elemento de marca, não transição. */
+  .ticker-scroll {
+    animation-duration: var(--ticker-duration, 40s) !important;
+    animation-iteration-count: infinite !important;
   }
 }

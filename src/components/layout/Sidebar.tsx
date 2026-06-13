@@ -1,29 +1,82 @@
 import { useState } from 'react';
-import { NavLink } from 'react-router-dom';
+import { NavLink, useLocation } from 'react-router-dom';
 import {
   LayoutDashboard,
   Wallet,
-  TrendingUp,
-  TrendingDown,
   Receipt,
   CreditCard,
-  FileText,
   Tag,
   Target,
   Repeat,
   Menu,
   X,
   LogOut,
-  UserCircle
+  UserCircle,
+  ChevronDown,
 } from 'lucide-react';
 import { useAuthStore } from '../../store/useAuthStore';
 import { useI18nStore } from '../../store/useI18nStore';
 import { useTutorialStore } from '../../store/useTutorialStore';
 import { useQueryClient } from '@tanstack/react-query';
-import { t } from '../../lib/i18n';
+import { t, TranslationKey } from '../../lib/i18n';
 import logo from '../../assets/logo-equilibra.png';
 import apiClient from '../../lib/axios';
 import { ServerStatusBadge } from '../ui/ServerStatusBadge';
+
+// ── tipos ──────────────────────────────────────────────────────────────────────
+
+interface SimpleItem {
+  type: 'item';
+  icon: React.ElementType;
+  key: TranslationKey;
+  to: string;
+}
+
+interface GroupItem {
+  type: 'group';
+  icon: React.ElementType;
+  key: TranslationKey;
+  storageKey: string;
+  children: { key: TranslationKey; to: string }[];
+}
+
+type MenuEntry = SimpleItem | GroupItem;
+
+// ── configuração ───────────────────────────────────────────────────────────────
+
+const menuEntries: MenuEntry[] = [
+  { type: 'item', icon: LayoutDashboard, key: 'menuHome', to: '/dashboard' },
+  { type: 'item', icon: Wallet, key: 'menuAccounts', to: '/contas' },
+  {
+    type: 'group',
+    icon: Receipt,
+    key: 'menuStatement',
+    storageKey: 'sidebar-group-extrato',
+    children: [
+      { key: 'menuStatementGeneral', to: '/extrato' },
+      { key: 'menuIncome', to: '/receitas' },
+      { key: 'menuExpenses', to: '/despesas' },
+      { key: 'menuInvestmentsHistory', to: '/investimentos/extrato' },
+    ],
+  },
+  {
+    type: 'group',
+    icon: CreditCard,
+    key: 'menuCards',
+    storageKey: 'sidebar-group-cartoes',
+    children: [
+      { key: 'menuMyCards', to: '/cartoes' },
+      { key: 'menuInvoices', to: '/faturas' },
+    ],
+  },
+  { type: 'item', icon: Repeat, key: 'menuFixed', to: '/recorrentes' },
+  { type: 'item', icon: Tag, key: 'menuCategories', to: '/categorias' },
+  { type: 'item', icon: Target, key: 'menuInvestments', to: '/investimentos' },
+  { type: 'item', icon: LayoutDashboard, key: 'menuTutorial', to: '/tutorial' },
+  { type: 'item', icon: UserCircle, key: 'menuProfile', to: '/perfil' },
+] as const;
+
+// ── subcomponentes ─────────────────────────────────────────────────────────────
 
 interface SidebarItemProps {
   icon: React.ElementType;
@@ -36,6 +89,7 @@ interface SidebarItemProps {
 const SidebarItem = ({ icon: Icon, label, to, isOpen, onClick }: SidebarItemProps) => (
   <NavLink
     to={to}
+    end
     onClick={onClick}
     className={({ isActive }) => `
       flex items-center p-3 rounded-lg cursor-pointer transition-all duration-200
@@ -52,20 +106,92 @@ const SidebarItem = ({ icon: Icon, label, to, isOpen, onClick }: SidebarItemProp
   </NavLink>
 );
 
-const menuItems = [
-  { icon: LayoutDashboard, key: 'menuHome', to: '/dashboard' },
-  { icon: Wallet, key: 'menuAccounts', to: '/contas' },
-  { icon: TrendingUp, key: 'menuIncome', to: '/receitas' },
-  { icon: TrendingDown, key: 'menuExpenses', to: '/despesas' },
-  { icon: Receipt, key: 'menuStatement', to: '/extrato' },
-  { icon: CreditCard, key: 'menuCards', to: '/cartoes' },
-  { icon: FileText, key: 'menuInvoices', to: '/faturas' },
-  { icon: Repeat, key: 'menuFixed', to: '/recorrentes' },
-  { icon: Tag, key: 'menuCategories', to: '/categorias' },
-  { icon: Target, key: 'menuInvestments', to: '/investimentos' },
-  { icon: LayoutDashboard, key: 'menuTutorial', to: '/tutorial' },
-  { icon: UserCircle, key: 'menuProfile', to: '/perfil' },
-] as const;
+interface SidebarGroupProps {
+  entry: GroupItem;
+  language: string;
+  sidebarOpen: boolean;
+  onExpandSidebar: () => void;
+  onItemClick?: () => void;
+}
+
+const SidebarGroup = ({ entry, language, sidebarOpen, onExpandSidebar, onItemClick }: SidebarGroupProps) => {
+  const location = useLocation();
+  const hasActiveChild = entry.children.some((c) => location.pathname === c.to);
+
+  const [open, setOpen] = useState(() => {
+    const saved = localStorage.getItem(entry.storageKey);
+    // abrir automaticamente se a rota ativa pertence ao grupo
+    if (hasActiveChild) return true;
+    return saved !== null ? saved === 'true' : false;
+  });
+
+  const toggle = () => {
+    if (!sidebarOpen) {
+      // sidebar recolhida: expandir sidebar e abrir o grupo
+      onExpandSidebar();
+      if (!open) {
+        setOpen(true);
+        localStorage.setItem(entry.storageKey, 'true');
+      }
+      return;
+    }
+    setOpen((prev) => {
+      localStorage.setItem(entry.storageKey, String(!prev));
+      return !prev;
+    });
+  };
+
+  const Icon = entry.icon;
+  const label = t(language as Parameters<typeof t>[0], entry.key);
+
+  return (
+    <div>
+      <button
+        onClick={toggle}
+        onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') toggle(); }}
+        aria-expanded={open}
+        className={`
+          w-full flex items-center p-3 rounded-lg cursor-pointer transition-all duration-200
+          ${hasActiveChild ? 'text-primary' : 'text-muted-foreground hover:bg-white/5 hover:text-white'}
+          ${sidebarOpen ? 'justify-start gap-4 px-4' : 'justify-center'}
+        `}
+      >
+        <Icon size={20} strokeWidth={2} className="shrink-0" />
+        {sidebarOpen && (
+          <>
+            <span className="font-semibold text-sm whitespace-nowrap overflow-hidden flex-1 text-left">
+              {label}
+            </span>
+            <ChevronDown
+              size={14}
+              className={`shrink-0 transition-transform duration-200 ${open ? 'rotate-180' : ''}`}
+            />
+          </>
+        )}
+      </button>
+
+      {sidebarOpen && open && (
+        <div className="ml-4 mt-1 space-y-1 border-l border-white/5 pl-3">
+          {entry.children.map((child) => (
+            <NavLink
+              key={child.to}
+              to={child.to}
+              onClick={onItemClick}
+              className={({ isActive }) => `
+                flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all duration-200 min-h-11
+                ${isActive ? 'bg-primary/10 text-primary font-semibold' : 'text-muted-foreground hover:bg-white/5 hover:text-white'}
+              `}
+            >
+              {t(language as Parameters<typeof t>[0], child.key)}
+            </NavLink>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+};
+
+// ── componente principal ───────────────────────────────────────────────────────
 
 interface SidebarProps {
   mobileOpen: boolean;
@@ -86,11 +212,18 @@ export const Sidebar = ({ mobileOpen, onMobileClose }: SidebarProps) => {
       return !prev;
     });
   };
+
+  const expandSidebar = () => {
+    setIsOpen(true);
+    localStorage.setItem('sidebar-open', 'true');
+  };
+
   const logout = useAuthStore(state => state.logout);
   const queryClient = useQueryClient();
-  const visibleMenuItems = isTutorialCompleted
-    ? menuItems.filter((item) => item.key !== 'menuTutorial')
-    : menuItems;
+
+  const visibleEntries = isTutorialCompleted
+    ? menuEntries.filter((e) => e.key !== 'menuTutorial')
+    : menuEntries;
 
   const handleLogout = () => {
     queryClient.clear();
@@ -100,6 +233,31 @@ export const Sidebar = ({ mobileOpen, onMobileClose }: SidebarProps) => {
   };
 
   const closeMobileSidebar = onMobileClose;
+
+  const renderEntry = (entry: MenuEntry, opts: { sidebarOpen: boolean; onItemClick?: () => void }) => {
+    if (entry.type === 'item') {
+      return (
+        <SidebarItem
+          key={entry.to}
+          icon={entry.icon}
+          label={t(language, entry.key)}
+          to={entry.to}
+          isOpen={opts.sidebarOpen}
+          onClick={opts.onItemClick}
+        />
+      );
+    }
+    return (
+      <SidebarGroup
+        key={entry.storageKey}
+        entry={entry}
+        language={language}
+        sidebarOpen={opts.sidebarOpen}
+        onExpandSidebar={expandSidebar}
+        onItemClick={opts.onItemClick}
+      />
+    );
+  };
 
   return (
     <>
@@ -123,23 +281,14 @@ export const Sidebar = ({ mobileOpen, onMobileClose }: SidebarProps) => {
           </button>
         </div>
 
-        <nav className="flex-1 px-3 space-y-2">
-          {visibleMenuItems.map((item) => (
-            <SidebarItem
-              key={item.to}
-              icon={item.icon}
-              label={t(language, item.key)}
-              to={item.to}
-              isOpen={isOpen}
-            />
-          ))}
+        <nav className="flex-1 min-h-0 px-3 pb-2 space-y-2 overflow-y-auto custom-scrollbar">
+          {visibleEntries.map((entry) => renderEntry(entry, { sidebarOpen: isOpen }))}
         </nav>
 
-        <div className={`px-4 mb-3 flex ${isOpen ? 'justify-start' : 'justify-center'}`}>
-          <ServerStatusBadge showLabel={isOpen} align="left" />
-        </div>
-
-        <div className="p-3 border-t border-white/5">
+        <div className="shrink-0 border-t border-white/5 px-3 py-3 space-y-1">
+          <div className={`flex items-center min-h-11 px-4 rounded-lg ${isOpen ? 'justify-start' : 'justify-center'}`}>
+            <ServerStatusBadge showLabel={isOpen} align="left" />
+          </div>
           <div
             onClick={handleLogout}
             onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') handleLogout(); }}
@@ -181,24 +330,14 @@ export const Sidebar = ({ mobileOpen, onMobileClose }: SidebarProps) => {
             </button>
           </div>
 
-          <nav className="flex-1 px-3 space-y-2 overflow-y-auto">
-            {visibleMenuItems.map((item) => (
-              <SidebarItem
-                key={item.to}
-                icon={item.icon}
-                label={t(language, item.key)}
-                to={item.to}
-                isOpen={true}
-                onClick={closeMobileSidebar}
-              />
-            ))}
+          <nav className="flex-1 min-h-0 px-3 pb-2 space-y-2 overflow-y-auto custom-scrollbar">
+            {visibleEntries.map((entry) => renderEntry(entry, { sidebarOpen: true, onItemClick: closeMobileSidebar }))}
           </nav>
 
-          <div className="px-4 mb-3 flex justify-start">
-            <ServerStatusBadge showLabel={true} align="left" />
-          </div>
-
-          <div className="p-3 border-t border-white/5">
+          <div className="shrink-0 border-t border-white/5 px-3 py-3 space-y-1">
+            <div className="flex items-center min-h-11 px-4 rounded-lg">
+              <ServerStatusBadge showLabel={true} align="left" />
+            </div>
             <div
               onClick={() => {
                 closeMobileSidebar();

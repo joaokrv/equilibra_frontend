@@ -58,6 +58,14 @@ export const MainLayout = ({ children }: MainLayoutProps) => {
       };
     }
 
+    if (pathname === '/investimentos/extrato') {
+      return {
+        label: tr('Nova movimentação', 'New movement'),
+        initialSection: 'investimento' as const,
+        allowSectionSwitch: false,
+      };
+    }
+
     if (pathname.startsWith('/investimentos')) {
       return {
         label: tr('Novo investimento', 'New investment'),
@@ -127,6 +135,10 @@ export const MainLayout = ({ children }: MainLayoutProps) => {
     }
     if (pathname.startsWith('/cartoes')) {
       window.dispatchEvent(new CustomEvent('abrir-modal-cartao'));
+      return;
+    }
+    if (pathname === '/investimentos/extrato') {
+      window.dispatchEvent(new CustomEvent('abrir-modal-movimentacao-investimento'));
       return;
     }
     if (pathname.startsWith('/investimentos')) {

@@ -137,7 +137,7 @@ export const MarketTicker: React.FC = () => {
       key: 'usd', label: 'USD', value: `R$ ${parseFloat(exchange.bid).toFixed(2)}`,
       change: `${pos ? '+' : ''}${exchange.pctChange}%`, changePositive: pos,
       icon: <DollarSign size={14} />, iconBg: 'bg-emerald-500/10 text-emerald-400',
-      href: 'https://economia.awesomeapi.com.br/last/USD-BRL',
+      href: 'https://finance.yahoo.com/quote/USDBRL%3DX/',
     });
   }
 
@@ -147,7 +147,7 @@ export const MarketTicker: React.FC = () => {
       key: 'eur', label: 'EUR', value: `R$ ${parseFloat(eurExchange.bid).toFixed(2)}`,
       change: `${pos ? '+' : ''}${eurExchange.pctChange}%`, changePositive: pos,
       icon: <DollarSign size={14} />, iconBg: 'bg-blue-500/10 text-blue-400',
-      href: 'https://economia.awesomeapi.com.br/last/EUR-BRL',
+      href: 'https://finance.yahoo.com/quote/EURBRL%3DX/',
     });
   }
 
@@ -201,7 +201,7 @@ export const MarketTicker: React.FC = () => {
     <div className="w-full bg-slate-900/80 backdrop-blur-xl border-b border-white/10 h-11 flex items-center overflow-hidden relative z-40 group/ticker">
       <div
         className="flex items-center whitespace-nowrap ticker-scroll"
-        style={{ animationDuration: `${duration}s` }}
+        style={{ '--ticker-duration': `${duration}s` } as React.CSSProperties}
         onMouseEnter={(e) => (e.currentTarget.style.animationPlayState = 'paused')}
         onMouseLeave={(e) => (e.currentTarget.style.animationPlayState = 'running')}
       >
@@ -216,7 +216,7 @@ export const MarketTicker: React.FC = () => {
           100% { transform: translateX(-50%); }
         }
         .ticker-scroll {
-          animation: ticker-scroll linear infinite;
+          animation: ticker-scroll var(--ticker-duration, 40s) linear infinite;
         }
       `}</style>
     </div>
