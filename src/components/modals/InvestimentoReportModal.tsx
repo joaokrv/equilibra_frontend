@@ -86,7 +86,6 @@ export const InvestimentoReportModal = ({
       }
       return;
     }
-    // PDF — backend ainda não tem endpoint para investimentos
     toast.error(tr(
       'Relatório PDF para investimentos em desenvolvimento. Use o CSV por enquanto.',
       'Investment PDF report is under development. Use CSV for now.',
@@ -110,7 +109,6 @@ export const InvestimentoReportModal = ({
         ref={dialogRef}
         className="glass w-full max-w-xl max-h-[94dvh] overflow-y-auto rounded-2xl sm:rounded-3xl p-4 sm:p-8 relative z-10 animate-in zoom-in-95 duration-300"
       >
-        {/* Header */}
         <div className="flex items-start sm:items-center justify-between mb-6 sm:mb-8 gap-3">
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-primary/10 flex items-center justify-center text-primary">
@@ -134,7 +132,6 @@ export const InvestimentoReportModal = ({
         </div>
 
         <div className="space-y-6">
-          {/* Seleção de formato */}
           <div className="grid grid-cols-2 gap-4">
             <button
               type="button"
@@ -166,7 +163,6 @@ export const InvestimentoReportModal = ({
             </button>
           </div>
 
-          {/* Período e preview */}
           <div className="bg-white/5 rounded-xl p-4 space-y-2">
             <p className="text-2xs font-bold text-muted-foreground uppercase tracking-widest">
               {tr('Período do relatório', 'Report period')}
@@ -196,7 +192,6 @@ export const InvestimentoReportModal = ({
             </p>
           )}
 
-          {/* Ações */}
           <div className="flex flex-col sm:flex-row gap-3 sm:gap-4 pt-2 sm:pt-4">
             <Button type="button" variant="outline" onClick={onClose} className="flex-1">
               {tr('CANCELAR', 'CANCEL')}

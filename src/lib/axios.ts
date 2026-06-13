@@ -21,7 +21,6 @@ const apiClient = axios.create({
   withCredentials: true,
 });
 
-// ─── Flag para evitar múltiplos refreshes simultâneos ────────────────
 let isRefreshing = false;
 let coldStartToastShown = false;
 let failedQueue: Array<{
@@ -44,24 +43,17 @@ const processQueue = (error: unknown) => {
   failedQueue = [];
 };
 
-// ─── Interceptor de Request: Tokens agora são enviados via httpOnly cookie ──────────────────────
-// Nenhuma injeção manual necessária — o browser envia cookies automaticamente
-// com withCredentials: true (configurado na criação do client).
-
-// ─── Interceptor de Response: Refresh silencioso em 401 ─────────────
 apiClient.interceptors.response.use(
   (response) => response,
   async (error: AxiosError) => {
-    // ─── Tratamento de Cold Start (Render) ────────────────
     const isNetworkError = error.message === 'Network Error' || error.code === 'ECONNABORTED';
     const isBadGateway = error.response?.status === 502 || error.response?.status === 504 || error.response?.status === 503;
-    
+
     if (isNetworkError || isBadGateway) {
       if (!coldStartToastShown) {
         coldStartToastShown = true;
         toast.warning('Servidor em inicialização. Tente novamente em 3 a 5 minutos.', 10000);
-        
-        // Reseta a flag após 1 minuto para caso o usuário tente novamente depois
+
         setTimeout(() => {
           coldStartToastShown = false;
         }, 60000);
@@ -95,7 +87,6 @@ apiClient.interceptors.response.use(
         { withCredentials: true },
       );
 
-      // Access token renovado já está no cookie httpOnly (enviado automaticamente).
       const currentUser = useAuthStore.getState().user;
       if (currentUser) {
         useAuthStore.getState().setAuth(currentUser);

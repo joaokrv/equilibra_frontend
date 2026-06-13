@@ -52,7 +52,6 @@ export const ExtratoPage = ({ filtroTipo, titulo, descricao }: ExtratoPageProps)
   const hoje = new Date();
   const primeiroDiaDoMes = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
 
-  // ── filtros ──────────────────────────────────────────────────────────────────
   const [dataInicio, setDataInicio] = useState(toLocalDateStr(primeiroDiaDoMes));
   const [dataFim, setDataFim] = useState(toLocalDateStr(hoje));
   const [tipoFiltro, setTipoFiltro] = useState<'RECEITA' | 'DESPESA' | ''>('');
@@ -63,7 +62,6 @@ export const ExtratoPage = ({ filtroTipo, titulo, descricao }: ExtratoPageProps)
   const [pageSize, setPageSize] = useState(10);
   const [currentPage, setCurrentPage] = useState(0);
 
-  // ── ordenação ────────────────────────────────────────────────────────────────
   const [sortField, setSortField] = useState<SortField>('data');
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
   const [modalRelatorioAberto, setModalRelatorioAberto] = useState(false);
@@ -71,18 +69,15 @@ export const ExtratoPage = ({ filtroTipo, titulo, descricao }: ExtratoPageProps)
   const tipoContextoFixo = filtroTipo === TransacaoResponseDTO.tipo.RECEITA ? 'RECEITA'
     : (filtroTipo === TransacaoResponseDTO.tipo.DESPESA ? 'DESPESA' : 'GERAL');
 
-  // ── edição/deleção ───────────────────────────────────────────────────────────
   const [transacaoParaEditar, setTransacaoParaEditar] = useState<TransacaoResponseDTO | undefined>(undefined);
   const [modalEditarAberto, setModalEditarAberto] = useState(false);
   const [transacaoParaDeletar, setTransacaoParaDeletar] = useState<TransacaoResponseDTO | undefined>(undefined);
 
-  // ── derivar mês/ano de dataInicio para a query (servidor ainda é mensal) ─────
   const ano = Number(dataInicio.slice(0, 4));
   const mes = Number(dataInicio.slice(5, 7));
 
   const resetPage = () => setCurrentPage(0);
 
-  // ── queries ──────────────────────────────────────────────────────────────────
   const { data: transacoes = [], isLoading, isError, refetch } = useQuery({
     queryKey: ['transacoes', ano, mes],
     queryFn: () => TransacoesService.listarMensal(ano, mes),
@@ -104,7 +99,6 @@ export const ExtratoPage = ({ filtroTipo, titulo, descricao }: ExtratoPageProps)
       .map((c) => ({ id: c.id as number, nome: c.nome as string }));
   }, [contasRaw]);
 
-  // ── deletar ──────────────────────────────────────────────────────────────────
   const deletarMutation = useMutation({
     mutationFn: ({ id, grupo }: { id: number; grupo: boolean }) => transacoesApi.excluir(id, grupo),
     onSuccess: () => {
@@ -119,14 +113,12 @@ export const ExtratoPage = ({ filtroTipo, titulo, descricao }: ExtratoPageProps)
     },
   });
 
-  // ── filtragem e ordenação ────────────────────────────────────────────────────
   const lista = transacoes;
   const listaSemTransferencias = lista.filter((t: TransacaoResponseDTO) => !t.isTransferencia);
   const listaBase = filtroTipo
     ? listaSemTransferencias.filter((t: TransacaoResponseDTO) => t.tipo === filtroTipo)
     : lista;
 
-  // ── opções dinâmicas para selects (derivadas de listaBase) ───────────────────
   const categorias = useMemo(() => {
     const set = new Set<string>();
     listaBase.forEach((t: TransacaoResponseDTO) => { if (t.nomeCategoria) set.add(t.nomeCategoria); });
@@ -196,7 +188,6 @@ export const ExtratoPage = ({ filtroTipo, titulo, descricao }: ExtratoPageProps)
   const totalPages = Math.max(1, Math.ceil(filtradasEOrdenadas.length / pageSize));
   const paginadas = filtradasEOrdenadas.slice(currentPage * pageSize, (currentPage + 1) * pageSize);
 
-  // ── resumo ───────────────────────────────────────────────────────────────────
   const resumoBase = filtroTipo ? filtradas : listaSemTransferencias.filter((t: TransacaoResponseDTO) => {
     if (t.data && t.data < dataInicio) return false;
     if (t.data && t.data > dataFim) return false;
@@ -211,18 +202,15 @@ export const ExtratoPage = ({ filtroTipo, titulo, descricao }: ExtratoPageProps)
   const abrirEditar = (t: TransacaoResponseDTO) => { setTransacaoParaEditar(t); setModalEditarAberto(true); };
   const fecharEditar = () => { setModalEditarAberto(false); setTransacaoParaEditar(undefined); };
 
-  // ── render ───────────────────────────────────────────────────────────────────
   return (
     <MainLayout>
       <div className="p-3 sm:p-4 lg:p-6 space-y-5 sm:space-y-6 animate-in fade-in duration-500 relative">
 
-        {/* Cabeçalho */}
         <div>
           <h1 className="text-2xl font-bold text-white">{tituloPagina}</h1>
           <p className="text-sm text-muted-foreground mt-1">{descricaoPagina}</p>
         </div>
 
-        {/* Barra de ações */}
         <div className="flex justify-end">
           <button
             onClick={() => setModalRelatorioAberto(true)}
@@ -233,7 +221,6 @@ export const ExtratoPage = ({ filtroTipo, titulo, descricao }: ExtratoPageProps)
           </button>
         </div>
 
-        {/* Resumo */}
         {!filtroTipo && (
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div className="bg-[#15161e] border border-[#232431] rounded-2xl p-4">
@@ -283,7 +270,6 @@ export const ExtratoPage = ({ filtroTipo, titulo, descricao }: ExtratoPageProps)
           </div>
         )}
 
-        {/* Filtros — mesmo padrão do Histórico de Investimentos */}
         <div className="bg-[#15161e] border border-[#232431] rounded-2xl p-4 mb-4 flex flex-wrap gap-3 items-end">
           <div className="flex flex-col gap-1">
             <label className="text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('De', 'From')}</label>
@@ -382,7 +368,6 @@ export const ExtratoPage = ({ filtroTipo, titulo, descricao }: ExtratoPageProps)
           </div>
         </div>
 
-        {/* Lista */}
         {isLoading ? (
           <div className="flex items-center justify-center h-48"><Loader2 className="animate-spin text-primary" size={32} /></div>
         ) : isError ? (
@@ -503,7 +488,6 @@ export const ExtratoPage = ({ filtroTipo, titulo, descricao }: ExtratoPageProps)
                         </button>
                       </div>
 
-                      {/* Mobile */}
                       <div className="xl:hidden flex flex-col gap-2 mt-1 px-1 w-full border-t border-white/5 pt-2">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
@@ -551,7 +535,6 @@ export const ExtratoPage = ({ filtroTipo, titulo, descricao }: ExtratoPageProps)
           </div>
         )}
 
-        {/* Paginação */}
         {!isLoading && !isError && filtradasEOrdenadas.length > 0 && (
           <div className="flex items-center justify-between text-sm text-muted-foreground">
             <span>

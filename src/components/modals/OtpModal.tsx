@@ -192,7 +192,6 @@ export function OtpModal({ isOpen, onClose, registroId, email, onSuccess }: OtpM
   return (
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm animate-in fade-in duration-200">
       <div ref={dialogRef} className="glass w-full max-w-md p-8 rounded-[2rem] border border-white/10 shadow-2xl relative overflow-hidden">
-        {/* Glow Decorativo */}
         <div className="absolute -top-24 -right-24 w-48 h-48 bg-primary/20 rounded-full blur-[80px]" />
         
         <div className="flex flex-col items-center text-center relative z-10">

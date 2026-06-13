@@ -83,7 +83,6 @@ const SummaryCard = ({
             {deltaLabel}
           </button>
 
-          {/* Tooltip */}
           {showTooltip && tooltipOpen && (
             <div className="absolute bottom-full right-0 mb-2 z-50 pointer-events-none">
               <div className="bg-secondary/95 border border-primary/30 rounded-lg p-3 whitespace-nowrap shadow-lg backdrop-blur-sm">

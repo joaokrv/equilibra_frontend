@@ -175,7 +175,6 @@ export const TransactionModal = ({
     }
   }, [isOpen, isEditMode, transacaoParaEditar, setValue, reset, tipoInicial]);
 
-  // ─── Queries Dinâmicas ────────────────────────────────────────────
   const { data: contas = [] } = useQuery({
     queryKey: ['accounts'],
     queryFn: () => ContasService.listarContas(),
@@ -194,7 +193,6 @@ export const TransactionModal = ({
     enabled: isOpen && activeSection !== 'investimento',
   });
 
-  // ─── Mutation: Criar ──────────────────────────────────────────────
   const criarMutation = useMutation({
     mutationFn: (payload: any) => TransacoesService.criarTransacao(payload),
     onSuccess: () => {
@@ -223,7 +221,6 @@ export const TransactionModal = ({
     },
   });
 
-  // ─── Mutation: Atualizar ──────────────────────────────────────────
   const atualizarMutation = useMutation({
     mutationFn: (payload: any) => TransacoesService.atualizarTransacao(transacaoParaEditar!.id!, payload),
     onSuccess: () => {
@@ -306,7 +303,6 @@ export const TransactionModal = ({
           ? tr(language, 'Registre seus gastos com o contexto da tela.', 'Register your expenses with the page context.')
           : tr(language, 'Controle sua saúde financeira', 'Track your financial health');
 
-  // ─── Opções dinâmicas para os selects ─────────────────────────────
   const contaOptions = [
     { label: tr(language, 'Selecione a Conta', 'Select Account'), value: '' },
     ...contas.map((c) => ({

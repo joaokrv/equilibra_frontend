@@ -121,18 +121,15 @@ export default function App() {
 
   return (
     <Routes>
-      {/* Rotas Públicas */}
       <Route path="/login" element={<PublicRoute><LoginPage /></PublicRoute>} />
       <Route path="/register" element={<PublicRoute><RegisterPage /></PublicRoute>} />
       <Route path="/forgot-password" element={<PublicRoute><ForgotPasswordPage /></PublicRoute>} />
       <Route path="/reset-password" element={<ResetPasswordPage />} />
 
-      {/* Rotas Protegidas */}
       <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
       <Route path="/perfil" element={<ProtectedRoute><PerfilPage /></ProtectedRoute>} />
       <Route path="/tutorial" element={<ProtectedRoute><TutorialPage /></ProtectedRoute>} />
-      
-      {/* Rotas Protegidas e Verificadas */}
+
       <Route path="/contas" element={<ProtectedRoute><VerifiedRoute><ContasPage /></VerifiedRoute></ProtectedRoute>} />
       <Route path="/receitas" element={<ProtectedRoute><VerifiedRoute><ReceitasPage /></VerifiedRoute></ProtectedRoute>} />
       <Route path="/despesas" element={<ProtectedRoute><VerifiedRoute><DespesasPage /></VerifiedRoute></ProtectedRoute>} />
@@ -145,10 +142,8 @@ export default function App() {
       <Route path="/investimentos/extrato" element={<ProtectedRoute><VerifiedRoute><InvestimentoExtratoPage /></VerifiedRoute></ProtectedRoute>} />
       <Route path="/recorrentes" element={<ProtectedRoute><VerifiedRoute><RecorrentesPage /></VerifiedRoute></ProtectedRoute>} />
 
-      {/* Redirecionamento Padrão */}
       <Route path="/" element={<Navigate to="/dashboard" replace />} />
 
-      {/* 404 */}
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );

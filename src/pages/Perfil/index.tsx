@@ -18,11 +18,14 @@ import {
   Wallet,
   ArrowUpCircle,
   ArrowDownCircle,
-  ShieldAlert
+  ShieldAlert,
+  Bell
 } from 'lucide-react';
 import { AccountActionModal } from '../../components/modals/AccountActionModal';
 import { Input } from '../../components/ui/Input';
+import { Switch } from '../../components/ui/Switch';
 import { MainLayout } from '../../components/layout/MainLayout';
+import apiClient from '../../lib/axios';
 import { getApiErrorMessage } from '../../lib/errorMessage';
 import { useI18nStore, type AppLanguage } from '../../store/useI18nStore';
 import { formatarMoeda } from '../../lib/formatters';
@@ -108,6 +111,19 @@ export function PerfilPage() {
     }
   });
 
+  const toggleNotificacaoFaturaMutation = useMutation({
+    mutationFn: (ativo: boolean) =>
+      apiClient.patch('/api/usuarios/perfil/me/notificacoes', { notificacoesFaturaAtivo: ativo })
+        .then((r) => r.data),
+    onSuccess: (updatedUser) => {
+      updateProfile(updatedUser);
+      toast.success(tr('Preferência de notificação atualizada!', 'Notification preference updated!'), 3000);
+    },
+    onError: (error: unknown) => {
+      toast.error(getApiErrorMessage(error, tr('Não foi possível atualizar a preferência agora. Tente novamente.', 'Could not update the preference right now. Please try again.')));
+    }
+  });
+
   const handleUpdatePerfil = (e: React.FormEvent) => {
     e.preventDefault();
     setLanguage(idioma);
@@ -156,7 +172,6 @@ export function PerfilPage() {
   return (
     <MainLayout>
       <div className="max-w-6xl mx-auto space-y-6 sm:space-y-10 animate-fade-in pb-8 sm:pb-12 px-2 sm:px-0">
-        {/* Header Seção */}
         <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 sm:gap-6">
           <div className="animate-in fade-in slide-in-from-left-4 duration-700">
             <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight text-white mb-2 uppercase italic">
@@ -181,7 +196,6 @@ export function PerfilPage() {
 
         <div className="grid grid-cols-1 xl:grid-cols-12 gap-5 sm:gap-8">
           
-          {/* Coluna Central: Dados do Usuário e Foto */}
           <div className="xl:col-span-4 space-y-5 sm:space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
             <div className="glass rounded-2xl sm:rounded-[2rem] p-5 sm:p-8 border border-white/10 relative overflow-hidden flex flex-col items-center">
               <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-transparent to-transparent opacity-50" />
@@ -199,13 +213,11 @@ export function PerfilPage() {
                       <UserIcon size={56} className="text-primary/70" />
                     </div>
                   )}
-                  {/* Overlay Upload */}
                   <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center text-white gap-1 backdrop-blur-sm">
                     <Camera size={24} />
                     <span className="text-2xs font-bold uppercase tracking-tighter">{tr('Alterar', 'Change')}</span>
                   </div>
                 </div>
-                {/* Badge Status */}
                 <div className={`absolute -bottom-1 -right-1 w-10 h-10 rounded-full border-4 border-[#0a0a0a] flex items-center justify-center ${user?.isEmailVerificado ? 'bg-emerald-500' : 'bg-amber-500'}`}>
                   {user?.isEmailVerificado ? <ShieldCheck size={20} className="text-white" /> : <AlertTriangle size={20} className="text-white" />}
                 </div>
@@ -234,7 +246,6 @@ export function PerfilPage() {
               </div>
             </div>
 
-            {/* Card de Ativação Se Pendente */}
             {!user?.isEmailVerificado && (
               <div className="glass rounded-2xl sm:rounded-[2rem] p-5 sm:p-8 border border-amber-500/20 bg-amber-500/5 animate-pulse-subtle">
                 <div className="flex items-center gap-3 mb-4">
@@ -274,12 +285,9 @@ export function PerfilPage() {
             )}
           </div>
 
-          {/* Coluna Direita: Balanço Geral e Formulário */}
           <div className="xl:col-span-8 space-y-5 sm:space-y-8 animate-in fade-in slide-in-from-right-4 duration-700 delay-200">
             
-            {/* Seção Balanço Geral (Cards Premium — clicáveis) */}
             <section className="grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-4">
-               {/* Receitas */}
                <Link to="/receitas" className="glass rounded-2xl sm:rounded-3xl p-3 sm:p-5 border border-white/5 group hover:border-emerald-500/30 transition-all cursor-pointer min-w-0">
                   <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-4">
                     <div className="p-1.5 sm:p-2 bg-emerald-500/20 rounded-lg sm:rounded-xl text-emerald-500 shrink-0">
@@ -293,7 +301,6 @@ export function PerfilPage() {
                   </p>
                </Link>
 
-               {/* Despesas */}
                <Link to="/despesas" className="glass rounded-2xl sm:rounded-3xl p-3 sm:p-5 border border-white/5 group hover:border-rose-500/30 transition-all cursor-pointer min-w-0">
                   <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-4">
                     <div className="p-1.5 sm:p-2 bg-rose-500/20 rounded-lg sm:rounded-xl text-rose-500 shrink-0">
@@ -307,7 +314,6 @@ export function PerfilPage() {
                   </p>
                </Link>
 
-               {/* Saldo Contas */}
                <Link to="/contas" className="glass rounded-2xl sm:rounded-3xl p-3 sm:p-5 border border-white/5 group hover:border-primary/30 transition-all cursor-pointer min-w-0">
                   <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-4">
                     <div className="p-1.5 sm:p-2 bg-primary/20 rounded-lg sm:rounded-xl text-primary shrink-0">
@@ -321,7 +327,6 @@ export function PerfilPage() {
                   </p>
                </Link>
 
-               {/* Investimentos */}
                <Link to="/investimentos" className="glass rounded-2xl sm:rounded-3xl p-3 sm:p-5 border border-white/5 group hover:border-amber-500/30 transition-all cursor-pointer min-w-0">
                   <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-4">
                     <div className="p-1.5 sm:p-2 bg-amber-500/20 rounded-lg sm:rounded-xl text-amber-500 shrink-0">
@@ -336,7 +341,6 @@ export function PerfilPage() {
                </Link>
             </section>
 
-            {/* Formulário de Edição */}
             <div className="glass rounded-2xl sm:rounded-[2rem] p-5 sm:p-8 lg:p-10 border border-white/10 relative overflow-hidden">
                <div className="absolute top-0 right-0 w-80 h-80 bg-primary/5 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2" />
                
@@ -416,7 +420,37 @@ export function PerfilPage() {
           </div>
         </div>
 
-        {/* Zona de Perigo */}
+        <section className="glass rounded-2xl sm:rounded-[2rem] p-5 sm:p-8 border border-white/10 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200">
+          <div className="flex items-center gap-3 mb-5">
+            <div className="p-2 bg-primary/20 rounded-xl border border-primary/20 shrink-0">
+              <Bell className="text-primary w-5 h-5" />
+            </div>
+            <div>
+              <h3 className="font-black text-white uppercase text-sm tracking-wider">
+                {tr('Notificações', 'Notifications')}
+              </h3>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                {tr('Escolha o que deseja receber por e-mail.', 'Choose what you want to receive by email.')}
+              </p>
+            </div>
+          </div>
+
+          <div className="flex items-center justify-between gap-4 bg-white/5 border border-white/10 rounded-2xl p-4 sm:p-5">
+            <div className="min-w-0">
+              <p className="text-sm font-bold text-white">{tr('Lembretes de fatura', 'Invoice reminders')}</p>
+              <p className="text-xs text-muted-foreground mt-0.5">
+                {tr('E-mails de vencimento e atraso das faturas do cartão.', 'Due-date and overdue emails for your card invoices.')}
+              </p>
+            </div>
+            <Switch
+              checked={user?.notificacoesFaturaAtivo ?? true}
+              disabled={toggleNotificacaoFaturaMutation.isPending}
+              onChange={(ativo) => toggleNotificacaoFaturaMutation.mutate(ativo)}
+              label={tr('Lembretes de fatura', 'Invoice reminders')}
+            />
+          </div>
+        </section>
+
         <section className="glass rounded-2xl sm:rounded-[2rem] p-5 sm:p-8 border border-rose-500/20 bg-rose-500/5 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-300">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div className="flex items-center gap-3">

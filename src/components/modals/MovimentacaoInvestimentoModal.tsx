@@ -33,7 +33,6 @@ interface TabConfig {
   activeCls: string;
 }
 
-// Config estática — fora do componente para não recriar a cada render.
 const TABS: TabConfig[] = [
   {
     key: 'depositar',
@@ -77,7 +76,6 @@ export const MovimentacaoInvestimentoModal = ({
 
   const [tab, setTab] = useState<Tab>(defaultTab);
 
-  // ── form de rendimento ────────────────────────────────────────────────────────
   const [rendInvId, setRendInvId] = useState('');
   const [rendValor, setRendValor] = useState('');
   const [rendData, setRendData] = useState(toLocalDateStr(new Date()));
@@ -138,7 +136,6 @@ export const MovimentacaoInvestimentoModal = ({
         ref={dialogRef}
         className="glass w-full max-w-xl max-h-[94dvh] overflow-y-auto rounded-2xl sm:rounded-3xl p-4 sm:p-8 relative z-10 animate-in zoom-in-95 duration-300"
       >
-        {/* Header */}
         <div className="flex items-start sm:items-center justify-between mb-6 gap-3">
           <div className="flex items-center gap-3">
             <div className={`w-10 h-10 sm:w-12 sm:h-12 rounded-xl sm:rounded-2xl bg-primary/10 flex items-center justify-center ${activeTab.color}`}>
@@ -161,7 +158,6 @@ export const MovimentacaoInvestimentoModal = ({
           </button>
         </div>
 
-        {/* Seleção de ação */}
         <div className="grid grid-cols-3 gap-2 mb-6">
           {TABS.map((t) => (
             <button
@@ -181,7 +177,6 @@ export const MovimentacaoInvestimentoModal = ({
           ))}
         </div>
 
-        {/* Conteúdo por aba */}
         {tab === 'depositar' && (
           <InvestmentQuickSection
             key="depositar"
@@ -202,7 +197,6 @@ export const MovimentacaoInvestimentoModal = ({
 
         {tab === 'rendimento' && (
           <div className="space-y-4">
-            {/* Investimento */}
             <div className="space-y-1.5">
               <label className="block text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">
                 {tr('Investimento', 'Investment')}
@@ -219,7 +213,6 @@ export const MovimentacaoInvestimentoModal = ({
               </select>
             </div>
 
-            {/* Valor */}
             <div className="space-y-1.5">
               <label className="block text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">
                 {tr('Valor (negativo = perda / marcação a mercado)', 'Amount (negative = loss / mark-to-market)')}
@@ -235,7 +228,6 @@ export const MovimentacaoInvestimentoModal = ({
               />
             </div>
 
-            {/* Data */}
             <div className="space-y-1.5">
               <label className="block text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">
                 {tr('Data', 'Date')}
@@ -249,7 +241,6 @@ export const MovimentacaoInvestimentoModal = ({
               />
             </div>
 
-            {/* Observação */}
             <div className="space-y-1.5">
               <label className="block text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">
                 {tr('Observação (opcional)', 'Notes (optional)')}
@@ -264,7 +255,6 @@ export const MovimentacaoInvestimentoModal = ({
               />
             </div>
 
-            {/* Ação */}
             <button
               onClick={submitRendimento}
               disabled={!rendInvId || !rendValor || Number(rendValor) === 0 || rendimentoMutation.isPending}

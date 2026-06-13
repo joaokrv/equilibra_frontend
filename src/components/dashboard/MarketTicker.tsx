@@ -205,7 +205,6 @@ export const MarketTicker: React.FC = () => {
         onMouseEnter={(e) => (e.currentTarget.style.animationPlayState = 'paused')}
         onMouseLeave={(e) => (e.currentTarget.style.animationPlayState = 'running')}
       >
-        {/* Duplica os itens para criar loop infinito */}
         {items.map((item) => renderItem(item, 'a'))}
         {items.map((item) => renderItem(item, 'b'))}
       </div>

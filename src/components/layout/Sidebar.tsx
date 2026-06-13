@@ -23,8 +23,6 @@ import logo from '../../assets/logo-equilibra.png';
 import apiClient from '../../lib/axios';
 import { ServerStatusBadge } from '../ui/ServerStatusBadge';
 
-// ── tipos ──────────────────────────────────────────────────────────────────────
-
 interface SimpleItem {
   type: 'item';
   icon: React.ElementType;
@@ -41,8 +39,6 @@ interface GroupItem {
 }
 
 type MenuEntry = SimpleItem | GroupItem;
-
-// ── configuração ───────────────────────────────────────────────────────────────
 
 const menuEntries: MenuEntry[] = [
   { type: 'item', icon: LayoutDashboard, key: 'menuHome', to: '/dashboard' },
@@ -75,8 +71,6 @@ const menuEntries: MenuEntry[] = [
   { type: 'item', icon: LayoutDashboard, key: 'menuTutorial', to: '/tutorial' },
   { type: 'item', icon: UserCircle, key: 'menuProfile', to: '/perfil' },
 ] as const;
-
-// ── subcomponentes ─────────────────────────────────────────────────────────────
 
 interface SidebarItemProps {
   icon: React.ElementType;
@@ -120,14 +114,12 @@ const SidebarGroup = ({ entry, language, sidebarOpen, onExpandSidebar, onItemCli
 
   const [open, setOpen] = useState(() => {
     const saved = localStorage.getItem(entry.storageKey);
-    // abrir automaticamente se a rota ativa pertence ao grupo
     if (hasActiveChild) return true;
     return saved !== null ? saved === 'true' : false;
   });
 
   const toggle = () => {
     if (!sidebarOpen) {
-      // sidebar recolhida: expandir sidebar e abrir o grupo
       onExpandSidebar();
       if (!open) {
         setOpen(true);
@@ -190,8 +182,6 @@ const SidebarGroup = ({ entry, language, sidebarOpen, onExpandSidebar, onItemCli
     </div>
   );
 };
-
-// ── componente principal ───────────────────────────────────────────────────────
 
 interface SidebarProps {
   mobileOpen: boolean;

@@ -133,7 +133,6 @@ export function ServerStatusBadge({
         {showLabel && <span className="whitespace-nowrap transition-all duration-300">{cfg.label}</span>}
       </button>
 
-      {/* Tooltip Card */}
       <div className={`
         absolute bottom-full mb-3 z-50
         w-[calc(100vw-3rem)] sm:w-[350px] 
@@ -187,7 +186,6 @@ export function ServerStatusBadge({
           </a>
         </div>
         
-        {/* Seta do Tooltip */}
         <div className={`absolute -bottom-1.5 w-3 h-3 bg-card border-b border-r border-border rotate-45 ${arrowAlignmentClasses}`} />
       </div>
     </div>

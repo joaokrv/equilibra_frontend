@@ -133,7 +133,6 @@ export const Topbar = () => {
             className="w-full bg-secondary/30 h-9 sm:h-10 pl-9 sm:pl-10 pr-3 sm:pr-4 rounded-xl text-xs sm:text-sm focus:outline-none focus:ring-1 focus:ring-primary/30 transition-all border border-transparent focus:bg-secondary/50"
           />
 
-          {/* Dropdown de resultados */}
           {focado && termo.length >= 2 && (
             <div className="absolute top-11 sm:top-12 left-0 w-full rounded-xl border border-white/10 bg-slate-950/95 backdrop-blur-xl shadow-2xl overflow-hidden z-[80] animate-in fade-in slide-in-from-top-2 duration-150">
               {resultados.length === 0 ? (

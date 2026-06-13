@@ -26,8 +26,6 @@ import {
   MovimentacaoAtualizacaoPayload,
 } from '../../../lib/movimentacoesInvestimentoApi';
 
-// ── constantes visuais ─────────────────────────────────────────────────────────
-
 const TIPO_LABEL: Record<TipoMovimentacao, string> = {
   APORTE: 'Aporte',
   RESGATE: 'Resgate',
@@ -51,15 +49,12 @@ const PAGE_SIZES = [10, 20, 50] as const;
 type SortField = 'tipo' | 'investimento' | 'data' | 'conta' | 'valor';
 type SortDirection = 'asc' | 'desc';
 
-// ── componente principal ───────────────────────────────────────────────────────
-
 export const InvestimentoExtratoPage = () => {
   const moeda = (useAuthStore((s) => s.user?.moeda) as 'BRL' | 'USD' | 'EUR') || 'BRL';
   const language = useI18nStore((s) => s.language);
   const tr = (pt: string, en: string) => (language === 'en-US' ? en : pt);
   const queryClient = useQueryClient();
 
-  // ── filtros e paginação ──────────────────────────────────────────────────────
   const hoje = new Date();
   const primeiroDiaDoMes = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
   const [dataInicio, setDataInicio] = useState(toLocalDateStr(primeiroDiaDoMes));
@@ -69,7 +64,6 @@ export const InvestimentoExtratoPage = () => {
   const [page, setPage] = useState(0);
   const [size, setSize] = useState<10 | 20 | 50>(10);
 
-  // ── ordenação (client-side dentro da página) ─────────────────────────────────
   const [sortField, setSortField] = useState<SortField>('data');
   const [sortDirection, setSortDirection] = useState<SortDirection>('desc');
 
@@ -82,10 +76,8 @@ export const InvestimentoExtratoPage = () => {
     }
   };
 
-  // ── estado de exclusão ───────────────────────────────────────────────────────
   const [paraExcluir, setParaExcluir] = useState<MovimentacaoInvestimentoItem | null>(null);
 
-  // ── modal de movimentação unificado ─────────────────────────────────────────
   const [modalMovimentacaoAberto, setModalMovimentacaoAberto] = useState(false);
   const [modalRelatorioAberto, setModalRelatorioAberto] = useState(false);
 
@@ -95,7 +87,6 @@ export const InvestimentoExtratoPage = () => {
     return () => window.removeEventListener('abrir-modal-movimentacao-investimento', abrir);
   }, []);
 
-  // ── estado modal "Editar movimentação" ───────────────────────────────────────
   const [paraEditar, setParaEditar] = useState<MovimentacaoInvestimentoItem | null>(null);
   const [editValor, setEditValor] = useState('');
   const [editData, setEditData] = useState('');
@@ -113,7 +104,6 @@ export const InvestimentoExtratoPage = () => {
 
   const modalEditarRef = useModalA11y(!!paraEditar, fecharEditar);
 
-  // ── queries ──────────────────────────────────────────────────────────────────
   const queryKey = ['mov-investimentos-extrato', dataInicio, dataFim, tipo, page, size];
 
   const { data, isLoading, isError, refetch } = useQuery({
@@ -140,7 +130,6 @@ export const InvestimentoExtratoPage = () => {
 
   const contasList = ensureArray<{ id: number; nome: string; saldo?: number }>(contas);
 
-  // ── dados derivados ──────────────────────────────────────────────────────────
   const totalPages = data?.totalPages ?? 1;
   const totalElements = data?.totalElements ?? 0;
   const movs = data?.content ?? [];
@@ -148,12 +137,10 @@ export const InvestimentoExtratoPage = () => {
   const movsProcessados = useMemo(() => {
     let result = [...movs];
 
-    // filtro por conta (client-side)
     if (contaFiltro) {
       result = result.filter((m) => m.nomeContaOrigem === contaFiltro);
     }
 
-    // ordenação (client-side dentro da página atual)
     result.sort((a, b) => {
       let cmp = 0;
       switch (sortField) {
@@ -181,10 +168,8 @@ export const InvestimentoExtratoPage = () => {
     return { aportado, resgatado, rendimentos };
   }, [movs]);
 
-  // ── invalidações compartilhadas ──────────────────────────────────────────────
   const invalidarTudo = () => invalidateInvestmentQueries(queryClient);
 
-  // ── mutations ────────────────────────────────────────────────────────────────
   const excluirMutation = useMutation({
     mutationFn: (id: number) => movimentacoesInvestimentoApi.excluir(id),
     onSuccess: () => {
@@ -206,7 +191,6 @@ export const InvestimentoExtratoPage = () => {
     onError: (e: unknown) => toast.error(getApiErrorMessage(e, tr('Erro ao editar.', 'Update failed.'))),
   });
 
-  // ── handlers ─────────────────────────────────────────────────────────────────
   function submitEditar() {
     if (!paraEditar || !editValor || !editData) return;
     editarMutation.mutate({
@@ -220,12 +204,10 @@ export const InvestimentoExtratoPage = () => {
     });
   }
 
-  // ── render ───────────────────────────────────────────────────────────────────
   return (
     <MainLayout>
       <div className="max-w-5xl mx-auto px-4 pb-20">
 
-        {/* Cabeçalho */}
         <div className="mb-6">
           <h1 className="text-2xl font-bold text-white">
             {tr('Histórico de Investimentos', 'Investment History')}
@@ -235,7 +217,6 @@ export const InvestimentoExtratoPage = () => {
           </p>
         </div>
 
-        {/* Barra de ações */}
         <div className="flex items-center gap-3 mb-5">
           <div className="flex-1" />
           <button
@@ -247,7 +228,6 @@ export const InvestimentoExtratoPage = () => {
           </button>
         </div>
 
-        {/* Cards de resumo */}
         {!isLoading && !isError && movs.length > 0 && (
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-5">
             <div className="bg-[#15161e] border border-[#232431] rounded-2xl p-4">
@@ -273,7 +253,6 @@ export const InvestimentoExtratoPage = () => {
           </div>
         )}
 
-        {/* Filtros */}
         <div className="bg-[#15161e] border border-[#232431] rounded-2xl p-4 mb-4 flex flex-wrap gap-3 items-end">
           <div className="flex flex-col gap-1">
             <label className="text-xs text-[#5a667b] uppercase tracking-wide">
@@ -341,7 +320,6 @@ export const InvestimentoExtratoPage = () => {
           </div>
         </div>
 
-        {/* Estados */}
         {isLoading && (
           <div className="flex justify-center py-16">
             <Loader2 size={28} className="animate-spin text-[#b794f4]" />
@@ -361,7 +339,6 @@ export const InvestimentoExtratoPage = () => {
 
         {!isLoading && !isError && movsProcessados.length > 0 && (
           <>
-            {/* Tabela — desktop */}
             <div className="hidden xl:block bg-[#15161e] border border-[#232431] rounded-2xl overflow-hidden">
               <table className="w-full text-sm">
                 <thead>
@@ -443,7 +420,6 @@ export const InvestimentoExtratoPage = () => {
               </table>
             </div>
 
-            {/* Cards — mobile */}
             <div className="xl:hidden flex flex-col gap-2">
               {movsProcessados.map((m) => (
                 <div key={m.id} className="bg-[#15161e] border border-[#232431] rounded-xl p-4">
@@ -486,7 +462,6 @@ export const InvestimentoExtratoPage = () => {
               ))}
             </div>
 
-            {/* Paginação */}
             <div className="flex items-center justify-between mt-4 text-sm text-[#a0aec0]">
               <span>
                 {totalElements} {tr('registro(s)', 'record(s)')} · {tr('Página', 'Page')} {page + 1} {tr('de', 'of')} {totalPages}
@@ -512,7 +487,6 @@ export const InvestimentoExtratoPage = () => {
         )}
       </div>
 
-      {/* Modal exclusão */}
       {paraExcluir && (
         <DeleteConfirmationModal
           isOpen={!!paraExcluir}
@@ -540,7 +514,6 @@ export const InvestimentoExtratoPage = () => {
         dataFim={dataFim}
       />
 
-      {/* Modal editar movimentação */}
       {paraEditar && (
         <div
           className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200"

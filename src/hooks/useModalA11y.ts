@@ -63,7 +63,6 @@ export function useModalA11y(isOpen: boolean, onClose: () => void) {
       }
     };
 
-    // Mobile: ao focar um campo, rola-o para o centro para não ficar atrás do teclado virtual.
     const onFocusIn = (e: FocusEvent) => {
       const target = e.target as HTMLElement | null;
       if (target && target.matches('input, textarea, select')) {

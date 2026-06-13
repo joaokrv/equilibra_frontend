@@ -172,7 +172,6 @@ export const FaturasPage = () => {
           <ChevronLeft size={18} /> {tr('Voltar', 'Back')}
         </button>
 
-        {/* Navegação de mês */}
         {faturas.length > 0 && (
           <div className="flex items-center justify-between gap-3 glass rounded-xl px-3 py-2 flex-shrink-0 h-[44px] w-fit">
             <button onClick={() => navMes(-1)} className="min-h-11 min-w-11 sm:min-h-0 sm:min-w-0 p-2.5 sm:p-1 rounded-lg hover:bg-white/10 text-muted-foreground hover:text-white transition-all flex items-center justify-center"><ChevronLeft size={18} /></button>
@@ -194,7 +193,6 @@ export const FaturasPage = () => {
           const StatusIcon = statusCfg.icon;
           return (
             <>
-              {/* Header card */}
               <div className="glass rounded-2xl p-4 sm:p-6 space-y-5">
                 <div className="flex items-center gap-4">
                   <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary flex-shrink-0">
@@ -217,7 +215,6 @@ export const FaturasPage = () => {
                   </div>
                 </div>
 
-                {/* Valores */}
                 <div className="grid grid-cols-3 gap-3">
                   <div className="bg-white/5 rounded-xl p-3">
                     <p className="text-2xs text-muted-foreground uppercase tracking-widest">{tr('Total', 'Total')}</p>
@@ -233,7 +230,6 @@ export const FaturasPage = () => {
                   </div>
                 </div>
 
-                {/* Datas */}
                 <div className="grid grid-cols-2 gap-4 pt-3 border-t border-white/5">
                   <div>
                     <p className="text-2xs text-muted-foreground uppercase tracking-widest">{tr('Fecha em', 'Closes on')}</p>
@@ -253,7 +249,6 @@ export const FaturasPage = () => {
                   </div>
                 </div>
 
-                {/* Cartão info */}
                 {cartaoAtual && (
                   <div className="grid grid-cols-2 gap-4 pt-3 border-t border-white/5">
                     <div>
@@ -281,7 +276,6 @@ export const FaturasPage = () => {
                 )}
               </div>
 
-              {/* Transações */}
               <div className="glass rounded-2xl p-4 sm:p-6 space-y-4">
                 <h2 className="font-bold text-white">{tr('Transações da Fatura', 'Invoice Transactions')}</h2>
                 {transacoesLoading ? (
@@ -314,7 +308,6 @@ export const FaturasPage = () => {
         })()}
       </div>
 
-      {/* Modal Pagar */}
       {modalPagar && faturaAtual && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200" role="dialog" aria-modal="true">
           <div ref={modalRef} className="glass w-full max-w-sm rounded-2xl p-6 space-y-5 animate-in zoom-in-95 duration-200">

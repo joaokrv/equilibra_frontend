@@ -9,7 +9,6 @@ import './index.css'
 import App from './App.tsx'
 OpenAPI.BASE = API_BASE_URL
 OpenAPI.WITH_CREDENTIALS = true
-// Token agora é enviado via httpOnly cookie (não em store)
 
 const queryClient = new QueryClient({
   defaultOptions: {

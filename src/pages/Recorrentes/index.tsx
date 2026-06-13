@@ -181,7 +181,6 @@ export const RecorrentesPage = () => {
           <p className="text-sm text-muted-foreground mt-1">{tr('Gerencie suas transações recorrentes mensais.', 'Manage your monthly recurring transactions.')}</p>
         </div>
 
-        {/* Abas */}
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
           <button onClick={() => setAba('DESPESA')} className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all ${aba === 'DESPESA' ? 'bg-rose-500/20 text-rose-400 ring-1 ring-rose-500/30' : 'bg-white/5 text-muted-foreground hover:text-white'}`}>
             <TrendingDown size={16} /> {tr('Despesas Fixas', 'Recurring Expenses')}
@@ -191,7 +190,6 @@ export const RecorrentesPage = () => {
           </button>
         </div>
 
-        {/* Resumo */}
         <div className="glass rounded-2xl p-4">
           <p className="text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">
             {tr('Total Mensal de', 'Monthly Total of')} {aba === 'DESPESA' ? tr('Despesas', 'Expenses') : tr('Receitas', 'Income')} {tr('Fixas', 'Recurring')}
@@ -206,7 +204,6 @@ export const RecorrentesPage = () => {
           </p>
         </div>
 
-        {/* Lista */}
         {isLoading ? (
           <div className="flex items-center justify-center h-48"><Loader2 className="animate-spin text-primary" size={32} /></div>
         ) : isError ? (
@@ -261,7 +258,6 @@ export const RecorrentesPage = () => {
         )}
       </div>
  
-      {/* Modal Criar/Editar */}
       {modalAberto && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200" role="dialog" aria-modal="true">
           <div ref={modalRef} className="glass w-full max-w-md rounded-2xl p-6 space-y-5 animate-in zoom-in-95 duration-200 max-h-[90vh] overflow-y-auto">

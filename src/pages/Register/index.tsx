@@ -115,7 +115,6 @@ export function RegisterPage() {
         </p>
 
         <form onSubmit={handleSubmit(onSubmit)} className="w-full space-y-4">
-          {/* Nome */}
           <Input
             {...register('nome')}
             id="reg-nome"
@@ -125,7 +124,6 @@ export function RegisterPage() {
           />
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* E-mail */}
             <Input
               {...register('email')}
               id="reg-email"
@@ -135,7 +133,6 @@ export function RegisterPage() {
               error={errors.email?.message}
             />
 
-            {/* Confirmar E-mail */}
             <Input
               {...register('confirmEmail')}
               id="reg-confirm-email"
@@ -147,7 +144,6 @@ export function RegisterPage() {
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            {/* Senha */}
             <div className="space-y-1.5 relative">
               <label className="block text-2xs font-bold text-muted-foreground ml-1 uppercase tracking-[0.2em]">{tr('Senha', 'Password')}</label>
               <div className="relative">
@@ -170,7 +166,6 @@ export function RegisterPage() {
               {errors.senha && <span className="text-2xs text-destructive font-bold ml-1 uppercase">{errors.senha.message}</span>}
             </div>
 
-            {/* Confirmar Senha */}
             <div className="space-y-1.5 relative">
               <label className="block text-2xs font-bold text-muted-foreground ml-1 uppercase tracking-[0.2em]">{tr('Confirmar Senha', 'Confirm Password')}</label>
               <div className="relative">
@@ -194,7 +189,6 @@ export function RegisterPage() {
             </div>
           </div>
 
-          {/* Checklist de Senha */}
           <div className="bg-secondary/20 p-3 sm:p-4 rounded-xl border border-white/5 grid grid-cols-1 sm:grid-cols-2 gap-y-2 gap-x-4">
             {passwordRequirements.map((req, idx) => (
               <div key={idx} className="flex items-center gap-2">

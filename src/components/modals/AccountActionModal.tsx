@@ -113,7 +113,6 @@ export function AccountActionModal({ isOpen, onClose, onSuccess }: AccountAction
           <X size={20} />
         </button>
 
-        {/* Etapa 1 — Escolha */}
         {etapa === 'escolha' && (
           <div className="relative z-10 space-y-6">
             <div className="flex items-center gap-3 mb-2">
@@ -175,7 +174,6 @@ export function AccountActionModal({ isOpen, onClose, onSuccess }: AccountAction
           </div>
         )}
 
-        {/* Etapa 2 — Confirmação de senha */}
         {etapa === 'confirmacao' && acao && (
           <div className="relative z-10 space-y-6">
             <button
@@ -233,7 +231,6 @@ export function AccountActionModal({ isOpen, onClose, onSuccess }: AccountAction
           </div>
         )}
 
-        {/* Etapa 3 — OTP */}
         {etapa === 'otp' && acao && (
           <div className="relative z-10 space-y-6">
             <div className="flex flex-col items-center text-center">

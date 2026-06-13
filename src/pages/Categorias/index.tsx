@@ -125,7 +125,6 @@ export const CategoriasPage = () => {
     <MainLayout>
       <div className="p-6 space-y-6 animate-in fade-in duration-500">
 
-        {/* Header */}
         <div>
           <h1 className="text-2xl font-bold text-white">{tr('Categorias', 'Categories')}</h1>
           <p className="text-sm text-muted-foreground mt-1">
@@ -158,7 +157,6 @@ export const CategoriasPage = () => {
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
 
-            {/* Receitas */}
             <div className="glass rounded-2xl p-6 space-y-4">
               <div className="flex items-center gap-2 mb-2">
                 <div className="p-1.5 bg-emerald-500/10 rounded-lg text-emerald-400">
@@ -195,7 +193,6 @@ export const CategoriasPage = () => {
               )}
             </div>
 
-            {/* Despesas */}
             <div className="glass rounded-2xl p-6 space-y-4">
               <div className="flex items-center gap-2 mb-2">
                 <div className="p-1.5 bg-rose-500/10 rounded-lg text-rose-400">
@@ -236,7 +233,6 @@ export const CategoriasPage = () => {
         )}
       </div>
 
-      {/* Modal Nova Categoria */}
       {modalAberto && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200" role="dialog" aria-modal="true">
           <div ref={modalRef} className="glass w-full max-w-sm rounded-2xl p-6 space-y-5 animate-in zoom-in-95 duration-200">

@@ -233,7 +233,6 @@ export const CartoesPage = () => {
           </div>
         </div>
 
-        {/* Resumo */}
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="glass rounded-2xl p-4">
             <p className="text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Limite Total', 'Total Limit')}</p>
@@ -249,7 +248,6 @@ export const CartoesPage = () => {
           </div>
         </div>
 
-        {/* Lista de cartões */}
         {isLoading ? (
           <div className="flex items-center justify-center h-48"><Loader2 className="animate-spin text-primary" size={32} /></div>
         ) : isError ? (
@@ -268,7 +266,6 @@ export const CartoesPage = () => {
           <div className="space-y-4">
             {cartoes.map((cartao) => (
               <div key={cartao.id} className="glass rounded-2xl overflow-hidden">
-                {/* Card header */}
                 <div className="p-4 sm:p-5 flex items-center gap-3 sm:gap-4 cursor-pointer hover:bg-white/5 transition-all" onClick={() => toggleExpand(cartao.id!)}>
                   <div className="w-14 h-10 flex items-center justify-center flex-shrink-0">
                     {cartao.bandeira && BANDEIRA_IMAGENS[cartao.bandeira] ? (
@@ -296,7 +293,6 @@ export const CartoesPage = () => {
                     </div>
                   </div>
                   <div className="flex items-center gap-2 flex-shrink-0">
-                    {/* Barra de uso */}
                     <div className="w-24 h-1.5 bg-white/10 rounded-full overflow-hidden hidden sm:block">
                       <div
                         className="h-full bg-primary rounded-full transition-all"
@@ -313,10 +309,8 @@ export const CartoesPage = () => {
                   </div>
                 </div>
 
-                {/* Faturas expandidas */}
                 {cartaoExpandido === cartao.id && (
                   <div className="border-t border-white/5 px-5 py-4 space-y-3 animate-in fade-in slide-in-from-top-2 duration-200">
-                    {/* Ciclo de vida da fatura */}
                     <div className="flex items-center gap-2 flex-wrap mb-1">
                       <span className="text-2xs font-bold text-muted-foreground uppercase tracking-widest">{tr('Ciclo', 'Cycle')}:</span>
                       {[
@@ -395,7 +389,6 @@ export const CartoesPage = () => {
         )}
       </div>
 
-      {/* Modal Novo Cartão */}
       {modalAberto && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200" role="dialog" aria-modal="true">
           <div ref={modalNovoRef} className="glass w-full max-w-md rounded-2xl p-6 space-y-5 animate-in zoom-in-95 duration-200">
@@ -452,7 +445,6 @@ export const CartoesPage = () => {
         </div>
       )}
 
-      {/* Modal Pagar Fatura */}
       {modalPagar && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200" role="dialog" aria-modal="true">
           <div ref={modalPagarRef} className="glass w-full max-w-sm rounded-2xl p-6 space-y-5 animate-in zoom-in-95 duration-200">

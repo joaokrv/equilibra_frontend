@@ -15,6 +15,7 @@ export interface User {
   celular?: string;
   moeda?: 'BRL' | 'USD' | 'EUR';
   fotoBase64?: string;
+  notificacoesFaturaAtivo?: boolean;
 }
 
 interface AuthState {

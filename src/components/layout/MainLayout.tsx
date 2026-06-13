@@ -198,7 +198,6 @@ export const MainLayout = ({ children }: MainLayoutProps) => {
         </main>
       </div>
 
-      {/* Botão Flutuante — Novo Lançamento (Apenas se verificado) */}
       {isVerified && (
         <>
           <button 

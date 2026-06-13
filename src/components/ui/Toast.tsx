@@ -89,7 +89,6 @@ const ToastItem = ({ id, message, variant, duration = 5000 }: {
         </button>
       </div>
 
-      {/* Barra de progresso */}
       {duration > 0 && (
         <div className="h-0.5 w-full bg-white/5">
           <div
