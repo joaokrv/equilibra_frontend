@@ -125,16 +125,10 @@
   .animate-spin {
     animation: spin 0.7s linear infinite !important;
   }
-  .animate-pulse,
-  .animate-pulse-subtle {
+  .animate-pulse {
     animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite !important;
   }
   .animate-ping {
     animation: ping 1s cubic-bezier(0, 0, 0.2, 1) infinite !important;
-  }
-  /* Ticker de mercado: rolagem contínua é elemento de marca, não transição. */
-  .ticker-scroll {
-    animation-duration: var(--ticker-duration, 40s) !important;
-    animation-iteration-count: infinite !important;
   }
 }

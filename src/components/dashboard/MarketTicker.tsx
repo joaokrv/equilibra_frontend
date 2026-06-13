@@ -218,6 +218,14 @@ export const MarketTicker: React.FC = () => {
         .ticker-scroll {
           animation: ticker-scroll var(--ticker-duration, 40s) linear infinite;
         }
+        /* Rolagem contínua é elemento de marca — preserva sob "reduzir movimento"
+           (a regra global em index.css congelaria animações infinitas). */
+        @media (prefers-reduced-motion: reduce) {
+          .ticker-scroll {
+            animation-duration: var(--ticker-duration, 40s) !important;
+            animation-iteration-count: infinite !important;
+          }
+        }
       `}</style>
     </div>
   );

@@ -281,12 +281,12 @@ export const Sidebar = ({ mobileOpen, onMobileClose }: SidebarProps) => {
           </button>
         </div>
 
-        <nav className="flex-1 min-h-0 px-3 pb-2 space-y-2 overflow-y-auto custom-scrollbar">
+        <nav className="flex-1 min-h-0 px-3 pb-2 space-y-2 overflow-y-auto">
           {visibleEntries.map((entry) => renderEntry(entry, { sidebarOpen: isOpen }))}
         </nav>
 
         <div className="shrink-0 border-t border-white/5 px-3 py-3 space-y-1">
-          <div className={`flex items-center min-h-11 px-4 rounded-lg ${isOpen ? 'justify-start' : 'justify-center'}`}>
+          <div className={`flex items-center min-h-11 px-4 ${isOpen ? 'justify-start' : 'justify-center'}`}>
             <ServerStatusBadge showLabel={isOpen} align="left" />
           </div>
           <div
@@ -330,12 +330,12 @@ export const Sidebar = ({ mobileOpen, onMobileClose }: SidebarProps) => {
             </button>
           </div>
 
-          <nav className="flex-1 min-h-0 px-3 pb-2 space-y-2 overflow-y-auto custom-scrollbar">
+          <nav className="flex-1 min-h-0 px-3 pb-2 space-y-2 overflow-y-auto">
             {visibleEntries.map((entry) => renderEntry(entry, { sidebarOpen: true, onItemClick: closeMobileSidebar }))}
           </nav>
 
           <div className="shrink-0 border-t border-white/5 px-3 py-3 space-y-1">
-            <div className="flex items-center min-h-11 px-4 rounded-lg">
+            <div className="flex items-center min-h-11 px-4">
               <ServerStatusBadge showLabel={true} align="left" />
             </div>
             <div
