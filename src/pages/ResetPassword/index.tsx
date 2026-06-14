@@ -115,7 +115,7 @@ export function ResetPasswordPage() {
           <img
             src={logo}
             alt="Equilibra Logo"
-            className="w-24 h-24 sm:w-28 sm:h-28 mb-4 drop-shadow-[0_0_20px_rgba(124,58,237,0.6)] opacity-50"
+            className="brand-logo w-24 h-24 sm:w-28 sm:h-28 mb-4 opacity-50"
           />
           <h1 className="text-2xl font-bold text-destructive mb-3">{tr('Link Inválido', 'Invalid Link')}</h1>
           <p className="text-muted-foreground text-center text-sm mb-8 leading-relaxed max-w-sm">
@@ -123,7 +123,7 @@ export function ResetPasswordPage() {
           </p>
           <Link
             to="/forgot-password"
-            className="bg-primary hover:bg-primary/90 text-white font-bold py-4 px-8 rounded-xl transition-all shadow-xl shadow-primary/25 active:scale-[0.98] text-sm tracking-widest"
+            className="bg-primary hover:bg-primary/90 text-primary-foreground font-bold py-4 px-8 rounded-xl transition-all shadow-xl shadow-primary/25 active:scale-[0.98] text-sm tracking-widest"
           >
             {tr('SOLICITAR NOVO LINK', 'REQUEST NEW LINK')}
           </Link>
@@ -144,7 +144,7 @@ export function ResetPasswordPage() {
           src={logo}
           alt="Equilibra Logo"
           id="reset-password-logo"
-          className="w-24 h-24 sm:w-28 sm:h-28 mb-2 drop-shadow-[0_0_20px_rgba(124,58,237,0.6)]"
+          className="brand-logo w-24 h-24 sm:w-28 sm:h-28 mb-2"
         />
 
         <h1 className="text-2xl sm:text-3xl font-bold text-gradient mb-2 tracking-tighter">{tr('Nova Senha', 'New Password')}</h1>
@@ -164,12 +164,12 @@ export function ResetPasswordPage() {
                 type={showPassword ? 'text' : 'password'}
                 id="nova-senha"
                 placeholder="••••••••"
-                className={`w-full bg-secondary/30 border ${errors.novaSenha ? 'border-destructive/50' : 'border-white/5'} rounded-xl px-4 py-3.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 focus:bg-secondary/60 transition-all font-medium placeholder:text-muted-foreground/30`}
+                className={`w-full bg-secondary/30 border ${errors.novaSenha ? 'border-destructive/50' : 'border-foreground/5'} rounded-xl px-4 py-3.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 focus:bg-secondary/60 transition-all font-medium placeholder:text-muted-foreground/30`}
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-white transition-colors"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                 aria-label={showPassword ? tr('Ocultar senha', 'Hide password') : tr('Mostrar senha', 'Show password')}
               >
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -192,12 +192,12 @@ export function ResetPasswordPage() {
                 type={showConfirmPassword ? 'text' : 'password'}
                 id="confirmar-senha"
                 placeholder="••••••••"
-                className={`w-full bg-secondary/30 border ${errors.confirmarSenha ? 'border-destructive/50' : 'border-white/5'} rounded-xl px-4 py-3.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 focus:bg-secondary/60 transition-all font-medium placeholder:text-muted-foreground/30`}
+                className={`w-full bg-secondary/30 border ${errors.confirmarSenha ? 'border-destructive/50' : 'border-foreground/5'} rounded-xl px-4 py-3.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 focus:bg-secondary/60 transition-all font-medium placeholder:text-muted-foreground/30`}
               />
               <button
                 type="button"
                 onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-white transition-colors"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                 aria-label={showConfirmPassword ? tr('Ocultar senha', 'Hide password') : tr('Mostrar senha', 'Show password')}
               >
                 {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -210,7 +210,7 @@ export function ResetPasswordPage() {
             )}
           </div>
 
-          <div className="bg-secondary/20 p-3 sm:p-4 rounded-xl border border-white/5 grid grid-cols-1 sm:grid-cols-2 gap-y-2 gap-x-4">
+          <div className="bg-secondary/20 p-3 sm:p-4 rounded-xl border border-foreground/5 grid grid-cols-1 sm:grid-cols-2 gap-y-2 gap-x-4">
             {passwordRequirements.map((req, idx) => (
               <div key={idx} className="flex items-center gap-2">
                 {req.met ? (
@@ -229,7 +229,7 @@ export function ResetPasswordPage() {
             type="submit"
             disabled={resetMutation.isPending}
             id="btn-resetar-senha"
-            className="w-full bg-primary hover:bg-primary/90 text-white font-bold py-4 sm:py-5 rounded-xl transition-all shadow-xl shadow-primary/25 mt-4 active:scale-[0.98] text-sm sm:text-base tracking-wider sm:tracking-widest disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
+            className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold py-4 sm:py-5 rounded-xl transition-all shadow-xl shadow-primary/25 mt-4 active:scale-[0.98] text-sm sm:text-base tracking-wider sm:tracking-widest disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-3"
           >
             <ShieldCheck size={18} />
             {resetMutation.isPending ? tr('REDEFININDO...', 'RESETTING...') : tr('REDEFINIR SENHA', 'RESET PASSWORD')}

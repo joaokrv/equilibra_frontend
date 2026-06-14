@@ -126,7 +126,7 @@ export const CategoriasPage = () => {
       <div className="p-6 space-y-6 animate-in fade-in duration-500">
 
         <div>
-          <h1 className="text-2xl font-bold text-white">{tr('Categorias', 'Categories')}</h1>
+          <h1 className="text-2xl font-bold text-foreground">{tr('Categorias', 'Categories')}</h1>
           <p className="text-sm text-muted-foreground mt-1">
             {tr('Organize suas transações com categorias personalizadas.', 'Organize your transactions with custom categories.')}
           </p>
@@ -139,7 +139,7 @@ export const CategoriasPage = () => {
             value={busca}
             onChange={(e) => handleBuscaChange(e.target.value)}
             placeholder={tr('Buscar categoria...', 'Search category...')}
-            className="w-full bg-secondary/30 border border-white/5 rounded-xl pl-9 pr-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium placeholder:text-muted-foreground/30"
+            className="w-full bg-secondary/30 border border-foreground/5 rounded-xl pl-9 pr-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium placeholder:text-muted-foreground/30"
           />
         </div>
 
@@ -159,11 +159,11 @@ export const CategoriasPage = () => {
 
             <div className="glass rounded-2xl p-6 space-y-4">
               <div className="flex items-center gap-2 mb-2">
-                <div className="p-1.5 bg-emerald-500/10 rounded-lg text-emerald-400">
+                <div className="p-1.5 bg-success-muted rounded-lg text-success">
                   <TrendingUp size={16} />
                 </div>
-                <h2 className="text-sm font-bold text-white uppercase tracking-widest">{tr('Receitas', 'Income')}</h2>
-                <span className="ml-auto text-xs text-muted-foreground bg-white/5 px-2 py-0.5 rounded-full">
+                <h2 className="text-sm font-bold text-foreground uppercase tracking-widest">{tr('Receitas', 'Income')}</h2>
+                <span className="ml-auto text-xs text-muted-foreground bg-foreground/5 px-2 py-0.5 rounded-full">
                   {receitas.length}
                 </span>
               </div>
@@ -195,11 +195,11 @@ export const CategoriasPage = () => {
 
             <div className="glass rounded-2xl p-6 space-y-4">
               <div className="flex items-center gap-2 mb-2">
-                <div className="p-1.5 bg-rose-500/10 rounded-lg text-rose-400">
+                <div className="p-1.5 bg-danger-muted rounded-lg text-danger">
                   <TrendingDown size={16} />
                 </div>
-                <h2 className="text-sm font-bold text-white uppercase tracking-widest">{tr('Despesas', 'Expenses')}</h2>
-                <span className="ml-auto text-xs text-muted-foreground bg-white/5 px-2 py-0.5 rounded-full">
+                <h2 className="text-sm font-bold text-foreground uppercase tracking-widest">{tr('Despesas', 'Expenses')}</h2>
+                <span className="ml-auto text-xs text-muted-foreground bg-foreground/5 px-2 py-0.5 rounded-full">
                   {despesas.length}
                 </span>
               </div>
@@ -234,16 +234,16 @@ export const CategoriasPage = () => {
       </div>
 
       {modalAberto && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200" role="dialog" aria-modal="true">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-overlay backdrop-blur-sm animate-in fade-in duration-200" role="dialog" aria-modal="true">
           <div ref={modalRef} className="glass w-full max-w-sm rounded-2xl p-6 space-y-5 animate-in zoom-in-95 duration-200">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Tag size={18} className="text-primary" />
-                <h3 className="font-bold text-white">{tr('Nova Categoria', 'New Category')}</h3>
+                <h3 className="font-bold text-foreground">{tr('Nova Categoria', 'New Category')}</h3>
               </div>
               <button
                 onClick={fecharModal}
-                className="text-muted-foreground hover:text-white transition-colors"
+                className="text-muted-foreground hover:text-foreground transition-colors"
                 aria-label={tr('Fechar modal', 'Close modal')}
               >
                 <X size={18} />
@@ -263,7 +263,7 @@ export const CategoriasPage = () => {
                   placeholder={tr('Ex: Alimentação, Salário...', 'Ex: Food, Salary...')}
                   maxLength={50}
                   autoFocus
-                  className="w-full bg-secondary/30 border border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium placeholder:text-muted-foreground/30"
+                  className="w-full bg-secondary/30 border border-foreground/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium placeholder:text-muted-foreground/30"
                 />
               </div>
 
@@ -277,8 +277,8 @@ export const CategoriasPage = () => {
                     onClick={() => setNovoTipo(CategoriaRegistroRequestDTO.tipo.RECEITA)}
                     className={`flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold transition-all border ${
                       novoTipo === CategoriaRegistroRequestDTO.tipo.RECEITA
-                        ? 'bg-emerald-500/20 border-emerald-500/40 text-emerald-400'
-                        : 'bg-white/5 border-white/5 text-muted-foreground hover:text-white'
+                        ? 'bg-success/20 border-success/40 text-success'
+                        : 'bg-foreground/5 border-foreground/5 text-muted-foreground hover:text-foreground'
                     }`}
                   >
                     <TrendingUp size={14} /> {tr('Receita', 'Income')}
@@ -288,8 +288,8 @@ export const CategoriasPage = () => {
                     onClick={() => setNovoTipo(CategoriaRegistroRequestDTO.tipo.DESPESA)}
                     className={`flex items-center justify-center gap-2 py-2.5 rounded-xl text-xs font-bold transition-all border ${
                       novoTipo === CategoriaRegistroRequestDTO.tipo.DESPESA
-                        ? 'bg-rose-500/20 border-rose-500/40 text-rose-400'
-                        : 'bg-white/5 border-white/5 text-muted-foreground hover:text-white'
+                        ? 'bg-danger/20 border-danger/40 text-danger'
+                        : 'bg-foreground/5 border-foreground/5 text-muted-foreground hover:text-foreground'
                     }`}
                   >
                     <TrendingDown size={14} /> {tr('Despesa', 'Expense')}
@@ -301,7 +301,7 @@ export const CategoriasPage = () => {
             <button
               onClick={handleCriar}
               disabled={!novoNome.trim() || criarMutation.isPending}
-              className="w-full bg-primary hover:bg-primary/90 text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-primary/20 active:scale-[0.98] text-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold py-3 rounded-xl transition-all shadow-lg shadow-primary/20 active:scale-[0.98] text-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
             >
               {criarMutation.isPending ? <Loader2 size={16} className="animate-spin" /> : <Plus size={16} />}
               {criarMutation.isPending ? tr('Criando...', 'Creating...') : tr('Criar Categoria', 'Create Category')}
@@ -315,7 +315,7 @@ export const CategoriasPage = () => {
         title={tr('Remover Categoria?', 'Remove Category?')}
         description={
           <>
-            {tr('Você está prestes a remover', 'You are about to remove')} <span className="text-white font-semibold">"{categoriaParaDeletar?.nome}"</span>.
+            {tr('Você está prestes a remover', 'You are about to remove')} <span className="text-foreground font-semibold">"{categoriaParaDeletar?.nome}"</span>.
             <br />
             {tr('Transações e recorrências vinculadas permanecerão ativas, mas ficarão sem categoria.', 'Linked transactions and recurrences will stay active, but will become uncategorized.')}
           </>
@@ -367,8 +367,8 @@ const CategoriaItem = ({
   const isEditing = editandoId === categoria.id;
 
   return (
-    <div className="flex items-center gap-2 px-4 py-3 bg-white/5 rounded-xl group hover:bg-white/8 transition-all">
-      <div className={`w-2 h-2 rounded-full flex-shrink-0 ${cor === 'emerald' ? 'bg-emerald-400' : 'bg-rose-400'}`} />
+    <div className="flex items-center gap-2 px-4 py-3 bg-foreground/5 rounded-xl group hover:bg-foreground/8 transition-all">
+      <div className={`w-2 h-2 rounded-full flex-shrink-0 ${cor === 'emerald' ? 'bg-success' : 'bg-danger'}`} />
 
       {isEditing ? (
         <input
@@ -380,10 +380,10 @@ const CategoriaItem = ({
             if (e.key === 'Escape') onCancelarEdicao();
           }}
           autoFocus
-          className="flex-1 bg-white/10 border border-primary/40 rounded-lg px-2 py-1 text-sm text-white font-medium focus:outline-none focus:ring-1 focus:ring-primary/60"
+          className="flex-1 bg-foreground/10 border border-primary/40 rounded-lg px-2 py-1 text-sm text-foreground font-medium focus:outline-none focus:ring-1 focus:ring-primary/60"
         />
       ) : (
-        <span className="flex-1 text-sm font-medium text-white truncate">{categoria.nome}</span>
+        <span className="flex-1 text-sm font-medium text-foreground truncate">{categoria.nome}</span>
       )}
 
       <div className="flex items-center gap-1 flex-shrink-0">
@@ -392,14 +392,14 @@ const CategoriaItem = ({
             <button
               onClick={onConfirmarEdicao}
               disabled={salvando}
-              className="min-h-11 min-w-11 sm:min-h-0 sm:min-w-0 p-2.5 sm:p-1.5 rounded-lg hover:bg-emerald-500/10 text-muted-foreground hover:text-emerald-400 transition-all flex items-center justify-center"
+              className="min-h-11 min-w-11 sm:min-h-0 sm:min-w-0 p-2.5 sm:p-1.5 rounded-lg hover:bg-success-muted text-muted-foreground hover:text-success transition-all flex items-center justify-center"
               title={tr('Confirmar', 'Confirm')}
             >
               {salvando ? <Loader2 size={13} className="animate-spin" /> : <Check size={13} />}
             </button>
             <button
               onClick={onCancelarEdicao}
-              className="min-h-11 min-w-11 sm:min-h-0 sm:min-w-0 p-2.5 sm:p-1.5 rounded-lg hover:bg-white/10 text-muted-foreground hover:text-white transition-all flex items-center justify-center"
+              className="min-h-11 min-w-11 sm:min-h-0 sm:min-w-0 p-2.5 sm:p-1.5 rounded-lg hover:bg-foreground/10 text-muted-foreground hover:text-foreground transition-all flex items-center justify-center"
               title={tr('Cancelar', 'Cancel')}
             >
               <X size={13} />
@@ -409,14 +409,14 @@ const CategoriaItem = ({
           <>
             <button
               onClick={onIniciarEdicao}
-              className="opacity-100 sm:opacity-0 sm:group-hover:opacity-100 min-h-11 min-w-11 sm:min-h-0 sm:min-w-0 p-2.5 sm:p-1.5 rounded-lg hover:bg-white/10 text-muted-foreground hover:text-primary transition-all flex items-center justify-center"
+              className="opacity-100 sm:opacity-0 sm:group-hover:opacity-100 min-h-11 min-w-11 sm:min-h-0 sm:min-w-0 p-2.5 sm:p-1.5 rounded-lg hover:bg-foreground/10 text-muted-foreground hover:text-primary transition-all flex items-center justify-center"
               title={tr('Editar nome', 'Edit name')}
             >
               <Pencil size={13} />
             </button>
             <button
               onClick={onDeletar}
-              className="opacity-100 sm:opacity-0 sm:group-hover:opacity-100 min-h-11 min-w-11 sm:min-h-0 sm:min-w-0 p-2.5 sm:p-1.5 rounded-lg hover:bg-rose-500/10 text-muted-foreground hover:text-rose-400 transition-all flex items-center justify-center"
+              className="opacity-100 sm:opacity-0 sm:group-hover:opacity-100 min-h-11 min-w-11 sm:min-h-0 sm:min-w-0 p-2.5 sm:p-1.5 rounded-lg hover:bg-danger-muted text-muted-foreground hover:text-danger transition-all flex items-center justify-center"
               title={tr(`Remover ${categoria.nome}`, `Remove ${categoria.nome}`)}
             >
               <Trash2 size={13} />

@@ -4,6 +4,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useAuthStore } from './store/useAuthStore';
 import { refreshSession } from './lib/axios';
 import { usePrivacyStore } from './store/usePrivacyStore';
+import { useThemeStore, applyTheme } from './store/useThemeStore';
 import { toast } from './store/useToastStore';
 import { PerfilService } from './api';
 import { Dashboard } from './pages/Dashboard';
@@ -69,6 +70,7 @@ const PublicRoute = ({ children }: { children: React.ReactNode }) => {
 
 export default function App() {
   const hideValues = usePrivacyStore((state) => state.hideValues);
+  const theme = useThemeStore((state) => state.theme);
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const [isInitializing, setIsInitializing] = useState(true);
@@ -108,6 +110,15 @@ export default function App() {
   useEffect(() => {
     document.documentElement.dataset.privacyValues = hideValues ? 'hidden' : 'visible';
   }, [hideValues]);
+
+  useEffect(() => {
+    applyTheme(theme);
+    if (theme !== 'system') return;
+    const media = window.matchMedia('(prefers-color-scheme: dark)');
+    const onChange = () => applyTheme('system');
+    media.addEventListener('change', onChange);
+    return () => media.removeEventListener('change', onChange);
+  }, [theme]);
 
   if (isInitializing) {
     return (

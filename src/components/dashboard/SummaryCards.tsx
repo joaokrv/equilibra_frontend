@@ -11,6 +11,7 @@ import { formatarMoeda, formatarPorcentagem } from '../../lib/formatters';
 import { useI18nStore } from '../../store/useI18nStore';
 import { t } from '../../lib/i18n';
 import { useState } from 'react';
+import { useCountUp } from '../../hooks/useCountUp';
 
 interface SummaryCardProps {
   title: string;
@@ -43,16 +44,17 @@ const SummaryCard = ({
 }: SummaryCardProps) => {
   const language = useI18nStore((state) => state.language);
   const [tooltipOpen, setTooltipOpen] = useState(false);
+  const animatedValue = useCountUp(value);
 
   const deltaLabel = deltaPercent === null
     ? '--'
     : `${deltaPercent >= 0 ? '+' : ''}${formatarPorcentagem(deltaPercent, 1)}`;
 
   const deltaClass = isPositive === null
-    ? 'bg-zinc-500/10 text-zinc-400'
+    ? 'bg-muted text-muted-foreground'
     : isPositive
-      ? 'bg-emerald-500/10 text-emerald-500'
-      : 'bg-rose-500/10 text-rose-500';
+      ? 'bg-success-muted text-success'
+      : 'bg-danger-muted text-danger';
   const formatMonthName = (dateStr: string): string => {
     if (!dateStr) return '';
     const date = new Date(dateStr);
@@ -66,7 +68,7 @@ const SummaryCard = ({
   const showTooltip = valorAnterior !== null && deltaPercent !== null;
 
   return (
-    <div className="glass p-6 rounded-2xl flex flex-col justify-between hover:border-primary/20 transition-all duration-300 group relative">
+    <div className="glass p-6 rounded-2xl flex flex-col justify-between hover:border-primary/20 transition-all duration-300 group relative card-lift">
       <div className="flex justify-between items-start mb-4">
         <div className="p-2 bg-secondary/50 rounded-lg text-muted-foreground group-hover:text-primary transition-colors">
           <Icon size={20} />
@@ -94,7 +96,7 @@ const SummaryCard = ({
                   <div className="font-semibold text-foreground">{monthAtual}</div>
                   <div>{formatarMoeda(value, moeda)}</div>
                 </div>
-                <div className={`text-sm font-bold ${isPositive ? 'text-emerald-500' : 'text-rose-500'}`}>
+                <div className={`text-sm font-bold ${isPositive ? 'text-success' : 'text-danger'}`}>
                   {deltaPercent >= 0 ? '▲' : '▼'} {formatarPorcentagem(deltaPercent, 1)}%
                 </div>
               </div>
@@ -104,7 +106,7 @@ const SummaryCard = ({
       </div>
       <div>
         <p className="text-xs font-bold text-muted-foreground uppercase tracking-[0.2em] mb-1">{title}</p>
-        <h3 className="text-2xl font-bold text-gradient">{formatarMoeda(value, moeda)}</h3>
+        <h3 className="text-2xl font-bold text-gradient tabular-nums">{formatarMoeda(animatedValue, moeda)}</h3>
         {secondaryLabel && typeof secondaryValue === 'number' && (
           <p className="mt-1.5 text-2xs font-medium text-muted-foreground">
             {secondaryLabel}:{' '}

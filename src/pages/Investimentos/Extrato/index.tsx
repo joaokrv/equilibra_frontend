@@ -34,14 +34,14 @@ const TIPO_LABEL: Record<TipoMovimentacao, string> = {
 
 const TIPO_ICON: Record<TipoMovimentacao, React.ReactNode> = {
   APORTE: <TrendingDown size={14} className="text-blue-400" />,
-  RESGATE: <TrendingUp size={14} className="text-emerald-400" />,
-  RENDIMENTO: <Sparkles size={14} className="text-purple-400" />,
+  RESGATE: <TrendingUp size={14} className="text-success" />,
+  RENDIMENTO: <Sparkles size={14} className="text-primary" />,
 };
 
 const TIPO_COLOR: Record<TipoMovimentacao, string> = {
   APORTE: 'text-blue-400',
-  RESGATE: 'text-emerald-400',
-  RENDIMENTO: 'text-purple-400',
+  RESGATE: 'text-success',
+  RENDIMENTO: 'text-primary',
 };
 
 const PAGE_SIZES = [10, 20, 50] as const;
@@ -209,10 +209,10 @@ export const InvestimentoExtratoPage = () => {
       <div className="max-w-5xl mx-auto px-4 pb-20">
 
         <div className="mb-6">
-          <h1 className="text-2xl font-bold text-white">
+          <h1 className="text-2xl font-bold text-foreground">
             {tr('Histórico de Investimentos', 'Investment History')}
           </h1>
-          <p className="text-sm text-[#a0aec0] mt-1">
+          <p className="text-sm text-muted-foreground mt-1">
             {tr('Histórico de aportes, resgates e rendimentos.', 'History of contributions, withdrawals and earnings.')}
           </p>
         </div>
@@ -230,60 +230,60 @@ export const InvestimentoExtratoPage = () => {
 
         {!isLoading && !isError && movs.length > 0 && (
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 mb-5">
-            <div className="bg-[#15161e] border border-[#232431] rounded-2xl p-4">
-              <p className="text-xs text-[#5a667b] uppercase tracking-wide mb-1">
+            <div className="bg-card border border-border rounded-2xl p-4">
+              <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">
                 {tr('Total Aportado', 'Total Contributed')}
               </p>
               <p className="text-lg font-bold text-blue-400">{formatarMoeda(resumo.aportado, moeda)}</p>
             </div>
-            <div className="bg-[#15161e] border border-[#232431] rounded-2xl p-4">
-              <p className="text-xs text-[#5a667b] uppercase tracking-wide mb-1">
+            <div className="bg-card border border-border rounded-2xl p-4">
+              <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">
                 {tr('Total Resgatado', 'Total Withdrawn')}
               </p>
-              <p className="text-lg font-bold text-emerald-400">{formatarMoeda(resumo.resgatado, moeda)}</p>
+              <p className="text-lg font-bold text-success">{formatarMoeda(resumo.resgatado, moeda)}</p>
             </div>
-            <div className="bg-[#15161e] border border-[#232431] rounded-2xl p-4">
-              <p className="text-xs text-[#5a667b] uppercase tracking-wide mb-1">
+            <div className="bg-card border border-border rounded-2xl p-4">
+              <p className="text-xs text-muted-foreground uppercase tracking-wide mb-1">
                 {tr('Rendimentos no período', 'Earnings in period')}
               </p>
-              <p className={`text-lg font-bold ${resumo.rendimentos < 0 ? 'text-red-400' : 'text-purple-400'}`}>
+              <p className={`text-lg font-bold ${resumo.rendimentos < 0 ? 'text-red-400' : 'text-primary'}`}>
                 {resumo.rendimentos < 0 ? '−' : '+'}{formatarMoeda(Math.abs(resumo.rendimentos), moeda)}
               </p>
             </div>
           </div>
         )}
 
-        <div className="bg-[#15161e] border border-[#232431] rounded-2xl p-4 mb-4 flex flex-wrap gap-3 items-end">
+        <div className="bg-card border border-border rounded-2xl p-4 mb-4 flex flex-wrap gap-3 items-end">
           <div className="flex flex-col gap-1">
-            <label className="text-xs text-[#5a667b] uppercase tracking-wide">
+            <label className="text-xs text-muted-foreground uppercase tracking-wide">
               {tr('De', 'From')}
             </label>
             <input
               type="date"
               value={dataInicio}
               onChange={(e) => { setDataInicio(e.target.value); setPage(0); }}
-              className="bg-[#0f1018] border border-[#2a2b3a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#b794f4]"
+              className="bg-background border border-border rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:border-primary"
             />
           </div>
           <div className="flex flex-col gap-1">
-            <label className="text-xs text-[#5a667b] uppercase tracking-wide">
+            <label className="text-xs text-muted-foreground uppercase tracking-wide">
               {tr('Até', 'To')}
             </label>
             <input
               type="date"
               value={dataFim}
               onChange={(e) => { setDataFim(e.target.value); setPage(0); }}
-              className="bg-[#0f1018] border border-[#2a2b3a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#b794f4]"
+              className="bg-background border border-border rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:border-primary"
             />
           </div>
           <div className="flex flex-col gap-1">
-            <label className="text-xs text-[#5a667b] uppercase tracking-wide">
+            <label className="text-xs text-muted-foreground uppercase tracking-wide">
               {tr('Tipo', 'Type')}
             </label>
             <select
               value={tipo}
               onChange={(e) => { setTipo(e.target.value as TipoMovimentacao | ''); setPage(0); }}
-              className="bg-[#0f1018] border border-[#2a2b3a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#b794f4]"
+              className="bg-background border border-border rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:border-primary"
             >
               <option value="">{tr('Todos', 'All')}</option>
               <option value="APORTE">{tr('Aportes', 'Contributions')}</option>
@@ -292,13 +292,13 @@ export const InvestimentoExtratoPage = () => {
             </select>
           </div>
           <div className="flex flex-col gap-1">
-            <label className="text-xs text-[#5a667b] uppercase tracking-wide">
+            <label className="text-xs text-muted-foreground uppercase tracking-wide">
               {tr('Conta', 'Account')}
             </label>
             <select
               value={contaFiltro}
               onChange={(e) => setContaFiltro(e.target.value)}
-              className="bg-[#0f1018] border border-[#2a2b3a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#b794f4]"
+              className="bg-background border border-border rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:border-primary"
             >
               <option value="">{tr('Todas', 'All')}</option>
               {contasList.map((c) => (
@@ -307,13 +307,13 @@ export const InvestimentoExtratoPage = () => {
             </select>
           </div>
           <div className="flex flex-col gap-1 ml-auto">
-            <label className="text-xs text-[#5a667b] uppercase tracking-wide">
+            <label className="text-xs text-muted-foreground uppercase tracking-wide">
               {tr('Por página', 'Per page')}
             </label>
             <select
               value={size}
               onChange={(e) => { setSize(Number(e.target.value) as 10 | 20 | 50); setPage(0); }}
-              className="bg-[#0f1018] border border-[#2a2b3a] rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-[#b794f4]"
+              className="bg-background border border-border rounded-lg px-3 py-2 text-sm text-foreground focus:outline-none focus:border-primary"
             >
               {PAGE_SIZES.map((s) => <option key={s} value={s}>{s}</option>)}
             </select>
@@ -322,16 +322,16 @@ export const InvestimentoExtratoPage = () => {
 
         {isLoading && (
           <div className="flex justify-center py-16">
-            <Loader2 size={28} className="animate-spin text-[#b794f4]" />
+            <Loader2 size={28} className="animate-spin text-primary" />
           </div>
         )}
 
         {isError && <ErrorState title="Erro ao carregar movimentações" onRetry={refetch} />}
 
         {!isLoading && !isError && movsProcessados.length === 0 && (
-          <div className="bg-[#15161e] border border-[#232431] rounded-2xl p-12 text-center">
-            <Filter size={36} className="text-[#3b2566] mx-auto mb-3" />
-            <p className="text-[#a0aec0] text-sm">
+          <div className="bg-card border border-border rounded-2xl p-12 text-center">
+            <Filter size={36} className="text-primary/40 mx-auto mb-3" />
+            <p className="text-muted-foreground text-sm">
               {tr('Nenhuma movimentação encontrada para o período.', 'No movements found for the selected period.')}
             </p>
           </div>
@@ -339,59 +339,59 @@ export const InvestimentoExtratoPage = () => {
 
         {!isLoading && !isError && movsProcessados.length > 0 && (
           <>
-            <div className="hidden xl:block bg-[#15161e] border border-[#232431] rounded-2xl overflow-hidden">
+            <div className="hidden xl:block bg-card border border-border rounded-2xl overflow-hidden">
               <table className="w-full text-sm">
                 <thead>
-                  <tr className="border-b border-[#232431] text-[#5a667b] text-xs uppercase tracking-wide">
+                  <tr className="border-b border-border text-muted-foreground text-xs uppercase tracking-wide">
                     <th className="px-4 py-3 text-left">
-                      <div className="flex items-center gap-1 cursor-pointer hover:text-white transition-colors" onClick={() => handleSort('tipo')}>
+                      <div className="flex items-center gap-1 cursor-pointer hover:text-foreground transition-colors" onClick={() => handleSort('tipo')}>
                         <span>{tr('Tipo', 'Type')}</span>
                         <SortIcon currentField={sortField} field="tipo" direction={sortDirection} />
                       </div>
                     </th>
                     <th className="px-4 py-3 text-left">
-                      <div className="flex items-center gap-1 cursor-pointer hover:text-white transition-colors" onClick={() => handleSort('investimento')}>
+                      <div className="flex items-center gap-1 cursor-pointer hover:text-foreground transition-colors" onClick={() => handleSort('investimento')}>
                         <span>{tr('Investimento', 'Investment')}</span>
                         <SortIcon currentField={sortField} field="investimento" direction={sortDirection} />
                       </div>
                     </th>
                     <th className="px-4 py-3 text-left">
-                      <div className="flex items-center gap-1 cursor-pointer hover:text-white transition-colors" onClick={() => handleSort('data')}>
+                      <div className="flex items-center gap-1 cursor-pointer hover:text-foreground transition-colors" onClick={() => handleSort('data')}>
                         <span>{tr('Data', 'Date')}</span>
                         <SortIcon currentField={sortField} field="data" direction={sortDirection} />
                       </div>
                     </th>
                     <th className="px-4 py-3 text-left">
-                      <div className="flex items-center gap-1 cursor-pointer hover:text-white transition-colors" onClick={() => handleSort('conta')}>
+                      <div className="flex items-center gap-1 cursor-pointer hover:text-foreground transition-colors" onClick={() => handleSort('conta')}>
                         <span>{tr('Conta', 'Account')}</span>
                         <SortIcon currentField={sortField} field="conta" direction={sortDirection} />
                       </div>
                     </th>
                     <th className="px-4 py-3 text-left">{tr('Observação', 'Notes')}</th>
                     <th className="px-4 py-3 text-right">
-                      <div className="flex items-center gap-1 cursor-pointer hover:text-white transition-colors justify-end" onClick={() => handleSort('valor')}>
+                      <div className="flex items-center gap-1 cursor-pointer hover:text-foreground transition-colors justify-end" onClick={() => handleSort('valor')}>
                         <SortIcon currentField={sortField} field="valor" direction={sortDirection} />
                         <span>{tr('Valor', 'Amount')}</span>
                       </div>
                     </th>
-                    <th className="px-4 py-3 text-right text-[#5a667b]">{tr('Ações', 'Actions')}</th>
+                    <th className="px-4 py-3 text-right text-muted-foreground">{tr('Ações', 'Actions')}</th>
                   </tr>
                 </thead>
                 <tbody>
                   {movsProcessados.map((m) => (
-                    <tr key={m.id} className="border-b border-[#1e1f2e] hover:bg-[#0f1018] transition-colors">
+                    <tr key={m.id} className="border-b border-border hover:bg-background transition-colors">
                       <td className="px-4 py-3">
                         <span className={`flex items-center gap-1.5 ${TIPO_COLOR[m.tipo]}`}>
                           {TIPO_ICON[m.tipo]}
                           {TIPO_LABEL[m.tipo]}
                         </span>
                       </td>
-                      <td className="px-4 py-3 text-white font-medium">{m.descricaoInvestimento}</td>
-                      <td className="px-4 py-3 text-[#a0aec0]">
+                      <td className="px-4 py-3 text-foreground font-medium">{m.descricaoInvestimento}</td>
+                      <td className="px-4 py-3 text-muted-foreground">
                         {new Date(m.data + 'T00:00:00').toLocaleDateString('pt-BR')}
                       </td>
-                      <td className="px-4 py-3 text-[#a0aec0]">{m.nomeContaOrigem ?? '—'}</td>
-                      <td className="px-4 py-3 text-[#718096] max-w-[140px] truncate">{m.observacao ?? '—'}</td>
+                      <td className="px-4 py-3 text-muted-foreground">{m.nomeContaOrigem ?? '—'}</td>
+                      <td className="px-4 py-3 text-muted-foreground max-w-[140px] truncate">{m.observacao ?? '—'}</td>
                       <td className={`px-4 py-3 text-right font-semibold ${m.valor < 0 ? 'text-red-400' : TIPO_COLOR[m.tipo]}`}>
                         {m.valor < 0 ? '−' : m.tipo === 'RESGATE' ? '−' : '+'}
                         {formatarMoeda(Math.abs(m.valor), moeda)}
@@ -400,7 +400,7 @@ export const InvestimentoExtratoPage = () => {
                         <div className="flex items-center justify-end gap-1">
                           <button
                             onClick={() => abrirEditar(m)}
-                            className="opacity-40 hover:opacity-100 transition-opacity text-[#b794f4] min-h-11 min-w-11 flex items-center justify-center"
+                            className="opacity-40 hover:opacity-100 transition-opacity text-primary min-h-11 min-w-11 flex items-center justify-center"
                             aria-label={tr('Editar', 'Edit')}
                           >
                             <Pencil size={14} />
@@ -422,7 +422,7 @@ export const InvestimentoExtratoPage = () => {
 
             <div className="xl:hidden flex flex-col gap-2">
               {movsProcessados.map((m) => (
-                <div key={m.id} className="bg-[#15161e] border border-[#232431] rounded-xl p-4">
+                <div key={m.id} className="bg-card border border-border rounded-xl p-4">
                   <div className="flex items-center justify-between mb-2">
                     <span className={`flex items-center gap-1.5 text-sm font-medium ${TIPO_COLOR[m.tipo]}`}>
                       {TIPO_ICON[m.tipo]} {TIPO_LABEL[m.tipo]}
@@ -432,16 +432,16 @@ export const InvestimentoExtratoPage = () => {
                       {formatarMoeda(Math.abs(m.valor), moeda)}
                     </span>
                   </div>
-                  <p className="text-white text-sm font-medium">{m.descricaoInvestimento}</p>
+                  <p className="text-foreground text-sm font-medium">{m.descricaoInvestimento}</p>
                   <div className="flex items-center justify-between mt-2">
-                    <span className="text-xs text-[#718096]">
+                    <span className="text-xs text-muted-foreground">
                       {new Date(m.data + 'T00:00:00').toLocaleDateString('pt-BR')}
                       {m.nomeContaOrigem ? ` · ${m.nomeContaOrigem}` : ''}
                     </span>
                     <div className="flex items-center gap-1">
                       <button
                         onClick={() => abrirEditar(m)}
-                        className="text-[#b794f4] opacity-60 hover:opacity-100 transition-opacity min-h-11 min-w-11 flex items-center justify-center"
+                        className="text-primary opacity-60 hover:opacity-100 transition-opacity min-h-11 min-w-11 flex items-center justify-center"
                         aria-label={tr('Editar', 'Edit')}
                       >
                         <Pencil size={14} />
@@ -456,13 +456,13 @@ export const InvestimentoExtratoPage = () => {
                     </div>
                   </div>
                   {m.observacao && (
-                    <p className="text-xs text-[#718096] mt-1 italic">{m.observacao}</p>
+                    <p className="text-xs text-muted-foreground mt-1 italic">{m.observacao}</p>
                   )}
                 </div>
               ))}
             </div>
 
-            <div className="flex items-center justify-between mt-4 text-sm text-[#a0aec0]">
+            <div className="flex items-center justify-between mt-4 text-sm text-muted-foreground">
               <span>
                 {totalElements} {tr('registro(s)', 'record(s)')} · {tr('Página', 'Page')} {page + 1} {tr('de', 'of')} {totalPages}
               </span>
@@ -470,14 +470,14 @@ export const InvestimentoExtratoPage = () => {
                 <button
                   onClick={() => setPage((p) => Math.max(0, p - 1))}
                   disabled={page === 0}
-                  className="min-h-11 min-w-11 flex items-center justify-center rounded-lg border border-[#2a2b3a] bg-[#0f1018] disabled:opacity-30 hover:border-[#b794f4] transition-colors"
+                  className="min-h-11 min-w-11 flex items-center justify-center rounded-lg border border-border bg-background disabled:opacity-30 hover:border-primary transition-colors"
                 >
                   <ChevronLeft size={16} />
                 </button>
                 <button
                   onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
                   disabled={page >= totalPages - 1}
-                  className="min-h-11 min-w-11 flex items-center justify-center rounded-lg border border-[#2a2b3a] bg-[#0f1018] disabled:opacity-30 hover:border-[#b794f4] transition-colors"
+                  className="min-h-11 min-w-11 flex items-center justify-center rounded-lg border border-border bg-background disabled:opacity-30 hover:border-primary transition-colors"
                 >
                   <ChevronRight size={16} />
                 </button>
@@ -516,7 +516,7 @@ export const InvestimentoExtratoPage = () => {
 
       {paraEditar && (
         <div
-          className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200"
+          className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-overlay backdrop-blur-sm animate-in fade-in duration-200"
           role="dialog"
           aria-modal="true"
           aria-label={tr('Editar movimentação', 'Edit movement')}
@@ -525,16 +525,16 @@ export const InvestimentoExtratoPage = () => {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
                 <Pencil size={18} className={TIPO_COLOR[paraEditar.tipo]} />
-                <h3 className="font-bold text-white">
+                <h3 className="font-bold text-foreground">
                   {tr('Editar', 'Edit')} {TIPO_LABEL[paraEditar.tipo]}
                 </h3>
               </div>
-              <button onClick={fecharEditar} className="text-muted-foreground hover:text-white transition-colors">
+              <button onClick={fecharEditar} className="text-muted-foreground hover:text-foreground transition-colors">
                 <X size={18} />
               </button>
             </div>
 
-            <div className="bg-white/5 rounded-xl p-3">
+            <div className="bg-foreground/5 rounded-xl p-3">
               <p className="text-xs text-muted-foreground">{paraEditar.descricaoInvestimento}</p>
             </div>
 
@@ -561,7 +561,7 @@ export const InvestimentoExtratoPage = () => {
                   onChange={(e) => setEditValor(e.target.value)}
                   min={paraEditar.tipo !== 'RENDIMENTO' ? '0.01' : undefined}
                   autoFocus
-                  className="w-full bg-secondary/30 border border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium"
+                  className="w-full bg-secondary/30 border border-foreground/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium"
                 />
               </div>
 
@@ -574,7 +574,7 @@ export const InvestimentoExtratoPage = () => {
                   value={editData}
                   max={toLocalDateStr(new Date())}
                   onChange={(e) => setEditData(e.target.value)}
-                  className="w-full bg-secondary/30 border border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium"
+                  className="w-full bg-secondary/30 border border-foreground/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium"
                 />
               </div>
 
@@ -588,11 +588,11 @@ export const InvestimentoExtratoPage = () => {
                   <select
                     value={editContaId}
                     onChange={(e) => setEditContaId(e.target.value)}
-                    className="w-full bg-secondary/30 border border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium appearance-none"
+                    className="w-full bg-secondary/30 border border-foreground/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium appearance-none"
                   >
-                    <option value="" className="bg-card text-white">{tr('Selecione...', 'Select...')}</option>
+                    <option value="" className="bg-card text-foreground">{tr('Selecione...', 'Select...')}</option>
                     {contasList.map((c) => (
-                      <option key={c.id} value={c.id} className="bg-card text-white">
+                      <option key={c.id} value={c.id} className="bg-card text-foreground">
                         {c.nome}{c.saldo !== undefined ? ` — ${formatarMoeda(c.saldo, moeda)}` : ''}
                       </option>
                     ))}
@@ -609,7 +609,7 @@ export const InvestimentoExtratoPage = () => {
                   value={editObs}
                   onChange={(e) => setEditObs(e.target.value)}
                   maxLength={255}
-                  className="w-full bg-secondary/30 border border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium placeholder:text-muted-foreground/30"
+                  className="w-full bg-secondary/30 border border-foreground/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium placeholder:text-muted-foreground/30"
                 />
               </div>
             </div>
@@ -621,7 +621,7 @@ export const InvestimentoExtratoPage = () => {
                 ((paraEditar.tipo === 'APORTE' || paraEditar.tipo === 'RESGATE') && !editContaId) ||
                 editarMutation.isPending
               }
-              className="w-full bg-primary hover:bg-primary/90 text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-primary/20 active:scale-[0.98] text-sm disabled:opacity-50 flex items-center justify-center gap-2"
+              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold py-3 rounded-xl transition-all shadow-lg shadow-primary/20 active:scale-[0.98] text-sm disabled:opacity-50 flex items-center justify-center gap-2"
             >
               {editarMutation.isPending
                 ? <><Loader2 size={16} className="animate-spin" /> {tr('Salvando...', 'Saving...')}</>

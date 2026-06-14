@@ -19,7 +19,8 @@ import {
   ArrowUpCircle,
   ArrowDownCircle,
   ShieldAlert,
-  Bell
+  Bell,
+  SunMoon
 } from 'lucide-react';
 import { AccountActionModal } from '../../components/modals/AccountActionModal';
 import { Input } from '../../components/ui/Input';
@@ -28,11 +29,13 @@ import { MainLayout } from '../../components/layout/MainLayout';
 import apiClient from '../../lib/axios';
 import { getApiErrorMessage } from '../../lib/errorMessage';
 import { useI18nStore, type AppLanguage } from '../../store/useI18nStore';
+import { useThemeStore, type AppTheme } from '../../store/useThemeStore';
 import { formatarMoeda } from '../../lib/formatters';
 
 export function PerfilPage() {
   const { user, updateProfile, updateIsEmailVerificado, logout } = useAuthStore();
   const { language, setLanguage } = useI18nStore();
+  const { theme, setTheme } = useThemeStore();
   const navigate = useNavigate();
   const tr = (pt: string, en: string) => (idioma === 'en-US' ? en : pt);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -174,7 +177,7 @@ export function PerfilPage() {
       <div className="max-w-6xl mx-auto space-y-6 sm:space-y-10 animate-fade-in pb-8 sm:pb-12 px-2 sm:px-0">
         <header className="flex flex-col md:flex-row md:items-center justify-between gap-4 sm:gap-6">
           <div className="animate-in fade-in slide-in-from-left-4 duration-700">
-            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight text-white mb-2 uppercase italic">
+            <h1 className="text-2xl sm:text-3xl lg:text-4xl font-black tracking-tight text-foreground mb-2 uppercase italic">
               {tr('Configuracoes', 'Settings')} <span className="text-primary">{tr('do Perfil', 'Profile')}</span>
             </h1>
             <p className="text-muted-foreground font-medium">
@@ -182,11 +185,11 @@ export function PerfilPage() {
             </p>
           </div>
           
-          <div className="hidden md:flex items-center gap-4 bg-white/5 border border-white/10 px-6 py-3 rounded-2xl backdrop-blur-md">
+          <div className="hidden md:flex items-center gap-4 bg-foreground/5 border border-foreground/10 px-6 py-3 rounded-2xl backdrop-blur-md">
             <Coins className="text-primary" size={24} />
             <div>
               <p className="text-2xs uppercase font-bold text-muted-foreground tracking-widest">{tr('Moeda Preferencial', 'Preferred Currency')}</p>
-              <p className="text-sm font-bold text-white">
+              <p className="text-sm font-bold text-foreground">
                 {moeda === 'BRL' && tr('Real (R$)', 'Brazilian Real (R$)')}
                 {moeda === 'USD' && tr('Dolar (USD)', 'US Dollar (USD)')}
               </p>
@@ -197,11 +200,11 @@ export function PerfilPage() {
         <div className="grid grid-cols-1 xl:grid-cols-12 gap-5 sm:gap-8">
           
           <div className="xl:col-span-4 space-y-5 sm:space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
-            <div className="glass rounded-2xl sm:rounded-[2rem] p-5 sm:p-8 border border-white/10 relative overflow-hidden flex flex-col items-center">
+            <div className="glass rounded-2xl sm:rounded-[2rem] p-5 sm:p-8 border border-foreground/10 relative overflow-hidden flex flex-col items-center">
               <div className="absolute inset-0 bg-gradient-to-br from-primary/20 via-transparent to-transparent opacity-50" />
               
               <div className="relative group cursor-pointer mb-6" onClick={() => fileInputRef.current?.click()}>
-                <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full overflow-hidden border-4 border-white/10 shadow-2xl relative">
+                <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full overflow-hidden border-4 border-foreground/10 shadow-2xl relative">
                   {user?.fotoBase64 ? (
                     <img 
                       src={`data:image/png;base64,${user.fotoBase64}`} 
@@ -213,13 +216,13 @@ export function PerfilPage() {
                       <UserIcon size={56} className="text-primary/70" />
                     </div>
                   )}
-                  <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center text-white gap-1 backdrop-blur-sm">
+                  <div className="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 transition-opacity flex flex-col items-center justify-center text-primary-foreground gap-1 backdrop-blur-sm">
                     <Camera size={24} />
                     <span className="text-2xs font-bold uppercase tracking-tighter">{tr('Alterar', 'Change')}</span>
                   </div>
                 </div>
-                <div className={`absolute -bottom-1 -right-1 w-10 h-10 rounded-full border-4 border-[#0a0a0a] flex items-center justify-center ${user?.isEmailVerificado ? 'bg-emerald-500' : 'bg-amber-500'}`}>
-                  {user?.isEmailVerificado ? <ShieldCheck size={20} className="text-white" /> : <AlertTriangle size={20} className="text-white" />}
+                <div className={`absolute -bottom-1 -right-1 w-10 h-10 rounded-full border-4 border-card flex items-center justify-center ${user?.isEmailVerificado ? 'bg-emerald-500' : 'bg-amber-500'}`}>
+                  {user?.isEmailVerificado ? <ShieldCheck size={20} className="text-primary-foreground" /> : <AlertTriangle size={20} className="text-primary-foreground" />}
                 </div>
               </div>
 
@@ -231,15 +234,15 @@ export function PerfilPage() {
                 className="hidden" 
               />
 
-              <h2 className="text-xl sm:text-2xl font-black text-white text-center mb-1">{user?.nome}</h2>
+              <h2 className="text-xl sm:text-2xl font-black text-foreground text-center mb-1">{user?.nome}</h2>
               <p className="text-muted-foreground text-xs sm:text-sm flex items-center gap-2 mb-6 font-medium text-center break-all">
                 <Mail size={14} className="text-primary shrink-0" /> <span className="break-all">{user?.email}</span>
               </p>
 
                 <div className="w-full space-y-3">
-                  <div className="flex flex-wrap justify-between items-center bg-white/5 rounded-2xl p-3 sm:p-4 border border-white/5 gap-2">
+                  <div className="flex flex-wrap justify-between items-center bg-foreground/5 rounded-2xl p-3 sm:p-4 border border-foreground/5 gap-2">
                     <span className="text-xs font-bold uppercase text-muted-foreground">{tr('Privacidade', 'Privacy')}</span>
-                    <span className="text-white text-xs font-bold flex items-center gap-2">
+                    <span className="text-foreground text-xs font-bold flex items-center gap-2">
                       <CheckCircle2 size={14} className="text-emerald-500 shrink-0" /> {tr('Criptografado', 'Encrypted')}
                     </span>
                  </div>
@@ -252,7 +255,7 @@ export function PerfilPage() {
                   <div className="p-2 bg-amber-500/20 rounded-lg">
                     <Send size={20} className="text-amber-500" />
                   </div>
-                  <h3 className="font-bold text-white uppercase text-sm tracking-wider">{tr('Ativar Conta', 'Activate Account')}</h3>
+                  <h3 className="font-bold text-foreground uppercase text-sm tracking-wider">{tr('Ativar Conta', 'Activate Account')}</h3>
                 </div>
                 <p className="text-xs text-amber-500/80 mb-6 font-medium leading-relaxed">
                   {tr('Insira o codigo enviado para seu e-mail para desbloquear todas as funcoes.', 'Enter the code sent to your email to unlock all features.')}
@@ -288,7 +291,7 @@ export function PerfilPage() {
           <div className="xl:col-span-8 space-y-5 sm:space-y-8 animate-in fade-in slide-in-from-right-4 duration-700 delay-200">
             
             <section className="grid grid-cols-2 md:grid-cols-4 gap-2.5 sm:gap-4">
-               <Link to="/receitas" className="glass rounded-2xl sm:rounded-3xl p-3 sm:p-5 border border-white/5 group hover:border-emerald-500/30 transition-all cursor-pointer min-w-0">
+               <Link to="/receitas" className="glass rounded-2xl sm:rounded-3xl p-3 sm:p-5 border border-foreground/5 group hover:border-emerald-500/30 transition-all cursor-pointer min-w-0">
                   <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-4">
                     <div className="p-1.5 sm:p-2 bg-emerald-500/20 rounded-lg sm:rounded-xl text-emerald-500 shrink-0">
                       <ArrowUpCircle size={16} className="md:hidden" />
@@ -296,12 +299,12 @@ export function PerfilPage() {
                     </div>
                     <span className="text-2xs sm:text-2xs font-black uppercase text-muted-foreground tracking-wider sm:tracking-widest leading-tight truncate">{tr('Receitas', 'Income')}</span>
                   </div>
-                  <p className="text-sm sm:text-lg xl:text-xl font-bold text-white truncate">
+                  <p className="text-sm sm:text-lg xl:text-xl font-bold text-foreground truncate">
                     {isLoadingResumo ? '---' : formatarMoeda(resumo?.totalReceitas || 0, moeda as UsuarioAtualizacaoRequestDTO.moeda)}
                   </p>
                </Link>
 
-               <Link to="/despesas" className="glass rounded-2xl sm:rounded-3xl p-3 sm:p-5 border border-white/5 group hover:border-rose-500/30 transition-all cursor-pointer min-w-0">
+               <Link to="/despesas" className="glass rounded-2xl sm:rounded-3xl p-3 sm:p-5 border border-foreground/5 group hover:border-rose-500/30 transition-all cursor-pointer min-w-0">
                   <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-4">
                     <div className="p-1.5 sm:p-2 bg-rose-500/20 rounded-lg sm:rounded-xl text-rose-500 shrink-0">
                       <ArrowDownCircle size={16} className="md:hidden" />
@@ -309,12 +312,12 @@ export function PerfilPage() {
                     </div>
                     <span className="text-2xs sm:text-2xs font-black uppercase text-muted-foreground tracking-wider sm:tracking-widest leading-tight truncate">{tr('Despesas', 'Expenses')}</span>
                   </div>
-                  <p className="text-sm sm:text-lg xl:text-xl font-bold text-white truncate">
+                  <p className="text-sm sm:text-lg xl:text-xl font-bold text-foreground truncate">
                     {isLoadingResumo ? '---' : formatarMoeda(resumo?.totalDespesas || 0, moeda as UsuarioAtualizacaoRequestDTO.moeda)}
                   </p>
                </Link>
 
-               <Link to="/contas" className="glass rounded-2xl sm:rounded-3xl p-3 sm:p-5 border border-white/5 group hover:border-primary/30 transition-all cursor-pointer min-w-0">
+               <Link to="/contas" className="glass rounded-2xl sm:rounded-3xl p-3 sm:p-5 border border-foreground/5 group hover:border-primary/30 transition-all cursor-pointer min-w-0">
                   <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-4">
                     <div className="p-1.5 sm:p-2 bg-primary/20 rounded-lg sm:rounded-xl text-primary shrink-0">
                       <Wallet size={16} className="md:hidden" />
@@ -322,12 +325,12 @@ export function PerfilPage() {
                     </div>
                     <span className="text-2xs sm:text-2xs font-black uppercase text-muted-foreground tracking-wider sm:tracking-widest leading-tight truncate">{tr('Saldo Atual', 'Balance')}</span>
                   </div>
-                  <p className="text-sm sm:text-lg xl:text-xl font-bold text-white truncate">
+                  <p className="text-sm sm:text-lg xl:text-xl font-bold text-foreground truncate">
                     {isLoadingResumo ? '---' : formatarMoeda(resumo?.saldoContas || 0, moeda as UsuarioAtualizacaoRequestDTO.moeda)}
                   </p>
                </Link>
 
-               <Link to="/investimentos" className="glass rounded-2xl sm:rounded-3xl p-3 sm:p-5 border border-white/5 group hover:border-amber-500/30 transition-all cursor-pointer min-w-0">
+               <Link to="/investimentos" className="glass rounded-2xl sm:rounded-3xl p-3 sm:p-5 border border-foreground/5 group hover:border-amber-500/30 transition-all cursor-pointer min-w-0">
                   <div className="flex items-center gap-2 sm:gap-3 mb-2 sm:mb-4">
                     <div className="p-1.5 sm:p-2 bg-amber-500/20 rounded-lg sm:rounded-xl text-amber-500 shrink-0">
                       <TrendingUp size={16} className="md:hidden" />
@@ -335,13 +338,13 @@ export function PerfilPage() {
                     </div>
                     <span className="text-2xs sm:text-2xs font-black uppercase text-muted-foreground tracking-wider sm:tracking-widest leading-tight truncate">{tr('Investido', 'Invested')}</span>
                   </div>
-                  <p className="text-sm sm:text-lg xl:text-xl font-bold text-white truncate">
+                  <p className="text-sm sm:text-lg xl:text-xl font-bold text-foreground truncate">
                     {isLoadingResumo ? '---' : formatarMoeda(resumo?.totalInvestido || 0, moeda as UsuarioAtualizacaoRequestDTO.moeda)}
                   </p>
                </Link>
             </section>
 
-            <div className="glass rounded-2xl sm:rounded-[2rem] p-5 sm:p-8 lg:p-10 border border-white/10 relative overflow-hidden">
+            <div className="glass rounded-2xl sm:rounded-[2rem] p-5 sm:p-8 lg:p-10 border border-foreground/10 relative overflow-hidden">
                <div className="absolute top-0 right-0 w-80 h-80 bg-primary/5 rounded-full blur-[100px] -translate-y-1/2 translate-x-1/2" />
                
               <form onSubmit={handleUpdatePerfil} className="relative z-10 space-y-6 sm:space-y-8">
@@ -353,7 +356,7 @@ export function PerfilPage() {
                           <input 
                              value={nome}
                              onChange={(e) => setNome(e.target.value)}
-                             className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white font-bold focus:border-primary/50 outline-none transition-all"
+                             className="w-full bg-foreground/5 border border-foreground/10 rounded-2xl py-4 pl-12 pr-4 text-foreground font-bold focus:border-primary/50 outline-none transition-all"
                               placeholder={tr('Seu nome', 'Your name')}
                           />
                        </div>
@@ -366,7 +369,7 @@ export function PerfilPage() {
                           <input 
                              value={celular}
                              onChange={(e) => setCelular(e.target.value.replace(/\D/g, ''))}
-                             className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white font-bold focus:border-primary/50 outline-none transition-all tracking-widest"
+                             className="w-full bg-foreground/5 border border-foreground/10 rounded-2xl py-4 pl-12 pr-4 text-foreground font-bold focus:border-primary/50 outline-none transition-all tracking-widest"
                               placeholder={tr('Apenas numeros', 'Numbers only')}
                              maxLength={11}
                           />
@@ -382,10 +385,10 @@ export function PerfilPage() {
                           <select
                              value={moeda}
                              onChange={(e) => setMoeda(e.target.value as UsuarioAtualizacaoRequestDTO.moeda)}
-                             className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 pl-12 pr-4 text-white font-bold focus:border-primary/50 outline-none transition-all appearance-none"
+                             className="w-full bg-foreground/5 border border-foreground/10 rounded-2xl py-4 pl-12 pr-4 text-foreground font-bold focus:border-primary/50 outline-none transition-all appearance-none"
                           >
-                              <option value="BRL" className="bg-slate-900">{tr('Real Brasileiro (R$)', 'Brazilian Real (R$)')}</option>
-                              <option value="USD" className="bg-slate-900">{tr('Dolar Americano (US$)', 'US Dollar (US$)')}</option>
+                              <option value="BRL" className="bg-popover text-popover-foreground">{tr('Real Brasileiro (R$)', 'Brazilian Real (R$)')}</option>
+                              <option value="USD" className="bg-popover text-popover-foreground">{tr('Dolar Americano (US$)', 'US Dollar (US$)')}</option>
                           </select>
                        </div>
                     </div>
@@ -396,10 +399,26 @@ export function PerfilPage() {
                           <select
                             value={idioma}
                               onChange={handleIdiomaChange}
-                            className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-4 text-white font-bold focus:border-primary/50 outline-none transition-all appearance-none"
+                            className="w-full bg-foreground/5 border border-foreground/10 rounded-2xl py-4 px-4 text-foreground font-bold focus:border-primary/50 outline-none transition-all appearance-none"
                           >
-                            <option value="pt-BR" className="bg-slate-900">{tr('Portugues (Brasil)', 'Portuguese (Brazil)')}</option>
-                            <option value="en-US" className="bg-slate-900">English (US)</option>
+                            <option value="pt-BR" className="bg-popover text-popover-foreground">{tr('Portugues (Brasil)', 'Portuguese (Brazil)')}</option>
+                            <option value="en-US" className="bg-popover text-popover-foreground">English (US)</option>
+                          </select>
+                        </div>
+                      </div>
+
+                      <div className="space-y-2">
+                        <label className="text-2xs font-black uppercase text-muted-foreground tracking-[0.2em] ml-1">{tr('Tema', 'Theme')}</label>
+                        <div className="relative">
+                          <SunMoon size={18} className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground" />
+                          <select
+                            value={theme}
+                            onChange={(e) => setTheme(e.target.value as AppTheme)}
+                            className="w-full bg-foreground/5 border border-foreground/10 rounded-2xl py-4 pl-12 pr-4 text-foreground font-bold focus:border-primary/50 outline-none transition-all appearance-none"
+                          >
+                            <option value="system" className="bg-popover text-popover-foreground">{tr('Sistema', 'System')}</option>
+                            <option value="light" className="bg-popover text-popover-foreground">{tr('Claro', 'Light')}</option>
+                            <option value="dark" className="bg-popover text-popover-foreground">{tr('Escuro', 'Dark')}</option>
                           </select>
                         </div>
                       </div>
@@ -409,7 +428,7 @@ export function PerfilPage() {
                      <button
                         type="submit"
                         disabled={updatePerfilMutation.isPending}
-                        className="w-full py-4 bg-primary hover:bg-primary/80 text-white font-black rounded-2xl transition-all uppercase tracking-widest text-sm shadow-xl shadow-primary/20 active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2"
+                        className="w-full py-4 bg-primary hover:bg-primary/80 text-primary-foreground font-black rounded-2xl transition-all uppercase tracking-widest text-sm shadow-xl shadow-primary/20 active:scale-95 disabled:opacity-50 flex items-center justify-center gap-2"
                      >
                       {updatePerfilMutation.isPending ? tr('Salvando...', 'Saving...') : tr('Salvar Alteracoes', 'Save Changes')}
                      </button>
@@ -420,13 +439,13 @@ export function PerfilPage() {
           </div>
         </div>
 
-        <section className="glass rounded-2xl sm:rounded-[2rem] p-5 sm:p-8 border border-white/10 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200">
+        <section className="glass rounded-2xl sm:rounded-[2rem] p-5 sm:p-8 border border-foreground/10 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-200">
           <div className="flex items-center gap-3 mb-5">
             <div className="p-2 bg-primary/20 rounded-xl border border-primary/20 shrink-0">
               <Bell className="text-primary w-5 h-5" />
             </div>
             <div>
-              <h3 className="font-black text-white uppercase text-sm tracking-wider">
+              <h3 className="font-black text-foreground uppercase text-sm tracking-wider">
                 {tr('Notificações', 'Notifications')}
               </h3>
               <p className="text-xs text-muted-foreground mt-0.5">
@@ -435,9 +454,9 @@ export function PerfilPage() {
             </div>
           </div>
 
-          <div className="flex items-center justify-between gap-4 bg-white/5 border border-white/10 rounded-2xl p-4 sm:p-5">
+          <div className="flex items-center justify-between gap-4 bg-foreground/5 border border-foreground/10 rounded-2xl p-4 sm:p-5">
             <div className="min-w-0">
-              <p className="text-sm font-bold text-white">{tr('Lembretes de fatura', 'Invoice reminders')}</p>
+              <p className="text-sm font-bold text-foreground">{tr('Lembretes de fatura', 'Invoice reminders')}</p>
               <p className="text-xs text-muted-foreground mt-0.5">
                 {tr('E-mails de vencimento e atraso das faturas do cartão.', 'Due-date and overdue emails for your card invoices.')}
               </p>
@@ -458,7 +477,7 @@ export function PerfilPage() {
                 <ShieldAlert className="text-rose-500 w-5 h-5" />
               </div>
               <div>
-                <h3 className="font-black text-white uppercase text-sm tracking-wider">
+                <h3 className="font-black text-foreground uppercase text-sm tracking-wider">
                   {tr('Zona de Perigo', 'Danger Zone')}
                 </h3>
                 <p className="text-xs text-muted-foreground mt-0.5">

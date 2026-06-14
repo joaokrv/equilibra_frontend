@@ -34,7 +34,7 @@ export const InvestmentComposition = ({
   return (
     <div className="glass p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl flex flex-col items-center mb-8 sm:mb-10 animate-in fade-in slide-in-from-bottom-4 duration-700 delay-250">
       <div className="w-full mb-5 sm:mb-8 text-center">
-        <h4 className="text-lg sm:text-xl font-bold text-white">{t(language, 'compositionTitle')}</h4>
+        <h4 className="text-lg sm:text-xl font-bold text-foreground">{t(language, 'compositionTitle')}</h4>
         <p className="text-xs text-muted-foreground font-medium uppercase tracking-widest mt-1">
           {t(language, 'accountsVsInvestments')}
         </p>
@@ -55,7 +55,7 @@ export const InvestmentComposition = ({
                   paddingAngle={6}
                 >
                   {dados.map((_, index) => (
-                    <Cell key={`item-${index}`} fill={COLORS[index % COLORS.length]} />
+                    <Cell key={`item-${index}`} fill={COLORS[index % COLORS.length]} stroke="var(--card)" strokeWidth={2} />
                   ))}
                 </Pie>
                 <Tooltip
@@ -80,7 +80,7 @@ export const InvestmentComposition = ({
               <p className="text-xs text-muted-foreground font-bold uppercase tracking-widest leading-none">
                 {t(language, 'chartTotal')}
               </p>
-              <p className="text-sm font-bold text-white mt-1">{formatarMoeda(total, moeda)}</p>
+              <p className="text-sm font-bold text-foreground mt-1">{formatarMoeda(total, moeda)}</p>
             </div>
           </>
         ) : (
@@ -100,7 +100,7 @@ export const InvestmentComposition = ({
               />
               <span className="text-muted-foreground font-semibold">{item.name}</span>
             </div>
-            <span className="text-white font-bold">
+            <span className="text-foreground font-bold">
               {((item.value / (total || 1)) * 100).toFixed(0)}%
             </span>
           </div>

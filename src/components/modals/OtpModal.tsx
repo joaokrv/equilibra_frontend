@@ -190,8 +190,8 @@ export function OtpModal({ isOpen, onClose, registroId, email, onSuccess }: OtpM
   const isExpired = otpStatus?.status === 'EXPIRADO' || (timeLeft === 0 && otpStatus?.status === 'ATIVO');
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm animate-in fade-in duration-200">
-      <div ref={dialogRef} className="glass w-full max-w-md p-8 rounded-[2rem] border border-white/10 shadow-2xl relative overflow-hidden">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-overlay backdrop-blur-sm animate-in fade-in duration-200">
+      <div ref={dialogRef} className="glass w-full max-w-md p-8 rounded-[2rem] border border-foreground/10 shadow-2xl relative overflow-hidden">
         <div className="absolute -top-24 -right-24 w-48 h-48 bg-primary/20 rounded-full blur-[80px]" />
         
         <div className="flex flex-col items-center text-center relative z-10">
@@ -260,7 +260,7 @@ export function OtpModal({ isOpen, onClose, registroId, email, onSuccess }: OtpM
                     onChange={(e) => setCodigo(e.target.value.replace(/\D/g, ''))}
                     placeholder="000000"
                     disabled={verifyMutation.isPending}
-                    className="w-full bg-secondary/30 border border-white/5 rounded-2xl px-4 py-5 text-center text-3xl font-black tracking-[0.5em] focus:outline-none focus:ring-2 focus:ring-primary/40 focus:bg-secondary/60 transition-all placeholder:text-muted-foreground/20 disabled:opacity-50"
+                    className="w-full bg-secondary/30 border border-foreground/5 rounded-2xl px-4 py-5 text-center text-3xl font-black tracking-[0.5em] focus:outline-none focus:ring-2 focus:ring-primary/40 focus:bg-secondary/60 transition-all placeholder:text-muted-foreground/20 disabled:opacity-50"
                   />
                 </div>
               )}
@@ -285,7 +285,7 @@ export function OtpModal({ isOpen, onClose, registroId, email, onSuccess }: OtpM
               <button
                 type="submit"
                 disabled={codigo.length !== 6 || verifyMutation.isPending}
-                className="w-full bg-primary hover:bg-primary/90 text-white font-bold py-4 rounded-2xl transition-all shadow-xl shadow-primary/20 active:scale-[0.98] disabled:opacity-50 disabled:active:scale-100"
+                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold py-4 rounded-2xl transition-all shadow-xl shadow-primary/20 active:scale-[0.98] disabled:opacity-50 disabled:active:scale-100"
               >
                 {verifyMutation.isPending ? tr('VERIFICANDO...', 'VERIFYING...') : tr('VERIFICAR CONTA', 'VERIFY ACCOUNT')}
               </button>
@@ -294,7 +294,7 @@ export function OtpModal({ isOpen, onClose, registroId, email, onSuccess }: OtpM
                 type="button"
                 onClick={() => resendMutation.mutate()}
                 disabled={resendMutation.isPending}
-                className="w-full bg-primary hover:bg-primary/90 text-white font-bold py-4 rounded-2xl transition-all shadow-xl shadow-primary/20 active:scale-[0.98] disabled:opacity-50"
+                className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold py-4 rounded-2xl transition-all shadow-xl shadow-primary/20 active:scale-[0.98] disabled:opacity-50"
               >
                 {resendMutation.isPending ? tr('REENVIANDO...', 'RESENDING...') : tr('REENVIAR NOVO CÓDIGO', 'RESEND NEW CODE')}
               </button>
@@ -302,7 +302,7 @@ export function OtpModal({ isOpen, onClose, registroId, email, onSuccess }: OtpM
               <button
                 type="button"
                 onClick={onClose}
-                className="w-full bg-secondary hover:bg-secondary/80 text-foreground font-bold py-4 rounded-2xl transition-all border border-white/5 active:scale-[0.98]"
+                className="w-full bg-secondary hover:bg-secondary/80 text-foreground font-bold py-4 rounded-2xl transition-all border border-foreground/5 active:scale-[0.98]"
               >
                 {tr('ENTENDIDO', 'GOT IT')}
               </button>
@@ -323,7 +323,7 @@ export function OtpModal({ isOpen, onClose, registroId, email, onSuccess }: OtpM
 
           <button
             onClick={onClose}
-            className="absolute top-4 right-4 text-muted-foreground hover:text-white transition-colors"
+            className="absolute top-4 right-4 text-muted-foreground hover:text-foreground transition-colors"
           >
             <X size={20} />
           </button>

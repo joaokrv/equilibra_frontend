@@ -14,11 +14,11 @@ export const BottomNav = ({ onAdd, onMore }: BottomNavProps) => {
 
   const linkClass = ({ isActive }: { isActive: boolean }) =>
     `flex flex-1 flex-col items-center justify-center gap-1 min-h-11 text-2xs font-bold transition-colors ${
-      isActive ? 'text-primary' : 'text-muted-foreground hover:text-white'
+      isActive ? 'text-primary' : 'text-muted-foreground hover:text-foreground'
     }`;
 
   return (
-    <nav className="md:hidden fixed bottom-0 inset-x-0 z-50 bg-card/95 backdrop-blur-md border-t border-white/10 pb-safe">
+    <nav className="md:hidden fixed bottom-0 inset-x-0 z-50 bg-card/95 backdrop-blur-md border-t border-foreground/10 pb-safe">
       <div className="flex items-stretch justify-around h-16">
         <NavLink to="/dashboard" className={linkClass}>
           <LayoutDashboard size={20} />
@@ -35,7 +35,7 @@ export const BottomNav = ({ onAdd, onMore }: BottomNavProps) => {
           aria-label={tr('Novo lançamento', 'Add entry')}
           className="flex flex-1 items-center justify-center"
         >
-          <span className="-mt-6 flex h-14 w-14 items-center justify-center rounded-full bg-primary text-white shadow-lg shadow-primary/30 active:scale-95 transition-transform">
+          <span className="-mt-6 flex h-14 w-14 items-center justify-center rounded-full bg-primary text-primary-foreground shadow-lg shadow-primary/30 active:scale-95 transition-transform">
             <Plus size={26} strokeWidth={3} />
           </span>
         </button>

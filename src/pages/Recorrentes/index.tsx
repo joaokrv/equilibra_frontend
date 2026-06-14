@@ -177,15 +177,15 @@ export const RecorrentesPage = () => {
     <MainLayout>
       <div className="p-3 sm:p-4 lg:p-6 space-y-5 sm:space-y-6 animate-in fade-in duration-500">
         <div>
-          <h1 className="text-2xl font-bold text-white">{tr('Receitas & Despesas Fixas', 'Recurring Income & Expenses')}</h1>
+          <h1 className="text-2xl font-bold text-foreground">{tr('Receitas & Despesas Fixas', 'Recurring Income & Expenses')}</h1>
           <p className="text-sm text-muted-foreground mt-1">{tr('Gerencie suas transações recorrentes mensais.', 'Manage your monthly recurring transactions.')}</p>
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-          <button onClick={() => setAba('DESPESA')} className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all ${aba === 'DESPESA' ? 'bg-rose-500/20 text-rose-400 ring-1 ring-rose-500/30' : 'bg-white/5 text-muted-foreground hover:text-white'}`}>
+          <button onClick={() => setAba('DESPESA')} className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all ${aba === 'DESPESA' ? 'bg-danger/20 text-danger ring-1 ring-danger/30' : 'bg-foreground/5 text-muted-foreground hover:text-foreground'}`}>
             <TrendingDown size={16} /> {tr('Despesas Fixas', 'Recurring Expenses')}
           </button>
-          <button onClick={() => setAba('RECEITA')} className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all ${aba === 'RECEITA' ? 'bg-emerald-500/20 text-emerald-400 ring-1 ring-emerald-500/30' : 'bg-white/5 text-muted-foreground hover:text-white'}`}>
+          <button onClick={() => setAba('RECEITA')} className={`flex items-center gap-2 px-4 py-2 rounded-xl text-sm font-bold transition-all ${aba === 'RECEITA' ? 'bg-success/20 text-success ring-1 ring-success/30' : 'bg-foreground/5 text-muted-foreground hover:text-foreground'}`}>
             <TrendingUp size={16} /> {tr('Receitas Fixas', 'Recurring Income')}
           </button>
         </div>
@@ -194,7 +194,7 @@ export const RecorrentesPage = () => {
           <p className="text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">
             {tr('Total Mensal de', 'Monthly Total of')} {aba === 'DESPESA' ? tr('Despesas', 'Expenses') : tr('Receitas', 'Income')} {tr('Fixas', 'Recurring')}
           </p>
-          <p className={`text-2xl font-bold mt-1 ${aba === 'DESPESA' ? 'text-rose-400' : 'text-emerald-400'}`}>
+          <p className={`text-2xl font-bold mt-1 ${aba === 'DESPESA' ? 'text-danger' : 'text-success'}`}>
             {formatarMoeda(totalFixo, moeda)}
           </p>
           <p className="text-xs text-muted-foreground mt-1">
@@ -223,32 +223,32 @@ export const RecorrentesPage = () => {
             </p>
           </div>
         ) : (
-          <div className="glass rounded-2xl divide-y divide-white/5 overflow-hidden">
+          <div className="glass rounded-2xl divide-y divide-foreground/5 overflow-hidden">
             {filtradas.map((rec) => (
-              <div key={rec.id} className="flex items-center gap-3 sm:gap-4 px-3 sm:px-5 py-4 hover:bg-white/5 transition-all group">
+              <div key={rec.id} className="flex items-center gap-3 sm:gap-4 px-3 sm:px-5 py-4 hover:bg-foreground/5 transition-all group">
                 <div className={`w-9 h-9 rounded-xl flex items-center justify-center flex-shrink-0 ${
-                  aba === 'RECEITA' ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'
+                  aba === 'RECEITA' ? 'bg-success-muted text-success' : 'bg-danger-muted text-danger'
                 }`}>
                   <Repeat size={16} />
                 </div>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-bold text-white truncate">{rec.descricao}</p>
+                  <p className="text-sm font-bold text-foreground truncate">{rec.descricao}</p>
                   <div className="flex items-center gap-2 mt-0.5 flex-wrap">
                     <span className="text-2xs text-muted-foreground flex items-center gap-1"><Calendar size={10} /> {tr('Dia', 'Day')} {rec.diaLancamento}</span>
-                    {rec.nomeCategoria && <span className="text-2xs text-muted-foreground bg-white/5 px-2 py-0.5 rounded-full">{rec.nomeCategoria}</span>}
+                    {rec.nomeCategoria && <span className="text-2xs text-muted-foreground bg-foreground/5 px-2 py-0.5 rounded-full">{rec.nomeCategoria}</span>}
                     {rec.nomeConta && <span className="text-2xs text-primary/60">{rec.nomeConta}</span>}
                     {rec.dataFim && <span className="text-2xs text-amber-400">{tr('até', 'until')} {new Date(rec.dataFim + 'T00:00:00').toLocaleDateString(language)}</span>}
                   </div>
                 </div>
                 <div className="text-right flex-shrink-0">
-                  <p className={`text-sm font-bold ${aba === 'RECEITA' ? 'text-emerald-400' : 'text-rose-400'}`}>
+                  <p className={`text-sm font-bold ${aba === 'RECEITA' ? 'text-success' : 'text-danger'}`}>
                     {formatarMoeda(rec.valor ?? 0, moeda)}
                   </p>
                   <p className="text-2xs text-muted-foreground">{tr('/mês', '/month')}</p>
                 </div>
                 <div className="flex gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity flex-shrink-0">
                   <button onClick={() => abrirEdicao(rec)} className="min-h-11 min-w-11 sm:min-h-0 sm:min-w-0 p-2 sm:p-1.5 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all flex items-center justify-center" aria-label={tr('Editar recorrência', 'Edit recurring')}><Pencil size={14} /></button>
-                  <button onClick={() => handleDeletar(rec.id!, rec.descricao!)} disabled={deletandoId === rec.id} className="min-h-11 min-w-11 sm:min-h-0 sm:min-w-0 p-2 sm:p-1.5 rounded-lg text-muted-foreground hover:text-rose-400 hover:bg-rose-500/10 transition-all disabled:opacity-50 flex items-center justify-center" aria-label={tr('Deletar recorrência', 'Delete recurring')}>
+                  <button onClick={() => handleDeletar(rec.id!, rec.descricao!)} disabled={deletandoId === rec.id} className="min-h-11 min-w-11 sm:min-h-0 sm:min-w-0 p-2 sm:p-1.5 rounded-lg text-muted-foreground hover:text-danger hover:bg-danger-muted transition-all disabled:opacity-50 flex items-center justify-center" aria-label={tr('Deletar recorrência', 'Delete recurring')}>
                     {deletandoId === rec.id ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
                   </button>
                 </div>
@@ -259,41 +259,41 @@ export const RecorrentesPage = () => {
       </div>
  
       {modalAberto && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200" role="dialog" aria-modal="true">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-overlay backdrop-blur-sm animate-in fade-in duration-200" role="dialog" aria-modal="true">
           <div ref={modalRef} className="glass w-full max-w-md rounded-2xl p-6 space-y-5 animate-in zoom-in-95 duration-200 max-h-[90vh] overflow-y-auto">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2"><Repeat size={18} className="text-primary" /><h3 className="font-bold text-white">{editando ? tr('Editar', 'Edit') : tr('Nova', 'New')} {aba === 'DESPESA' ? tr('Despesa', 'Expense') : tr('Receita', 'Income')} {tr('Fixa', 'Recurring')}</h3></div>
-              <button onClick={fecharModal} className="text-muted-foreground hover:text-white transition-colors"><X size={18} /></button>
+              <div className="flex items-center gap-2"><Repeat size={18} className="text-primary" /><h3 className="font-bold text-foreground">{editando ? tr('Editar', 'Edit') : tr('Nova', 'New')} {aba === 'DESPESA' ? tr('Despesa', 'Expense') : tr('Receita', 'Income')} {tr('Fixa', 'Recurring')}</h3></div>
+              <button onClick={fecharModal} className="text-muted-foreground hover:text-foreground transition-colors"><X size={18} /></button>
             </div>
             <div className="space-y-4">
               <div className="space-y-1.5">
                 <label className="block text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Descrição', 'Description')}</label>
-                <input type="text" value={descricao} onChange={(e) => setDescricao(e.target.value)} placeholder={aba === 'DESPESA' ? tr('Ex: Aluguel, Luz, Internet...', 'Ex: Rent, Electricity, Internet...') : tr('Ex: Salário, Vale...', 'Ex: Salary, Benefits...')} maxLength={100} autoFocus className="w-full bg-secondary/30 border border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium placeholder:text-muted-foreground/30" />
+                <input type="text" value={descricao} onChange={(e) => setDescricao(e.target.value)} placeholder={aba === 'DESPESA' ? tr('Ex: Aluguel, Luz, Internet...', 'Ex: Rent, Electricity, Internet...') : tr('Ex: Salário, Vale...', 'Ex: Salary, Benefits...')} maxLength={100} autoFocus className="w-full bg-secondary/30 border border-foreground/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium placeholder:text-muted-foreground/30" />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1.5">
                   <label className="block text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Valor', 'Amount')}</label>
-                  <input type="number" step="0.01" value={valor} onChange={(e) => setValor(e.target.value)} placeholder="1500,00" className="w-full bg-secondary/30 border border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium placeholder:text-muted-foreground/30" />
+                  <input type="number" step="0.01" value={valor} onChange={(e) => setValor(e.target.value)} placeholder="1500,00" className="w-full bg-secondary/30 border border-foreground/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium placeholder:text-muted-foreground/30" />
                 </div>
                 <div className="space-y-1.5">
                   <label className="block text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Dia do Mês', 'Day of Month')}</label>
-                  <input type="number" min={1} max={31} value={diaLancamento} onChange={(e) => setDiaLancamento(e.target.value)} placeholder="5" className="w-full bg-secondary/30 border border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium placeholder:text-muted-foreground/30" />
+                  <input type="number" min={1} max={31} value={diaLancamento} onChange={(e) => setDiaLancamento(e.target.value)} placeholder="5" className="w-full bg-secondary/30 border border-foreground/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium placeholder:text-muted-foreground/30" />
                 </div>
               </div>
               {metodoPagamento !== 'CARTAO_CREDITO' && (
                 <div className="space-y-1.5">
                   <label className="block text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Conta', 'Account')}</label>
-                  <select value={contaId} onChange={(e) => setContaId(e.target.value)} className="w-full bg-secondary/30 border border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium appearance-none">
-                    <option value="" className="bg-card text-white">{tr('Selecione...', 'Select...')}</option>
-                    {contas.map((c) => <option key={c.id} value={c.id} className="bg-card text-white">{c.nome}</option>)}
+                  <select value={contaId} onChange={(e) => setContaId(e.target.value)} className="w-full bg-secondary/30 border border-foreground/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium appearance-none">
+                    <option value="" className="bg-card text-foreground">{tr('Selecione...', 'Select...')}</option>
+                    {contas.map((c) => <option key={c.id} value={c.id} className="bg-card text-foreground">{c.nome}</option>)}
                   </select>
                 </div>
               )}
               <div className="space-y-1.5">
                 <label className="block text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Categoria', 'Category')}</label>
-                <select value={categoriaId} onChange={(e) => setCategoriaId(e.target.value)} className="w-full bg-secondary/30 border border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium appearance-none">
-                  <option value="" className="bg-card text-white">{tr('Nenhuma', 'None')}</option>
-                  {categoriasFiltradas.map((c: any) => <option key={c.id} value={c.id} className="bg-card text-white">{c.nome}</option>)}
+                <select value={categoriaId} onChange={(e) => setCategoriaId(e.target.value)} className="w-full bg-secondary/30 border border-foreground/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium appearance-none">
+                  <option value="" className="bg-card text-foreground">{tr('Nenhuma', 'None')}</option>
+                  {categoriasFiltradas.map((c: any) => <option key={c.id} value={c.id} className="bg-card text-foreground">{c.nome}</option>)}
                 </select>
               </div>
               <div className="space-y-1.5">
@@ -303,32 +303,32 @@ export const RecorrentesPage = () => {
                     setMetodoPagamento(novoMetodo);
                     if (novoMetodo === 'CARTAO_CREDITO') setContaId('');
                     else setCartaoId('');
-                }} className="w-full bg-secondary/30 border border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium appearance-none">
-                  <option value="" className="bg-card text-white">{tr('Nenhum', 'None')}</option>
-                  {Object.entries(METODO_PAGAMENTO_LABELS).map(([val, label]) => <option key={val} value={val} className="bg-card text-white">{label}</option>)}
+                }} className="w-full bg-secondary/30 border border-foreground/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium appearance-none">
+                  <option value="" className="bg-card text-foreground">{tr('Nenhum', 'None')}</option>
+                  {Object.entries(METODO_PAGAMENTO_LABELS).map(([val, label]) => <option key={val} value={val} className="bg-card text-foreground">{label}</option>)}
                 </select>
               </div>
               {metodoPagamento === 'CARTAO_CREDITO' && cartoes.length > 0 && (
                 <div className="space-y-1.5">
                   <label className="block text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Cartão', 'Card')}</label>
-                  <select value={cartaoId} onChange={(e) => setCartaoId(e.target.value)} className="w-full bg-secondary/30 border border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium appearance-none">
-                    <option value="" className="bg-card text-white">{tr('Selecione...', 'Select...')}</option>
-                    {cartoes.map((c) => <option key={c.id} value={c.id} className="bg-card text-white">{c.nome}</option>)}
+                  <select value={cartaoId} onChange={(e) => setCartaoId(e.target.value)} className="w-full bg-secondary/30 border border-foreground/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium appearance-none">
+                    <option value="" className="bg-card text-foreground">{tr('Selecione...', 'Select...')}</option>
+                    {cartoes.map((c) => <option key={c.id} value={c.id} className="bg-card text-foreground">{c.nome}</option>)}
                   </select>
                 </div>
               )}
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1.5">
                   <label className="block text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Início', 'Start')}</label>
-                  <input type="date" value={dataInicio} onChange={(e) => setDataInicio(e.target.value)} className="w-full bg-secondary/30 border border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium" />
+                  <input type="date" value={dataInicio} onChange={(e) => setDataInicio(e.target.value)} className="w-full bg-secondary/30 border border-foreground/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium" />
                 </div>
                 <div className="space-y-1.5">
                   <label className="block text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Fim (Opcional)', 'End (Optional)')}</label>
-                  <input type="date" value={dataFim} onChange={(e) => setDataFim(e.target.value)} className="w-full bg-secondary/30 border border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium" />
+                  <input type="date" value={dataFim} onChange={(e) => setDataFim(e.target.value)} className="w-full bg-secondary/30 border border-foreground/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium" />
                 </div>
               </div>
             </div>
-            <button onClick={handleSalvar} disabled={!descricao.trim() || !valor || !diaLancamento || !metodoPagamento || (metodoPagamento === 'CARTAO_CREDITO' ? !cartaoId : !contaId) || criarMutation.isPending || editarMutation.isPending} className="w-full bg-primary hover:bg-primary/90 text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-primary/20 active:scale-[0.98] text-sm disabled:opacity-50 flex items-center justify-center gap-2">
+            <button onClick={handleSalvar} disabled={!descricao.trim() || !valor || !diaLancamento || !metodoPagamento || (metodoPagamento === 'CARTAO_CREDITO' ? !cartaoId : !contaId) || criarMutation.isPending || editarMutation.isPending} className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold py-3 rounded-xl transition-all shadow-lg shadow-primary/20 active:scale-[0.98] text-sm disabled:opacity-50 flex items-center justify-center gap-2">
               {(criarMutation.isPending || editarMutation.isPending) ? <><Loader2 size={16} className="animate-spin" /> {tr('Salvando...', 'Saving...')}</> : <>{editando ? <Pencil size={16} /> : <Plus size={16} />} {editando ? tr('Atualizar', 'Update') : tr('Criar', 'Create')}</>}
             </button>
           </div>
@@ -340,7 +340,7 @@ export const RecorrentesPage = () => {
         title={tr('Desativar Recorrência?', 'Disable Recurring Transaction?')}
         description={
           <>
-            {tr('Você está prestes a desativar', 'You are about to disable')} <span className="text-white font-semibold">"{recorrenteParaDeletar?.descricao}"</span>.
+            {tr('Você está prestes a desativar', 'You are about to disable')} <span className="text-foreground font-semibold">"{recorrenteParaDeletar?.descricao}"</span>.
             <br />
             {tr('Transações já geradas permanecerão no histórico.', 'Transactions already generated will remain in history.')}
           </>

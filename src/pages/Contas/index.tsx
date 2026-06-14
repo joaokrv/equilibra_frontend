@@ -221,7 +221,7 @@ export const ContasPage = () => {
       <div className="p-3 sm:p-4 lg:p-6 space-y-5 sm:space-y-6 animate-in fade-in duration-500">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-white">Minhas Contas</h1>
+            <h1 className="text-2xl font-bold text-foreground">Minhas Contas</h1>
             <p className="text-sm text-muted-foreground mt-1">{tr('Gerencie suas contas bancárias e acompanhe seus saldos.', 'Manage your bank accounts and track your balances.')}</p>
           </div>
         </div>
@@ -233,13 +233,13 @@ export const ContasPage = () => {
             value={busca}
             onChange={(e) => handleBuscaChange(e.target.value)}
             placeholder={tr('Buscar conta...', 'Search account...')}
-            className="w-full bg-secondary/30 border border-white/5 rounded-xl pl-9 pr-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium placeholder:text-muted-foreground/30"
+            className="w-full bg-secondary/30 border border-foreground/5 rounded-xl pl-9 pr-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium placeholder:text-muted-foreground/30"
           />
         </div>
 
         <div className="glass rounded-2xl p-6">
           <p className="text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Saldo Total (Contas + Investimentos)', 'Total Balance (Accounts + Investments)')}</p>
-          <p className={`text-2xl sm:text-3xl font-bold mt-1 ${saldoTotal >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+          <p className={`text-2xl sm:text-3xl font-bold mt-1 ${saldoTotal >= 0 ? 'text-success' : 'text-danger'}`}>
             {formatarMoeda(saldoTotal, moeda)}
           </p>
           <p className="text-xs text-muted-foreground mt-1">{language === 'en-US' ? `${contasFiltradas.length} account${contasFiltradas.length !== 1 ? 's' : ''} shown` : `${contasFiltradas.length} conta${contasFiltradas.length !== 1 ? 's' : ''} exibida${contasFiltradas.length !== 1 ? 's' : ''}`}</p>
@@ -272,8 +272,8 @@ export const ContasPage = () => {
                     <div className="flex items-center gap-3">
                       <div className="w-10 h-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary"><Wallet size={18} /></div>
                       <div>
-                        <p className="text-sm font-bold text-white">{conta.nome}</p>
-                        <p className={`text-lg font-bold mt-0.5 ${(conta.saldo ?? 0) >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+                        <p className="text-sm font-bold text-foreground">{conta.nome}</p>
+                        <p className={`text-lg font-bold mt-0.5 ${(conta.saldo ?? 0) >= 0 ? 'text-success' : 'text-danger'}`}>
                           {formatarMoeda(conta.saldo ?? 0, moeda)}
                         </p>
                         <p className="text-xs text-muted-foreground mt-1">
@@ -283,7 +283,7 @@ export const ContasPage = () => {
                     </div>
                     <div className="flex gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
                       <button onClick={() => abrirEdicao(conta)} className="min-h-11 min-w-11 sm:min-h-0 sm:min-w-0 p-2.5 sm:p-1.5 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all flex items-center justify-center" aria-label={tr('Editar', 'Edit')}><Pencil size={14} /></button>
-                      <button onClick={() => handleDeletar(conta.id!, conta.nome!)} disabled={deletandoId === conta.id} className="min-h-11 min-w-11 sm:min-h-0 sm:min-w-0 p-2.5 sm:p-1.5 rounded-lg text-muted-foreground hover:text-rose-400 hover:bg-rose-500/10 transition-all disabled:opacity-50 flex items-center justify-center" aria-label={tr('Remover', 'Remove')}>
+                      <button onClick={() => handleDeletar(conta.id!, conta.nome!)} disabled={deletandoId === conta.id} className="min-h-11 min-w-11 sm:min-h-0 sm:min-w-0 p-2.5 sm:p-1.5 rounded-lg text-muted-foreground hover:text-danger hover:bg-danger-muted transition-all disabled:opacity-50 flex items-center justify-center" aria-label={tr('Remover', 'Remove')}>
                         {deletandoId === conta.id ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
                       </button>
                     </div>
@@ -296,23 +296,23 @@ export const ContasPage = () => {
       </div>
 
       {modalAberto && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200" role="dialog" aria-modal="true">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-overlay backdrop-blur-sm animate-in fade-in duration-200" role="dialog" aria-modal="true">
           <div ref={modalRef} className="glass w-full max-w-sm rounded-2xl p-6 space-y-5 animate-in zoom-in-95 duration-200">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2"><Wallet size={18} className="text-primary" /><h3 className="font-bold text-white">{editando ? tr('Editar Saldo', 'Edit Balance') : tr('Nova Conta', 'New Account')}</h3></div>
-              <button onClick={fecharModal} className="text-muted-foreground hover:text-white transition-colors"><X size={18} /></button>
+              <div className="flex items-center gap-2"><Wallet size={18} className="text-primary" /><h3 className="font-bold text-foreground">{editando ? tr('Editar Saldo', 'Edit Balance') : tr('Nova Conta', 'New Account')}</h3></div>
+              <button onClick={fecharModal} className="text-muted-foreground hover:text-foreground transition-colors"><X size={18} /></button>
             </div>
             <div className="space-y-4">
               {!editando && (
                 <>
                   <div className="space-y-1.5">
                     <label className="block text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Nome', 'Name')}</label>
-                    <input type="text" value={nome} onChange={(e) => setNome(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleSalvar()} placeholder={tr('Ex: Nubank, Itaú...', 'e.g. Nubank, Chase...')} maxLength={50} autoFocus className="w-full bg-secondary/30 border border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium placeholder:text-muted-foreground/30" />
+                    <input type="text" value={nome} onChange={(e) => setNome(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleSalvar()} placeholder={tr('Ex: Nubank, Itaú...', 'e.g. Nubank, Chase...')} maxLength={50} autoFocus className="w-full bg-secondary/30 border border-foreground/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium placeholder:text-muted-foreground/30" />
                   </div>
 
                   <div className="space-y-1.5">
                     <label className="block text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Investimento Inicial (Opcional)', 'Initial Investment (Optional)')}</label>
-                    <input type="number" step="0.01" value={investimentoInicial} onChange={(e) => setInvestimentoInicial(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleSalvar()} placeholder="0.00" className="w-full bg-secondary/30 border border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium placeholder:text-muted-foreground/30" />
+                    <input type="number" step="0.01" value={investimentoInicial} onChange={(e) => setInvestimentoInicial(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleSalvar()} placeholder="0.00" className="w-full bg-secondary/30 border border-foreground/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium placeholder:text-muted-foreground/30" />
                     <p className="text-2xs text-muted-foreground/80 leading-relaxed">
                       {tr('Não precisa somar manualmente: informe o saldo em conta e o investimento inicial separados. O sistema envia o total e debita automaticamente o valor investido da conta.', 'No need to add manually: enter account balance and initial investment separately. The system sends the total and automatically debits the invested amount from the account.')}
                     </p>
@@ -326,7 +326,7 @@ export const ContasPage = () => {
                       type="checkbox"
                       checked={maisDeUmInvestimento}
                       onChange={(e) => setMaisDeUmInvestimento(e.target.checked)}
-                      className="mt-0.5 rounded border-white/20 bg-secondary/30"
+                      className="mt-0.5 rounded border-foreground/20 bg-secondary/30"
                     />
                     <span className="text-xs text-muted-foreground leading-relaxed">
                       {tr('Tenho mais de um investimento nesta conta e quero cadastrar todos em seguida.', 'I have more than one investment in this account and want to register all of them next.')}
@@ -336,10 +336,10 @@ export const ContasPage = () => {
               )}
               <div className="space-y-1.5">
                 <label className="block text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">{editando ? tr('Novo Saldo', 'New Balance') : tr('Saldo em Conta (sem investimentos)', 'Account Balance (without investments)')}</label>
-                <input type="number" step="0.01" value={saldo} onChange={(e) => setSaldo(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleSalvar()} placeholder="0.00" autoFocus={!!editando} className="w-full bg-secondary/30 border border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium placeholder:text-muted-foreground/30" />
+                <input type="number" step="0.01" value={saldo} onChange={(e) => setSaldo(e.target.value)} onKeyDown={(e) => e.key === 'Enter' && handleSalvar()} placeholder="0.00" autoFocus={!!editando} className="w-full bg-secondary/30 border border-foreground/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium placeholder:text-muted-foreground/30" />
               </div>
             </div>
-            <button onClick={handleSalvar} disabled={(!editando && !nome.trim()) || criarMutation.isPending || editarMutation.isPending} className="w-full bg-primary hover:bg-primary/90 text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-primary/20 active:scale-[0.98] text-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+            <button onClick={handleSalvar} disabled={(!editando && !nome.trim()) || criarMutation.isPending || editarMutation.isPending} className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold py-3 rounded-xl transition-all shadow-lg shadow-primary/20 active:scale-[0.98] text-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
               {(criarMutation.isPending || editarMutation.isPending) ? <><Loader2 size={16} className="animate-spin" /> {tr('Salvando...', 'Saving...')}</> : <>{editando ? <Pencil size={16} /> : <Plus size={16} />} {editando ? tr('Atualizar', 'Update') : tr('Criar Conta', 'Create Account')}</>}
             </button>
           </div>
@@ -351,7 +351,7 @@ export const ContasPage = () => {
         title={tr('Remover Conta?', 'Remove Account?')}
         description={
           <>
-            {tr('Você está prestes a remover', 'You are about to remove')} <span className="text-white font-semibold">"{contaParaDeletar?.nome}"</span>.
+            {tr('Você está prestes a remover', 'You are about to remove')} <span className="text-foreground font-semibold">"{contaParaDeletar?.nome}"</span>.
             <br />
             {tr('Investimentos, transações e recorrências vinculados serão desativados em cascata. A conta só pode ser removida com saldo zerado.', 'Linked investments, transactions, and recurrences will be deactivated in cascade. The account can only be removed when balance is zero.')}
           </>

@@ -124,7 +124,7 @@ export const ReportModal = ({ isOpen, onClose, tipoContextoFixo }: ReportModalPr
 
   return (
     <div className="fixed inset-0 z-[100] flex items-start sm:items-center justify-center p-2 sm:p-4 animate-in fade-in duration-300">
-      <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" onClick={onClose} />
+      <div className="absolute inset-0 bg-overlay backdrop-blur-sm" onClick={onClose} />
 
       <div ref={dialogRef} className="glass w-full max-w-xl max-h-[94dvh] overflow-y-auto rounded-2xl sm:rounded-3xl p-4 sm:p-8 relative z-10 animate-in zoom-in-95 duration-300">
          <div className="flex items-start sm:items-center justify-between mb-6 sm:mb-8 gap-3">
@@ -133,7 +133,7 @@ export const ReportModal = ({ isOpen, onClose, tipoContextoFixo }: ReportModalPr
                 <FileDown size={20} />
               </div>
               <div>
-                <h3 className="text-lg sm:text-xl font-bold text-white leading-tight">
+                <h3 className="text-lg sm:text-xl font-bold text-foreground leading-tight">
                   {tr(language, 'Exportar Relatório', 'Export Report')}
                 </h3>
                 <p className="text-2xs uppercase font-bold text-muted-foreground tracking-widest">
@@ -143,7 +143,7 @@ export const ReportModal = ({ isOpen, onClose, tipoContextoFixo }: ReportModalPr
             </div>
             <button
               onClick={onClose}
-              className="p-2 hover:bg-white/5 rounded-full text-muted-foreground hover:text-white transition-all"
+              className="p-2 hover:bg-foreground/5 rounded-full text-muted-foreground hover:text-foreground transition-all"
             >
               <X size={20} />
             </button>

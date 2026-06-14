@@ -9,9 +9,9 @@ import { useI18nStore } from '../../store/useI18nStore';
 const variantConfig: Record<ToastVariant, { icon: React.ElementType; bg: string; border: string; text: string }> = {
   success: {
     icon: CheckCircle2,
-    bg: 'bg-emerald-500/10',
-    border: 'border-emerald-500/30',
-    text: 'text-emerald-400',
+    bg: 'bg-success-muted',
+    border: 'border-success/30',
+    text: 'text-success',
   },
   warning: {
     icon: AlertTriangle,
@@ -79,10 +79,10 @@ const ToastItem = ({ id, message, variant, duration = 5000 }: {
     >
       <div className="flex items-start gap-3 p-4">
         <Icon size={20} className={`${config.text} flex-shrink-0 mt-0.5`} />
-        <p className="text-sm font-medium text-white/90 flex-1 leading-relaxed">{message}</p>
+        <p className="text-sm font-medium text-foreground/90 flex-1 leading-relaxed">{message}</p>
         <button
           onClick={handleClose}
-          className="text-white/40 hover:text-white transition-colors flex-shrink-0"
+          className="text-foreground/40 hover:text-foreground transition-colors flex-shrink-0"
           aria-label={language === 'en-US' ? 'Close notification' : 'Fechar notificacao'}
         >
           <X size={16} />
@@ -90,7 +90,7 @@ const ToastItem = ({ id, message, variant, duration = 5000 }: {
       </div>
 
       {duration > 0 && (
-        <div className="h-0.5 w-full bg-white/5">
+        <div className="h-0.5 w-full bg-foreground/5">
           <div
             className={`h-full ${config.text.replace('text-', 'bg-')} transition-all duration-50 ease-linear`}
             style={{ width: `${progress}%` }}

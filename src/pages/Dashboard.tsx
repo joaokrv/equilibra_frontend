@@ -89,12 +89,12 @@ export const Dashboard = () => {
       <header className="mb-8 sm:mb-10 animate-in fade-in slide-in-from-top-4 duration-700">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
           <div>
-            <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-white mb-2">{t(language, 'dashboardTitle')}</h2>
+            <h2 className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground mb-2">{t(language, 'dashboardTitle')}</h2>
             <p className="text-sm text-muted-foreground max-w-2xl leading-relaxed">
               {t(language, 'dashboardBrief')}
             </p>
 
-            <div className="mt-4 inline-flex flex-wrap items-center gap-1 rounded-xl bg-secondary/50 p-1 border border-white/10">
+            <div className="mt-4 inline-flex flex-wrap items-center gap-1 rounded-xl bg-secondary/50 p-1 border border-foreground/10">
               {periodOptions.map((option) => (
                 <button
                   key={option.value}
@@ -103,7 +103,7 @@ export const Dashboard = () => {
                   className={`px-3 py-1.5 text-2xs sm:text-xs font-bold uppercase tracking-wider rounded-md transition-all ${
                     periodoSelecionado === option.value
                       ? 'bg-primary text-primary-foreground'
-                      : 'text-muted-foreground hover:text-white'
+                      : 'text-muted-foreground hover:text-foreground'
                   }`}
                 >
                   {option.label}

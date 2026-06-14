@@ -206,7 +206,7 @@ export const ExtratoPage = ({ filtroTipo, titulo, descricao }: ExtratoPageProps)
       <div className="p-3 sm:p-4 lg:p-6 space-y-5 sm:space-y-6 animate-in fade-in duration-500 relative">
 
         <div>
-          <h1 className="text-2xl font-bold text-white">{tituloPagina}</h1>
+          <h1 className="text-2xl font-bold text-foreground">{tituloPagina}</h1>
           <p className="text-sm text-muted-foreground mt-1">{descricaoPagina}</p>
         </div>
 
@@ -222,17 +222,17 @@ export const ExtratoPage = ({ filtroTipo, titulo, descricao }: ExtratoPageProps)
 
         {!filtroTipo && (
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="bg-[#15161e] border border-[#232431] rounded-2xl p-4">
+            <div className="bg-card border border-border rounded-2xl p-4">
               <p className="text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Receitas', 'Income')}</p>
-              <p className="text-xl font-bold text-emerald-400 mt-1">{formatarMoeda(totalReceitas, moeda)}</p>
+              <p className="text-xl font-bold text-success mt-1">{formatarMoeda(totalReceitas, moeda)}</p>
             </div>
-            <div className="bg-[#15161e] border border-[#232431] rounded-2xl p-4">
+            <div className="bg-card border border-border rounded-2xl p-4">
               <p className="text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Despesas', 'Expenses')}</p>
-              <p className="text-xl font-bold text-rose-400 mt-1">{formatarMoeda(totalDespesas, moeda)}</p>
+              <p className="text-xl font-bold text-danger mt-1">{formatarMoeda(totalDespesas, moeda)}</p>
             </div>
-            <div className="bg-[#15161e] border border-[#232431] rounded-2xl p-4">
+            <div className="bg-card border border-border rounded-2xl p-4">
               <p className="text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Balanço', 'Balance')}</p>
-              <p className={`text-xl font-bold mt-1 ${totalReceitas - totalDespesas >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+              <p className={`text-xl font-bold mt-1 ${totalReceitas - totalDespesas >= 0 ? 'text-success' : 'text-danger'}`}>
                 {formatarMoeda(totalReceitas - totalDespesas, moeda)}
               </p>
             </div>
@@ -241,11 +241,11 @@ export const ExtratoPage = ({ filtroTipo, titulo, descricao }: ExtratoPageProps)
 
         {filtroTipo && (
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-            <div className="bg-[#15161e] border border-[#232431] rounded-2xl p-4">
+            <div className="bg-card border border-border rounded-2xl p-4">
               <p className="text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">
                 {tr('Total de', 'Total')} {filtroTipo === TransacaoResponseDTO.tipo.RECEITA ? tr('Receitas', 'Income') : tr('Despesas', 'Expenses')}
               </p>
-              <p className={`text-xl sm:text-2xl font-bold mt-1 ${filtroTipo === TransacaoResponseDTO.tipo.RECEITA ? 'text-emerald-400' : 'text-rose-400'}`}>
+              <p className={`text-xl sm:text-2xl font-bold mt-1 ${filtroTipo === TransacaoResponseDTO.tipo.RECEITA ? 'text-success' : 'text-danger'}`}>
                 {formatarMoeda(filtroTipo === TransacaoResponseDTO.tipo.RECEITA ? totalReceitas : totalDespesas, moeda)}
               </p>
               <p className="text-xs text-muted-foreground mt-1">
@@ -254,29 +254,29 @@ export const ExtratoPage = ({ filtroTipo, titulo, descricao }: ExtratoPageProps)
                   : `${filtradas.length} transaç${filtradas.length !== 1 ? 'ões' : 'ão'} no período`}
               </p>
             </div>
-            <div className="bg-[#15161e] border border-[#232431] rounded-2xl p-4">
+            <div className="bg-card border border-border rounded-2xl p-4">
               <p className="text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">
                 {filtroTipo === TransacaoResponseDTO.tipo.RECEITA ? tr('Recebido', 'Received') : tr('Pago', 'Paid')}
               </p>
-              <p className={`text-xl sm:text-2xl font-bold mt-1 ${filtroTipo === TransacaoResponseDTO.tipo.RECEITA ? 'text-emerald-400' : 'text-rose-400'}`}>
+              <p className={`text-xl sm:text-2xl font-bold mt-1 ${filtroTipo === TransacaoResponseDTO.tipo.RECEITA ? 'text-success' : 'text-danger'}`}>
                 {formatarMoeda(totalPagos, moeda)}
               </p>
             </div>
-            <div className="bg-[#15161e] border border-[#232431] rounded-2xl p-4">
+            <div className="bg-card border border-border rounded-2xl p-4">
               <p className="text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Pendente', 'Pending')}</p>
               <p className="text-xl sm:text-2xl font-bold mt-1 text-amber-400">{formatarMoeda(totalPendentes, moeda)}</p>
             </div>
           </div>
         )}
 
-        <div className="bg-[#15161e] border border-[#232431] rounded-2xl p-4 mb-4 flex flex-wrap gap-3 items-end">
+        <div className="bg-card border border-border rounded-2xl p-4 mb-4 flex flex-wrap gap-3 items-end">
           <div className="flex flex-col gap-1">
             <label className="text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('De', 'From')}</label>
             <input
               type="date"
               value={dataInicio}
               onChange={(e) => { setDataInicio(e.target.value); resetPage(); }}
-              className="bg-secondary/30 border border-white/5 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium"
+              className="bg-secondary/30 border border-foreground/5 rounded-xl px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium"
             />
           </div>
           <div className="flex flex-col gap-1">
@@ -285,7 +285,7 @@ export const ExtratoPage = ({ filtroTipo, titulo, descricao }: ExtratoPageProps)
               type="date"
               value={dataFim}
               onChange={(e) => { setDataFim(e.target.value); resetPage(); }}
-              className="bg-secondary/30 border border-white/5 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium"
+              className="bg-secondary/30 border border-foreground/5 rounded-xl px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium"
             />
           </div>
           {!filtroTipo && (
@@ -294,7 +294,7 @@ export const ExtratoPage = ({ filtroTipo, titulo, descricao }: ExtratoPageProps)
               <select
                 value={tipoFiltro}
                 onChange={(e) => { setTipoFiltro(e.target.value as 'RECEITA' | 'DESPESA' | ''); resetPage(); }}
-                className="bg-secondary/30 border border-white/5 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium appearance-none"
+                className="bg-secondary/30 border border-foreground/5 rounded-xl px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium appearance-none"
               >
                 <option value="">{tr('Todos', 'All')}</option>
                 <option value="RECEITA">{tr('Receitas', 'Income')}</option>
@@ -307,7 +307,7 @@ export const ExtratoPage = ({ filtroTipo, titulo, descricao }: ExtratoPageProps)
             <select
               value={statusFiltro}
               onChange={(e) => { setStatusFiltro(e.target.value as 'PAGO' | 'PENDENTE' | ''); resetPage(); }}
-              className="bg-secondary/30 border border-white/5 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium appearance-none"
+              className="bg-secondary/30 border border-foreground/5 rounded-xl px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium appearance-none"
             >
               <option value="">{tr('Todos', 'All')}</option>
               <option value="PAGO">{tr('Pago', 'Paid')}</option>
@@ -319,7 +319,7 @@ export const ExtratoPage = ({ filtroTipo, titulo, descricao }: ExtratoPageProps)
             <select
               value={contaFiltro}
               onChange={(e) => { setContaFiltro(e.target.value); resetPage(); }}
-              className="bg-secondary/30 border border-white/5 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium appearance-none"
+              className="bg-secondary/30 border border-foreground/5 rounded-xl px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium appearance-none"
             >
               <option value="">{tr('Todas', 'All')}</option>
               {contasList.map((c) => (
@@ -332,7 +332,7 @@ export const ExtratoPage = ({ filtroTipo, titulo, descricao }: ExtratoPageProps)
             <select
               value={categoriaFiltro}
               onChange={(e) => { setCategoriaFiltro(e.target.value); resetPage(); }}
-              className="bg-secondary/30 border border-white/5 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium appearance-none"
+              className="bg-secondary/30 border border-foreground/5 rounded-xl px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium appearance-none"
             >
               <option value="">{tr('Todas', 'All')}</option>
               {categorias.map((cat) => (
@@ -345,7 +345,7 @@ export const ExtratoPage = ({ filtroTipo, titulo, descricao }: ExtratoPageProps)
             <select
               value={metodoPagamentoFiltro}
               onChange={(e) => { setMetodoPagamentoFiltro(e.target.value); resetPage(); }}
-              className="bg-secondary/30 border border-white/5 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium appearance-none"
+              className="bg-secondary/30 border border-foreground/5 rounded-xl px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium appearance-none"
             >
               <option value="">{tr('Todos', 'All')}</option>
               {metodos.map((m) => (
@@ -358,7 +358,7 @@ export const ExtratoPage = ({ filtroTipo, titulo, descricao }: ExtratoPageProps)
             <select
               value={pageSize}
               onChange={(e) => { setPageSize(Number(e.target.value)); resetPage(); }}
-              className="bg-secondary/30 border border-white/5 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium appearance-none"
+              className="bg-secondary/30 border border-foreground/5 rounded-xl px-3 py-2 text-sm text-foreground focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium appearance-none"
             >
               <option value={10}>10</option>
               <option value={20}>20</option>
@@ -377,57 +377,57 @@ export const ExtratoPage = ({ filtroTipo, titulo, descricao }: ExtratoPageProps)
             onRetry={() => refetch()}
           />
         ) : paginadas.length === 0 ? (
-          <div className="bg-[#15161e] border border-[#232431] rounded-2xl p-6 sm:p-10 lg:p-12 flex flex-col items-center justify-center gap-4 text-center">
+          <div className="bg-card border border-border rounded-2xl p-6 sm:p-10 lg:p-12 flex flex-col items-center justify-center gap-4 text-center">
             <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center text-primary/50"><Receipt size={32} /></div>
             <p className="text-sm text-muted-foreground font-medium max-w-xs leading-relaxed">
               {tr('Nenhuma transação encontrada para este período.', 'No transactions found for this period.')}
             </p>
           </div>
         ) : (
-          <div className="bg-[#15161e] border border-[#232431] flex flex-col rounded-2xl overflow-hidden">
+          <div className="bg-card border border-border flex flex-col rounded-2xl overflow-hidden">
             <div className="w-full overflow-x-auto">
               <div className="w-full xl:min-w-max">
-                <div className="hidden xl:grid xl:grid-cols-[40px_minmax(120px,1fr)_90px_100px_80px_70px_100px_70px] items-center gap-4 px-4 sm:px-6 py-4 bg-white/5 border-b border-white/5 select-none font-bold text-2xs uppercase text-muted-foreground tracking-widest z-10 w-full">
+                <div className="hidden xl:grid xl:grid-cols-[40px_minmax(120px,1fr)_90px_100px_80px_70px_100px_70px] items-center gap-4 px-4 sm:px-6 py-4 bg-foreground/5 border-b border-foreground/5 select-none font-bold text-2xs uppercase text-muted-foreground tracking-widest z-10 w-full">
                   <div />
-                  <div className="flex items-center gap-1 xl:gap-2 cursor-pointer hover:text-white transition-colors" onClick={() => handleSort('descricao')}>
+                  <div className="flex items-center gap-1 xl:gap-2 cursor-pointer hover:text-foreground transition-colors" onClick={() => handleSort('descricao')}>
                     <span>{tr('Nome', 'Name')}</span>
                     <SortIcon currentField={sortField} field="descricao" direction={sortDirection} />
                   </div>
-                  <div className="flex items-center gap-1 xl:gap-2 cursor-pointer hover:text-white transition-colors" onClick={() => handleSort('categoria')}>
+                  <div className="flex items-center gap-1 xl:gap-2 cursor-pointer hover:text-foreground transition-colors" onClick={() => handleSort('categoria')}>
                     <span>{tr('Categoria', 'Category')}</span>
                     <SortIcon currentField={sortField} field="categoria" direction={sortDirection} />
                   </div>
-                  <div className="flex items-center gap-1 xl:gap-2 cursor-pointer hover:text-white transition-colors" onClick={() => handleSort('metodoPagamento')}>
+                  <div className="flex items-center gap-1 xl:gap-2 cursor-pointer hover:text-foreground transition-colors" onClick={() => handleSort('metodoPagamento')}>
                     <span>{tr('Método', 'Method')}</span>
                     <SortIcon currentField={sortField} field="metodoPagamento" direction={sortDirection} />
                   </div>
-                  <div className="flex justify-start items-center gap-1 xl:gap-2 cursor-pointer hover:text-white transition-colors" onClick={() => handleSort('data')}>
+                  <div className="flex justify-start items-center gap-1 xl:gap-2 cursor-pointer hover:text-foreground transition-colors" onClick={() => handleSort('data')}>
                     <span>{tr('Data', 'Date')}</span>
                     <SortIcon currentField={sortField} field="data" direction={sortDirection} />
                   </div>
-                  <div className="flex justify-start items-center gap-1 xl:gap-2 cursor-pointer hover:text-white transition-colors" onClick={() => handleSort('status')}>
+                  <div className="flex justify-start items-center gap-1 xl:gap-2 cursor-pointer hover:text-foreground transition-colors" onClick={() => handleSort('status')}>
                     <span>{tr('Status', 'Status')}</span>
                     <SortIcon currentField={sortField} field="status" direction={sortDirection} />
                   </div>
-                  <div className="flex items-center gap-1 xl:gap-2 cursor-pointer hover:text-white transition-colors justify-end pr-1 xl:pr-2" onClick={() => handleSort('valor')}>
+                  <div className="flex items-center gap-1 xl:gap-2 cursor-pointer hover:text-foreground transition-colors justify-end pr-1 xl:pr-2" onClick={() => handleSort('valor')}>
                     <SortIcon currentField={sortField} field="valor" direction={sortDirection} />
                     <span>{tr('Valor', 'Value')}</span>
                   </div>
                   <div className="text-right pr-1 xl:pr-2">{tr('Ações', 'Actions')}</div>
                 </div>
 
-                <div className="flex-1 w-full bg-black/10">
+                <div className="flex-1 w-full bg-foreground/5">
                   {paginadas.map((t: TransacaoResponseDTO) => (
-                    <div key={t.id} className="group relative flex flex-col xl:grid xl:grid-cols-[40px_minmax(120px,1fr)_90px_100px_80px_70px_100px_70px] xl:items-center gap-3 xl:gap-4 px-4 sm:px-6 py-4 hover:bg-white/5 transition-all outline-none border-b border-white/5 last:border-0 border-transparent">
+                    <div key={t.id} className="group relative flex flex-col xl:grid xl:grid-cols-[40px_minmax(120px,1fr)_90px_100px_80px_70px_100px_70px] xl:items-center gap-3 xl:gap-4 px-4 sm:px-6 py-4 hover:bg-foreground/5 transition-all outline-none border-b border-foreground/5 last:border-0 border-transparent">
                       <div className={`w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0 ${
-                        t.isTransferencia ? 'bg-sky-500/10 text-sky-400'
-                        : t.tipo === TransacaoResponseDTO.tipo.RECEITA ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400'
+                        t.isTransferencia ? 'bg-sky-500/10 text-sky-500'
+                        : t.tipo === TransacaoResponseDTO.tipo.RECEITA ? 'bg-success-muted text-success' : 'bg-danger-muted text-danger'
                       }`}>
                         {t.isTransferencia ? <Repeat size={18} /> : (t.tipo === TransacaoResponseDTO.tipo.RECEITA ? <TrendingUp size={18} /> : <TrendingDown size={18} />)}
                       </div>
 
                       <div className="flex flex-col justify-center min-w-0 pr-1 xl:pr-2">
-                        <p className="text-sm xl:text-base font-bold text-white truncate">{t.descricao}</p>
+                        <p className="text-sm xl:text-base font-bold text-foreground truncate">{t.descricao}</p>
                         {t.isRecorrente && (
                           <span className="block mt-1 sm:mt-1 xl:mt-0 max-w-fit items-center gap-1 text-2xs font-bold text-violet-400 bg-violet-500/10 px-2 py-0.5 rounded-md truncate">
                             <Repeat size={10} className="inline mr-1 mb-0.5" /> {tr('Fixa', 'Recurring')}
@@ -441,7 +441,7 @@ export const ExtratoPage = ({ filtroTipo, titulo, descricao }: ExtratoPageProps)
                       </div>
 
                       <div className="hidden xl:flex flex-col items-start gap-1 justify-center min-w-0 pr-1 xl:pr-2">
-                        <span className="text-2xs text-muted-foreground bg-white/5 px-2 py-1 rounded w-full truncate uppercase tracking-wider font-semibold">
+                        <span className="text-2xs text-muted-foreground bg-foreground/5 px-2 py-1 rounded w-full truncate uppercase tracking-wider font-semibold">
                           {t.nomeCategoria || 'Sem cat'}
                         </span>
                       </div>
@@ -463,7 +463,7 @@ export const ExtratoPage = ({ filtroTipo, titulo, descricao }: ExtratoPageProps)
                       <div className="hidden xl:flex justify-start">
                         {t.status && (
                           <span className={`text-2xs uppercase tracking-wider font-bold px-1.5 xl:px-2 py-1 rounded w-[70px] text-center truncate ${
-                            t.status === TransacaoResponseDTO.status.PAGO ? 'bg-emerald-500/10 text-emerald-400' : 'bg-amber-500/10 text-amber-400'
+                            t.status === TransacaoResponseDTO.status.PAGO ? 'bg-success-muted text-success' : 'bg-amber-500/10 text-amber-400'
                           }`}>
                             {statusLabel(t.status)}
                           </span>
@@ -472,25 +472,25 @@ export const ExtratoPage = ({ filtroTipo, titulo, descricao }: ExtratoPageProps)
 
                       <div className="hidden xl:flex justify-end pr-1 xl:pr-3 truncate">
                         <p className={`text-sm xl:text-base font-bold tabular-nums tracking-tight whitespace-nowrap truncate ${
-                          t.isTransferencia ? 'text-sky-400' : t.tipo === TransacaoResponseDTO.tipo.RECEITA ? 'text-emerald-400' : 'text-rose-400'
+                          t.isTransferencia ? 'text-sky-500' : t.tipo === TransacaoResponseDTO.tipo.RECEITA ? 'text-success' : 'text-danger'
                         }`}>
                           {t.isTransferencia ? '' : t.tipo === TransacaoResponseDTO.tipo.RECEITA ? '+' : ''} {formatarMoeda(t.valor ?? 0, moeda)}
                         </p>
                       </div>
 
                       <div className="hidden xl:flex items-center justify-end gap-1.5 opacity-40 group-hover:opacity-100 transition-opacity">
-                        <button onClick={() => abrirEditar(t)} className="p-1.5 xl:p-2 rounded-lg text-muted-foreground hover:bg-white/10 hover:text-primary transition-all" title={tr('Editar transação', 'Edit transaction')}>
+                        <button onClick={() => abrirEditar(t)} className="p-1.5 xl:p-2 rounded-lg text-muted-foreground hover:bg-foreground/10 hover:text-primary transition-all" title={tr('Editar transação', 'Edit transaction')}>
                           <Pencil size={18} />
                         </button>
-                        <button onClick={() => setTransacaoParaDeletar(t)} className="p-1.5 xl:p-2 rounded-lg text-muted-foreground hover:bg-rose-500/10 hover:text-rose-400 transition-all" title={tr('Excluir transação', 'Delete transaction')}>
+                        <button onClick={() => setTransacaoParaDeletar(t)} className="p-1.5 xl:p-2 rounded-lg text-muted-foreground hover:bg-danger-muted hover:text-danger transition-all" title={tr('Excluir transação', 'Delete transaction')}>
                           <Trash2 size={18} />
                         </button>
                       </div>
 
-                      <div className="xl:hidden flex flex-col gap-2 mt-1 px-1 w-full border-t border-white/5 pt-2">
+                      <div className="xl:hidden flex flex-col gap-2 mt-1 px-1 w-full border-t border-foreground/5 pt-2">
                         <div className="flex items-center justify-between">
                           <div className="flex items-center gap-2">
-                            <span className="text-2xs text-muted-foreground bg-white/5 px-2 py-1 rounded inline-flex uppercase tracking-wider font-semibold">
+                            <span className="text-2xs text-muted-foreground bg-foreground/5 px-2 py-1 rounded inline-flex uppercase tracking-wider font-semibold">
                               {t.nomeCategoria || 'S/Categoria'}
                             </span>
                             {t.metodoPagamento && (
@@ -506,22 +506,22 @@ export const ExtratoPage = ({ filtroTipo, titulo, descricao }: ExtratoPageProps)
                         <div className="flex items-center justify-between mt-1 pt-1">
                           {t.status && (
                             <span className={`text-2xs uppercase tracking-wider font-bold px-2 py-1 rounded ${
-                              t.status === TransacaoResponseDTO.status.PAGO ? 'text-emerald-400 bg-emerald-500/10' : 'text-amber-400 bg-amber-500/10'
+                              t.status === TransacaoResponseDTO.status.PAGO ? 'text-success bg-success-muted' : 'text-amber-400 bg-amber-500/10'
                             }`}>
                               {statusLabel(t.status)}
                             </span>
                           )}
                           <p className={`text-lg font-bold tabular-nums tracking-tight ${
-                            t.isTransferencia ? 'text-sky-400' : t.tipo === TransacaoResponseDTO.tipo.RECEITA ? 'text-emerald-400' : 'text-rose-400'
+                            t.isTransferencia ? 'text-sky-500' : t.tipo === TransacaoResponseDTO.tipo.RECEITA ? 'text-success' : 'text-danger'
                           }`}>
                             {t.isTransferencia ? '' : t.tipo === TransacaoResponseDTO.tipo.RECEITA ? '+' : ''} {formatarMoeda(t.valor ?? 0, moeda)}
                           </p>
                         </div>
                         <div className="flex items-center gap-2 mt-2">
-                          <button onClick={() => abrirEditar(t)} className="flex-1 py-2 bg-secondary/30 rounded-lg flex items-center justify-center gap-2 text-xs font-bold text-muted-foreground hover:text-white transition-colors">
+                          <button onClick={() => abrirEditar(t)} className="flex-1 py-2 bg-secondary/30 rounded-lg flex items-center justify-center gap-2 text-xs font-bold text-muted-foreground hover:text-foreground transition-colors">
                             <Pencil size={14} /> {tr('Editar', 'Edit')}
                           </button>
-                          <button onClick={() => setTransacaoParaDeletar(t)} className="flex-1 py-2 bg-rose-500/10 rounded-lg flex items-center justify-center gap-2 text-xs font-bold text-rose-400/80 hover:text-rose-400 transition-colors">
+                          <button onClick={() => setTransacaoParaDeletar(t)} className="flex-1 py-2 bg-danger-muted rounded-lg flex items-center justify-center gap-2 text-xs font-bold text-danger/80 hover:text-danger transition-colors">
                             <Trash2 size={14} /> {tr('Excluir', 'Delete')}
                           </button>
                         </div>
@@ -543,14 +543,14 @@ export const ExtratoPage = ({ filtroTipo, titulo, descricao }: ExtratoPageProps)
               <button
                 onClick={() => setCurrentPage((p) => Math.max(0, p - 1))}
                 disabled={currentPage === 0}
-                className="min-h-11 min-w-11 flex items-center justify-center rounded-lg border border-white/5 bg-secondary/30 disabled:opacity-30 hover:border-primary/40 transition-colors"
+                className="min-h-11 min-w-11 flex items-center justify-center rounded-lg border border-foreground/5 bg-secondary/30 disabled:opacity-30 hover:border-primary/40 transition-colors"
               >
                 <ChevronLeft size={16} />
               </button>
               <button
                 onClick={() => setCurrentPage((p) => Math.min(totalPages - 1, p + 1))}
                 disabled={currentPage >= totalPages - 1}
-                className="min-h-11 min-w-11 flex items-center justify-center rounded-lg border border-white/5 bg-secondary/30 disabled:opacity-30 hover:border-primary/40 transition-colors"
+                className="min-h-11 min-w-11 flex items-center justify-center rounded-lg border border-foreground/5 bg-secondary/30 disabled:opacity-30 hover:border-primary/40 transition-colors"
               >
                 <ChevronRight size={16} />
               </button>
@@ -570,14 +570,14 @@ export const ExtratoPage = ({ filtroTipo, titulo, descricao }: ExtratoPageProps)
           (transacaoParaDeletar?.totalParcelas ?? 0) > 1 ? (
             <>
               {tr('Esta é a parcela', 'This is installment')}{' '}
-              <span className="text-white font-semibold">{transacaoParaDeletar?.numeroParcela}/{transacaoParaDeletar?.totalParcelas}</span>{' '}
-              {tr('da compra', 'of the purchase')} <span className="text-white font-semibold">"{transacaoParaDeletar?.descricao}"</span>.
+              <span className="text-foreground font-semibold">{transacaoParaDeletar?.numeroParcela}/{transacaoParaDeletar?.totalParcelas}</span>{' '}
+              {tr('da compra', 'of the purchase')} <span className="text-foreground font-semibold">"{transacaoParaDeletar?.descricao}"</span>.
               <br />
               {tr('Escolha excluir apenas esta parcela ou a compra inteira (todas as parcelas).', 'Choose to delete only this installment or the entire purchase (all installments).')}
             </>
           ) : (
             <>
-              {tr('Você está prestes a excluir', 'You are about to delete')} <span className="text-white font-semibold">"{transacaoParaDeletar?.descricao}"</span>.
+              {tr('Você está prestes a excluir', 'You are about to delete')} <span className="text-foreground font-semibold">"{transacaoParaDeletar?.descricao}"</span>.
               <br />
               {tr('Esta ação não pode ser desfeita e o impacto no saldo será revertido.', 'This action cannot be undone and the balance impact will be reverted.')}
             </>

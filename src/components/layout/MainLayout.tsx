@@ -160,7 +160,7 @@ export const MainLayout = ({ children }: MainLayoutProps) => {
   };
 
   return (
-    <div className="flex h-dvh bg-background overflow-hidden relative">
+    <div className="flex h-dvh bg-background overflow-hidden relative aurora">
       <Sidebar mobileOpen={drawerOpen} onMobileClose={() => setDrawerOpen(false)} />
 
       <div className="flex-1 flex flex-col min-w-0">
@@ -199,13 +199,13 @@ export const MainLayout = ({ children }: MainLayoutProps) => {
           <button 
             onClick={abrirModal}
             className="
-              hidden md:flex fixed bottom-safe-4 right-4 sm:bottom-8 sm:right-8 bg-primary text-white p-3 sm:p-4 rounded-xl sm:rounded-2xl
+              hidden md:flex fixed bottom-safe-4 right-4 sm:bottom-8 sm:right-8 bg-primary text-primary-foreground p-3 sm:p-4 rounded-xl sm:rounded-2xl
               shadow-[0_10px_40px_-10px_rgba(124,58,237,0.5)] transition-all duration-300 transform hover:scale-105 active:scale-95
               items-center group z-40 animate-in fade-in slide-in-from-bottom-8 duration-1000
               hover:bg-primary/90 hover:shadow-[0_20px_60px_-10px_rgba(124,58,237,0.6)]
             "
           >
-            <div className="bg-white/20 p-1.5 sm:p-2 rounded-xl shadow-inner group-hover:rotate-90 transition-transform duration-300 shrink-0">
+            <div className="bg-foreground/20 p-1.5 sm:p-2 rounded-xl shadow-inner group-hover:rotate-90 transition-transform duration-300 shrink-0">
               <Plus size={20} strokeWidth={3} />
             </div>
             <span className="font-black uppercase tracking-widest text-2xs sm:text-xs drop-shadow-md overflow-hidden whitespace-nowrap transition-all duration-500 ease-out max-w-0 opacity-0 group-hover:max-w-[200px] group-hover:opacity-100 group-hover:ml-3">

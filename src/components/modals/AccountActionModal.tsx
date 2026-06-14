@@ -100,15 +100,15 @@ export function AccountActionModal({ isOpen, onClose, onSuccess }: AccountAction
     confirmarDesativarMutation.isPending;
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-background/80 backdrop-blur-sm animate-in fade-in duration-200">
-      <div ref={dialogRef} className="glass w-full max-w-md p-8 rounded-[2rem] border border-white/10 shadow-2xl relative overflow-hidden">
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-overlay backdrop-blur-sm animate-in fade-in duration-200">
+      <div ref={dialogRef} className="glass w-full max-w-md p-8 rounded-[2rem] border border-foreground/10 shadow-2xl relative overflow-hidden">
         <div
           className={`absolute -top-24 -right-24 w-48 h-48 bg-${accentColor}-500/20 rounded-full blur-[80px]`}
         />
 
         <button
           onClick={onClose}
-          className="absolute top-4 right-4 text-muted-foreground hover:text-white transition-colors z-10"
+          className="absolute top-4 right-4 text-muted-foreground hover:text-foreground transition-colors z-10"
         >
           <X size={20} />
         </button>
@@ -119,7 +119,7 @@ export function AccountActionModal({ isOpen, onClose, onSuccess }: AccountAction
               <div className="p-2 bg-rose-500/20 rounded-xl border border-rose-500/20">
                 <AlertTriangle className="text-rose-500 w-6 h-6" />
               </div>
-              <h2 className="text-xl font-black text-white uppercase tracking-tight">
+              <h2 className="text-xl font-black text-foreground uppercase tracking-tight">
                 {tr('Zona de Perigo', 'Danger Zone')}
               </h2>
             </div>
@@ -139,7 +139,7 @@ export function AccountActionModal({ isOpen, onClose, onSuccess }: AccountAction
                   <EyeOff className="text-amber-500 w-5 h-5" />
                 </div>
                 <div>
-                  <p className="font-bold text-white text-sm uppercase tracking-wider">
+                  <p className="font-bold text-foreground text-sm uppercase tracking-wider">
                     {tr('Desativar Conta', 'Deactivate Account')}
                   </p>
                   <p className="text-xs text-muted-foreground mt-0.5">
@@ -159,7 +159,7 @@ export function AccountActionModal({ isOpen, onClose, onSuccess }: AccountAction
                   <Trash2 className="text-rose-500 w-5 h-5" />
                 </div>
                 <div>
-                  <p className="font-bold text-white text-sm uppercase tracking-wider">
+                  <p className="font-bold text-foreground text-sm uppercase tracking-wider">
                     {tr('Excluir Conta', 'Delete Account')}
                   </p>
                   <p className="text-xs text-muted-foreground mt-0.5">
@@ -178,7 +178,7 @@ export function AccountActionModal({ isOpen, onClose, onSuccess }: AccountAction
           <div className="relative z-10 space-y-6">
             <button
               onClick={() => setEtapa('escolha')}
-              className="flex items-center gap-2 text-xs text-muted-foreground hover:text-white transition-colors uppercase tracking-widest font-bold mb-2"
+              className="flex items-center gap-2 text-xs text-muted-foreground hover:text-foreground transition-colors uppercase tracking-widest font-bold mb-2"
             >
               <ArrowLeft size={14} /> {tr('Voltar', 'Back')}
             </button>
@@ -189,7 +189,7 @@ export function AccountActionModal({ isOpen, onClose, onSuccess }: AccountAction
                   ? <Trash2 className="text-rose-500 w-6 h-6" />
                   : <EyeOff className="text-amber-500 w-6 h-6" />}
               </div>
-              <h2 className="text-xl font-black text-white uppercase tracking-tight">
+              <h2 className="text-xl font-black text-foreground uppercase tracking-tight">
                 {isExcluir
                   ? tr('Excluir Conta', 'Delete Account')
                   : tr('Desativar Conta', 'Deactivate Account')}
@@ -215,13 +215,13 @@ export function AccountActionModal({ isOpen, onClose, onSuccess }: AccountAction
                 value={senha}
                 onChange={(e) => setSenha(e.target.value)}
                 placeholder={tr('Sua senha atual', 'Your current password')}
-                className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-4 text-white font-bold focus:outline-none focus:border-white/30 transition-all"
+                className="w-full bg-foreground/5 border border-foreground/10 rounded-2xl py-4 px-4 text-foreground font-bold focus:outline-none focus:border-foreground/30 transition-all"
                 autoFocus
               />
               <button
                 type="submit"
                 disabled={!senha || isPending}
-                className={`w-full py-4 bg-${accentColor}-500 hover:bg-${accentColor}-400 text-white font-black rounded-2xl transition-all uppercase tracking-widest text-xs shadow-lg disabled:opacity-50 active:scale-95`}
+                className={`w-full py-4 bg-${accentColor}-500 hover:bg-${accentColor}-400 text-primary-foreground font-black rounded-2xl transition-all uppercase tracking-widest text-xs shadow-lg disabled:opacity-50 active:scale-95`}
               >
                 {isPending
                   ? tr('Processando...', 'Processing...')
@@ -237,7 +237,7 @@ export function AccountActionModal({ isOpen, onClose, onSuccess }: AccountAction
               <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mb-4 border border-primary/20">
                 <ShieldCheck className="text-primary w-8 h-8" />
               </div>
-              <h2 className="text-xl font-black text-white uppercase tracking-tight mb-2">
+              <h2 className="text-xl font-black text-foreground uppercase tracking-tight mb-2">
                 {tr('Confirmação por E-mail', 'Email Confirmation')}
               </h2>
               <p className="text-sm text-muted-foreground leading-relaxed">
@@ -265,19 +265,19 @@ export function AccountActionModal({ isOpen, onClose, onSuccess }: AccountAction
                 value={codigo}
                 onChange={(e) => setCodigo(e.target.value.replace(/\D/g, ''))}
                 placeholder="000000"
-                className="w-full bg-secondary/30 border border-white/5 rounded-2xl px-4 py-5 text-center text-3xl font-black tracking-[0.5em] focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all placeholder:text-muted-foreground/20"
+                className="w-full bg-secondary/30 border border-foreground/5 rounded-2xl px-4 py-5 text-center text-3xl font-black tracking-[0.5em] focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all placeholder:text-muted-foreground/20"
               />
               <input
                 type="password"
                 value={senha}
                 onChange={(e) => setSenha(e.target.value)}
                 placeholder={tr('Confirme sua senha', 'Confirm your password')}
-                className="w-full bg-white/5 border border-white/10 rounded-2xl py-4 px-4 text-white font-bold focus:outline-none focus:border-white/30 transition-all"
+                className="w-full bg-foreground/5 border border-foreground/10 rounded-2xl py-4 px-4 text-foreground font-bold focus:outline-none focus:border-foreground/30 transition-all"
               />
               <button
                 type="submit"
                 disabled={codigo.length !== 6 || !senha || isPending}
-                className={`w-full py-4 bg-${accentColor}-500 hover:bg-${accentColor}-400 text-white font-black rounded-2xl transition-all uppercase tracking-widest text-xs shadow-lg disabled:opacity-50 active:scale-95`}
+                className={`w-full py-4 bg-${accentColor}-500 hover:bg-${accentColor}-400 text-primary-foreground font-black rounded-2xl transition-all uppercase tracking-widest text-xs shadow-lg disabled:opacity-50 active:scale-95`}
               >
                 {isPending
                   ? tr('Processando...', 'Processing...')

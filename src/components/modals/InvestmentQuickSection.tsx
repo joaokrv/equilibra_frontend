@@ -41,9 +41,10 @@ interface InvestmentQuickSectionProps {
   onSuccess?: () => void;
   onCancel: () => void;
   defaultOperacao?: 'APORTE' | 'RESGATE';
+  lockOperacao?: boolean;
 }
 
-export const InvestmentQuickSection = ({ onSuccess, onCancel, defaultOperacao }: InvestmentQuickSectionProps) => {
+export const InvestmentQuickSection = ({ onSuccess, onCancel, defaultOperacao, lockOperacao }: InvestmentQuickSectionProps) => {
   const queryClient = useQueryClient();
   const language = useI18nStore((state) => state.language);
   const schema = useMemo(() => buildQuickInvestmentSchema(language), [language]);
@@ -154,13 +155,13 @@ export const InvestmentQuickSection = ({ onSuccess, onCancel, defaultOperacao }:
 
   return (
     <section className="space-y-5">
-      <div className="rounded-2xl border border-white/5 bg-secondary/20 p-4 sm:p-5">
+      <div className="rounded-2xl border border-foreground/5 bg-secondary/20 p-4 sm:p-5">
         <div className="flex items-start gap-3">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary">
             <Target size={18} />
           </div>
           <div>
-            <h4 className="text-sm sm:text-base font-bold text-white">
+            <h4 className="text-sm sm:text-base font-bold text-foreground">
               {tr(language, 'Movimentação de investimento', 'Investment movement')}
             </h4>
             <p className="mt-1 text-xs sm:text-sm text-muted-foreground leading-relaxed">
@@ -175,7 +176,7 @@ export const InvestmentQuickSection = ({ onSuccess, onCancel, defaultOperacao }:
       </div>
 
       {investimentos.length === 0 ? (
-        <div className="rounded-2xl border border-white/5 bg-background/40 p-5 text-center">
+        <div className="rounded-2xl border border-foreground/5 bg-background/40 p-5 text-center">
           <p className="text-sm font-medium text-muted-foreground">
             {tr(
               language,
@@ -199,30 +200,32 @@ export const InvestmentQuickSection = ({ onSuccess, onCancel, defaultOperacao }:
         </div>
       ) : (
         <form onSubmit={handleSubmit(onSubmit)} className="space-y-5">
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            <button
-              type="button"
-              onClick={() => setValue('operacao', 'APORTE')}
-              className={`rounded-xl border px-4 py-3 text-xs font-bold uppercase tracking-widest transition-all ${
-                operacao === 'APORTE'
-                  ? 'border-emerald-500 bg-emerald-500/10 text-emerald-400 shadow-lg shadow-emerald-500/10'
-                  : 'border-transparent bg-secondary/20 text-muted-foreground hover:text-white'
-              }`}
-            >
-              {tr(language, 'Aporte', 'Deposit')}
-            </button>
-            <button
-              type="button"
-              onClick={() => setValue('operacao', 'RESGATE')}
-              className={`rounded-xl border px-4 py-3 text-xs font-bold uppercase tracking-widest transition-all ${
-                operacao === 'RESGATE'
-                  ? 'border-sky-500 bg-sky-500/10 text-sky-400 shadow-lg shadow-sky-500/10'
-                  : 'border-transparent bg-secondary/20 text-muted-foreground hover:text-white'
-              }`}
-            >
-              {tr(language, 'Resgate', 'Withdraw')}
-            </button>
-          </div>
+          {!lockOperacao && (
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              <button
+                type="button"
+                onClick={() => setValue('operacao', 'APORTE')}
+                className={`rounded-xl border px-4 py-3 text-xs font-bold uppercase tracking-widest transition-all ${
+                  operacao === 'APORTE'
+                    ? 'border-success bg-success-muted text-success shadow-lg shadow-success/10'
+                    : 'border-transparent bg-secondary/20 text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                {tr(language, 'Aporte', 'Deposit')}
+              </button>
+              <button
+                type="button"
+                onClick={() => setValue('operacao', 'RESGATE')}
+                className={`rounded-xl border px-4 py-3 text-xs font-bold uppercase tracking-widest transition-all ${
+                  operacao === 'RESGATE'
+                    ? 'border-sky-500 bg-sky-500/10 text-sky-400 shadow-lg shadow-sky-500/10'
+                    : 'border-transparent bg-secondary/20 text-muted-foreground hover:text-foreground'
+                }`}
+              >
+                {tr(language, 'Resgate', 'Withdraw')}
+              </button>
+            </div>
+          )}
 
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <Select

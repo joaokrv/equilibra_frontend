@@ -11,7 +11,7 @@ export const NotFoundPage = () => (
       <div className="w-20 h-20 rounded-3xl bg-destructive/10 flex items-center justify-center text-destructive">
         <AlertTriangle size={40} />
       </div>
-      <h2 className="text-2xl font-bold text-white">Página não encontrada</h2>
+      <h2 className="text-2xl font-bold text-foreground">Página não encontrada</h2>
       <p className="text-muted-foreground text-sm font-medium text-center max-w-md">
         A página que você procura não existe ou foi movida.
       </p>

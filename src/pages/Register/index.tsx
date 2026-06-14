@@ -106,7 +106,7 @@ export function RegisterPage() {
     <div className="min-h-screen flex items-center justify-center bg-background p-3 sm:p-4 font-sans py-6 sm:py-12">
       <div className="glass w-full max-w-2xl p-5 sm:p-8 lg:p-12 rounded-2xl sm:rounded-[2.5rem] flex flex-col items-center">
         <Link to="/login">
-          <img src={logo} alt="Equilibra" className="w-24 h-24 mb-2 drop-shadow-[0_0_15px_rgba(124,58,237,0.5)]" />
+          <img src={logo} alt="Equilibra" className="brand-logo w-24 h-24 mb-2" />
         </Link>
         
         <h1 className="text-2xl sm:text-3xl font-bold text-gradient mb-1 tracking-tighter">{tr('Criar Conta', 'Create Account')}</h1>
@@ -152,12 +152,12 @@ export function RegisterPage() {
                   type={showPassword ? "text" : "password"} 
                   id="reg-senha"
                   placeholder="••••••••"
-                  className={`w-full bg-secondary/30 border ${errors.senha ? 'border-destructive/50' : 'border-white/5'} rounded-xl px-4 py-3.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 focus:bg-secondary/60 transition-all font-medium placeholder:text-muted-foreground/30`}
+                  className={`w-full bg-secondary/30 border ${errors.senha ? 'border-destructive/50' : 'border-foreground/5'} rounded-xl px-4 py-3.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 focus:bg-secondary/60 transition-all font-medium placeholder:text-muted-foreground/30`}
                 />
                 <button 
                   type="button" 
                   onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-white transition-colors"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                   aria-label={showPassword ? tr('Ocultar senha', 'Hide password') : tr('Mostrar senha', 'Show password')}
                 >
                   {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -174,12 +174,12 @@ export function RegisterPage() {
                   type={showConfirmPassword ? "text" : "password"} 
                   id="reg-confirm-senha"
                   placeholder="••••••••"
-                  className={`w-full bg-secondary/30 border ${errors.confirmSenha ? 'border-destructive/50' : 'border-white/5'} rounded-xl px-4 py-3.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 focus:bg-secondary/60 transition-all font-medium placeholder:text-muted-foreground/30`}
+                  className={`w-full bg-secondary/30 border ${errors.confirmSenha ? 'border-destructive/50' : 'border-foreground/5'} rounded-xl px-4 py-3.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 focus:bg-secondary/60 transition-all font-medium placeholder:text-muted-foreground/30`}
                 />
                 <button 
                   type="button" 
                   onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-white transition-colors"
+                  className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                   aria-label={showConfirmPassword ? tr('Ocultar senha', 'Hide password') : tr('Mostrar senha', 'Show password')}
                 >
                   {showConfirmPassword ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -189,7 +189,7 @@ export function RegisterPage() {
             </div>
           </div>
 
-          <div className="bg-secondary/20 p-3 sm:p-4 rounded-xl border border-white/5 grid grid-cols-1 sm:grid-cols-2 gap-y-2 gap-x-4">
+          <div className="bg-secondary/20 p-3 sm:p-4 rounded-xl border border-foreground/5 grid grid-cols-1 sm:grid-cols-2 gap-y-2 gap-x-4">
             {passwordRequirements.map((req, idx) => (
               <div key={idx} className="flex items-center gap-2">
                 {req.met ? (
@@ -208,7 +208,7 @@ export function RegisterPage() {
             type="submit"
             disabled={registerMutation.isPending}
             id="btn-register"
-            className="w-full bg-primary hover:bg-primary/90 text-white font-bold py-4 sm:py-5 rounded-xl transition-all shadow-xl shadow-primary/20 mt-4 active:scale-[0.98] text-sm sm:text-base tracking-widest disabled:opacity-50"
+            className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold py-4 sm:py-5 rounded-xl transition-all shadow-xl shadow-primary/20 mt-4 active:scale-[0.98] text-sm sm:text-base tracking-widest disabled:opacity-50"
           >
             {registerMutation.isPending ? tr('PROCESSANDO...', 'PROCESSING...') : tr('CRIAR MINHA CONTA', 'CREATE MY ACCOUNT')}
           </button>

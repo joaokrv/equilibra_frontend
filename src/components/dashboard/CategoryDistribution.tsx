@@ -62,12 +62,12 @@ export const CategoryDistribution = ({
   return (
   <div className="glass p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl flex flex-col items-center">
     <div className="w-full mb-5 sm:mb-8 text-center">
-      <h4 className="text-lg sm:text-xl font-bold text-white">{t(language, 'distributionTitle')}</h4>
+      <h4 className="text-lg sm:text-xl font-bold text-foreground">{t(language, 'distributionTitle')}</h4>
       <p className="text-xs text-muted-foreground font-medium uppercase tracking-widest mt-1">
         {t(language, 'byCategory')}
       </p>
 
-      <div className="mt-4 inline-flex flex-wrap justify-center gap-1 rounded-xl bg-secondary/50 p-1 border border-white/10">
+      <div className="mt-4 inline-flex flex-wrap justify-center gap-1 rounded-xl bg-secondary/50 p-1 border border-foreground/10">
         {[
           { id: 'DESPESA', label: t(language, 'filterExpenses') },
           { id: 'RECEITA', label: t(language, 'filterIncome') },
@@ -80,7 +80,7 @@ export const CategoryDistribution = ({
             className={`px-3 py-1.5 text-2xs sm:text-xs font-bold uppercase tracking-wider rounded-md transition-all ${
               filtro === item.id
                 ? 'bg-primary text-primary-foreground'
-                : 'text-muted-foreground hover:text-white'
+                : 'text-muted-foreground hover:text-foreground'
             }`}
           >
             {item.label}
@@ -104,7 +104,7 @@ export const CategoryDistribution = ({
                 dataKey="value"
               >
                 {dadosFiltrados.map((_, index) => (
-                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                  <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} stroke="var(--card)" strokeWidth={2} />
                 ))}
               </Pie>
               <Tooltip
@@ -114,13 +114,13 @@ export const CategoryDistribution = ({
                   String(name || t(language, 'chartTotalValue')),
                 ]}
                 contentStyle={{
-                  backgroundColor: 'rgba(2, 6, 23, 0.96)',
+                  backgroundColor: 'var(--card)',
                   border: '1px solid rgba(124, 58, 237, 0.35)',
                   borderRadius: '12px',
-                  color: '#fff',
+                  color: 'var(--foreground)',
                 }}
-                itemStyle={{ color: '#fff', textTransform: 'none' }}
-                labelStyle={{ color: '#cbd5e1', marginBottom: '4px' }}
+                itemStyle={{ color: 'var(--foreground)', textTransform: 'none' }}
+                labelStyle={{ color: 'var(--muted-foreground)', marginBottom: '4px' }}
                 wrapperStyle={{ outline: 'none', pointerEvents: 'none', zIndex: 20 }}
               />
             </PieChart>
@@ -129,7 +129,7 @@ export const CategoryDistribution = ({
             <p className="text-xs text-muted-foreground font-bold uppercase tracking-widest leading-none">
               {t(language, 'chartTotal')}
             </p>
-            <p className="text-sm font-bold text-white mt-1">{formatarMoeda(totalFiltro, moeda)}</p>
+            <p className="text-sm font-bold text-foreground mt-1">{formatarMoeda(totalFiltro, moeda)}</p>
           </div>
         </>
       ) : (
@@ -149,7 +149,7 @@ export const CategoryDistribution = ({
             />
             <span className="text-xs font-semibold text-muted-foreground">{cat.name}</span>
           </div>
-          <span className="text-xs font-bold text-white">
+          <span className="text-xs font-bold text-foreground">
             {((cat.value / (totalFiltro || 1)) * 100).toFixed(0)}%
           </span>
         </div>

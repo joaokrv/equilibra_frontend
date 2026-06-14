@@ -103,7 +103,7 @@ export function LoginPage() {
           src={logo} 
           alt="Equilibra Logo" 
           id="login-logo"
-          className="w-28 h-28 sm:w-36 sm:h-36 lg:w-40 lg:h-40 mb-2 drop-shadow-[0_0_20px_rgba(124,58,237,0.6)]" 
+          className="brand-logo w-28 h-28 sm:w-36 sm:h-36 lg:w-40 lg:h-40 mb-2" 
         />
         
         <h1 className="text-3xl sm:text-4xl font-bold text-gradient mb-2 tracking-tighter">Equilibra</h1>
@@ -129,12 +129,12 @@ export function LoginPage() {
                 type={showPassword ? 'text' : 'password'}
                 id="senha"
                 placeholder="••••••••"
-                className={`w-full bg-secondary/30 border ${errors.senha ? 'border-destructive/50' : 'border-white/5'} rounded-xl px-4 py-3.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 focus:bg-secondary/60 transition-all font-medium placeholder:text-muted-foreground/30`}
+                className={`w-full bg-secondary/30 border ${errors.senha ? 'border-destructive/50' : 'border-foreground/5'} rounded-xl px-4 py-3.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 focus:bg-secondary/60 transition-all font-medium placeholder:text-muted-foreground/30`}
               />
               <button
                 type="button"
                 onClick={() => setShowPassword(!showPassword)}
-                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-white transition-colors"
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground transition-colors"
                 aria-label={showPassword ? tr('Ocultar senha', 'Hide password') : tr('Mostrar senha', 'Show password')}
               >
                 {showPassword ? <EyeOff size={18} /> : <Eye size={18} />}
@@ -151,7 +151,7 @@ export function LoginPage() {
             type="submit"
             disabled={loginMutation.isPending}
             id="btn-login"
-            className="w-full bg-primary hover:bg-primary/90 text-white font-bold py-4 sm:py-5 rounded-xl transition-all shadow-xl shadow-primary/25 mt-6 active:scale-[0.98] text-sm sm:text-base tracking-widest disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold py-4 sm:py-5 rounded-xl transition-all shadow-xl shadow-primary/25 mt-6 active:scale-[0.98] text-sm sm:text-base tracking-widest disabled:opacity-50 disabled:cursor-not-allowed"
           >
             {loginMutation.isPending ? tr('AUTENTICANDO...', 'AUTHENTICATING...') : tr('ENTRAR NO FLUXO', 'SIGN IN')}
           </button>
@@ -174,7 +174,7 @@ export function LoginPage() {
           {tr('Esqueci minha senha', 'Forgot my password')}
         </Link>
         
-        <div className="mt-8 pt-4 border-t border-white/5 w-full text-center">
+        <div className="mt-8 pt-4 border-t border-foreground/5 w-full text-center">
           <ServerStatusBadge />
         </div>
       </div>

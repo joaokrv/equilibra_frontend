@@ -64,8 +64,8 @@ export const CartoesPage = () => {
   const statusFaturaConfig: Record<string, { label: string; color: string; icon: typeof CheckCircle2 }> = {
     ABERTA: { label: tr('Aberta', 'Open'), color: 'text-blue-400 bg-blue-500/10', icon: Clock },
     FECHADA: { label: tr('Fechada', 'Closed'), color: 'text-amber-400 bg-amber-500/10', icon: Calendar },
-    PAGA: { label: tr('Paga', 'Paid'), color: 'text-emerald-400 bg-emerald-500/10', icon: CheckCircle2 },
-    ATRASADA: { label: tr('Atrasada', 'Overdue'), color: 'text-rose-400 bg-rose-500/10', icon: AlertTriangle },
+    PAGA: { label: tr('Paga', 'Paid'), color: 'text-success bg-success-muted', icon: CheckCircle2 },
+    ATRASADA: { label: tr('Atrasada', 'Overdue'), color: 'text-danger bg-danger-muted', icon: AlertTriangle },
   };
   const [modalAberto, setModalAberto] = useState(false);
   const [cartaoEditando, setCartaoEditando] = useState<CartaoResponseDTO | null>(null);
@@ -228,7 +228,7 @@ export const CartoesPage = () => {
       <div className="p-3 sm:p-4 lg:p-6 space-y-5 sm:space-y-6 animate-in fade-in duration-500">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-white">{tr('Meus Cartões', 'My Cards')}</h1>
+            <h1 className="text-2xl font-bold text-foreground">{tr('Meus Cartões', 'My Cards')}</h1>
             <p className="text-sm text-muted-foreground mt-1">{tr('Gerencie seus cartões de crédito e acompanhe faturas.', 'Manage your credit cards and track invoices.')}</p>
           </div>
         </div>
@@ -236,15 +236,15 @@ export const CartoesPage = () => {
         <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
           <div className="glass rounded-2xl p-4">
             <p className="text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Limite Total', 'Total Limit')}</p>
-            <p className="text-xl font-bold text-white mt-1">{formatarMoeda(limiteTotal, moeda)}</p>
+            <p className="text-xl font-bold text-foreground mt-1">{formatarMoeda(limiteTotal, moeda)}</p>
           </div>
           <div className="glass rounded-2xl p-4">
             <p className="text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Usado', 'Used')}</p>
-            <p className="text-xl font-bold text-rose-400 mt-1">{formatarMoeda(limiteUsado, moeda)}</p>
+            <p className="text-xl font-bold text-danger mt-1">{formatarMoeda(limiteUsado, moeda)}</p>
           </div>
           <div className="glass rounded-2xl p-4">
             <p className="text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Disponível', 'Available')}</p>
-            <p className="text-xl font-bold text-emerald-400 mt-1">{formatarMoeda(limiteTotal - limiteUsado, moeda)}</p>
+            <p className="text-xl font-bold text-success mt-1">{formatarMoeda(limiteTotal - limiteUsado, moeda)}</p>
           </div>
         </div>
 
@@ -266,7 +266,7 @@ export const CartoesPage = () => {
           <div className="space-y-4">
             {cartoes.map((cartao) => (
               <div key={cartao.id} className="glass rounded-2xl overflow-hidden">
-                <div className="p-4 sm:p-5 flex items-center gap-3 sm:gap-4 cursor-pointer hover:bg-white/5 transition-all" onClick={() => toggleExpand(cartao.id!)}>
+                <div className="p-4 sm:p-5 flex items-center gap-3 sm:gap-4 cursor-pointer hover:bg-foreground/5 transition-all" onClick={() => toggleExpand(cartao.id!)}>
                   <div className="w-14 h-10 flex items-center justify-center flex-shrink-0">
                     {cartao.bandeira && BANDEIRA_IMAGENS[cartao.bandeira] ? (
                       <img
@@ -282,24 +282,24 @@ export const CartoesPage = () => {
                   </div>
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2">
-                      <p className="text-sm font-bold text-white">{cartao.nome}</p>
-                      <span className="text-2xs text-muted-foreground bg-white/5 px-2 py-0.5 rounded-full">
+                      <p className="text-sm font-bold text-foreground">{cartao.nome}</p>
+                      <span className="text-2xs text-muted-foreground bg-foreground/5 px-2 py-0.5 rounded-full">
                         {cartao.bandeira ? BANDEIRA_CARTAO_LABELS[cartao.bandeira] : ''}
                       </span>
                     </div>
                     <div className="flex items-center gap-4 mt-1">
                       <span className="text-xs text-muted-foreground">{tr('Limite', 'Limit')}: {formatarMoeda(cartao.limite ?? 0, moeda)}</span>
-                      <span className="text-xs text-emerald-400">{tr('Disponível', 'Available')}: {formatarMoeda(cartao.limiteDisponivel ?? 0, moeda)}</span>
+                      <span className="text-xs text-success">{tr('Disponível', 'Available')}: {formatarMoeda(cartao.limiteDisponivel ?? 0, moeda)}</span>
                     </div>
                   </div>
                   <div className="flex items-center gap-2 flex-shrink-0">
-                    <div className="w-24 h-1.5 bg-white/10 rounded-full overflow-hidden hidden sm:block">
+                    <div className="w-24 h-1.5 bg-foreground/10 rounded-full overflow-hidden hidden sm:block">
                       <div
                         className="h-full bg-primary rounded-full transition-all"
                         style={{ width: `${Math.min(100, ((cartao.limite ?? 0) - (cartao.limiteDisponivel ?? 0)) / (cartao.limite || 1) * 100)}%` }}
                       />
                     </div>
-                    <button onClick={(e) => { e.stopPropagation(); handleDeletar(cartao.id!, cartao.nome!); }} className="min-h-11 min-w-11 sm:min-h-0 sm:min-w-0 p-2.5 sm:p-1.5 rounded-lg text-muted-foreground hover:text-rose-400 hover:bg-rose-500/10 transition-all flex items-center justify-center">
+                    <button onClick={(e) => { e.stopPropagation(); handleDeletar(cartao.id!, cartao.nome!); }} className="min-h-11 min-w-11 sm:min-h-0 sm:min-w-0 p-2.5 sm:p-1.5 rounded-lg text-muted-foreground hover:text-danger hover:bg-danger-muted transition-all flex items-center justify-center">
                       <Trash2 size={14} />
                     </button>
                     <button onClick={(e) => { e.stopPropagation(); abrirModalEdicao(cartao); }} className="min-h-11 min-w-11 sm:min-h-0 sm:min-w-0 p-2.5 sm:p-1.5 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all flex items-center justify-center" aria-label={tr('Editar cartão', 'Edit card')}>
@@ -310,7 +310,7 @@ export const CartoesPage = () => {
                 </div>
 
                 {cartaoExpandido === cartao.id && (
-                  <div className="border-t border-white/5 px-5 py-4 space-y-3 animate-in fade-in slide-in-from-top-2 duration-200">
+                  <div className="border-t border-foreground/5 px-5 py-4 space-y-3 animate-in fade-in slide-in-from-top-2 duration-200">
                     <div className="flex items-center gap-2 flex-wrap mb-1">
                       <span className="text-2xs font-bold text-muted-foreground uppercase tracking-widest">{tr('Ciclo', 'Cycle')}:</span>
                       {[
@@ -318,9 +318,9 @@ export const CartoesPage = () => {
                         { label: '→', color: 'text-muted-foreground' },
                         { label: tr(`Fecha dia ${cartao.diaFechamento}`, `Closes day ${cartao.diaFechamento}`), color: 'text-amber-400 bg-amber-500/10' },
                         { label: '→', color: 'text-muted-foreground' },
-                        { label: tr(`Vence dia ${cartao.diaVencimento}`, `Due day ${cartao.diaVencimento}`), color: 'text-rose-400 bg-rose-500/10' },
+                        { label: tr(`Vence dia ${cartao.diaVencimento}`, `Due day ${cartao.diaVencimento}`), color: 'text-danger bg-danger-muted' },
                         { label: '→', color: 'text-muted-foreground' },
-                        { label: tr('Paga', 'Paid'), color: 'text-emerald-400 bg-emerald-500/10' },
+                        { label: tr('Paga', 'Paid'), color: 'text-success bg-success-muted' },
                       ].map((step, i) => (
                         step.label === '→'
                           ? <span key={i} className="text-xs text-muted-foreground">{step.label}</span>
@@ -329,7 +329,7 @@ export const CartoesPage = () => {
                     </div>
                     {cartao.nomeConta && (
                       <p className="text-2xs text-muted-foreground">
-                        {tr('Conta vinculada', 'Linked account')}: <span className="text-white font-semibold">{cartao.nomeConta}</span>
+                        {tr('Conta vinculada', 'Linked account')}: <span className="text-foreground font-semibold">{cartao.nomeConta}</span>
                       </p>
                     )}
                     {faturas.length === 0 ? (
@@ -340,10 +340,10 @@ export const CartoesPage = () => {
                           const cfg = statusFaturaConfig[f.status || 'ABERTA'];
                           const Icon = cfg.icon;
                           return (
-                            <div key={f.id} className="flex items-center gap-3 bg-white/5 rounded-xl px-4 py-3">
+                            <div key={f.id} className="flex items-center gap-3 bg-foreground/5 rounded-xl px-4 py-3">
                               <div className={`p-1.5 rounded-lg ${cfg.color}`}><Icon size={14} /></div>
                               <div className="flex-1 min-w-0">
-                                <p className="text-xs font-bold text-white">
+                                <p className="text-xs font-bold text-foreground">
                                   {String(f.mes).padStart(2, '0')}/{f.ano}
                                 </p>
                                 <p className="text-2xs text-muted-foreground">
@@ -351,15 +351,15 @@ export const CartoesPage = () => {
                                 </p>
                               </div>
                               <div className="text-right">
-                                <p className="text-xs font-bold text-white">{formatarMoeda(f.valorTotal ?? 0, moeda)}</p>
+                                <p className="text-xs font-bold text-foreground">{formatarMoeda(f.valorTotal ?? 0, moeda)}</p>
                                 {(f.valorPago ?? 0) > 0 && (
-                                  <p className="text-2xs text-emerald-400">{tr('Pago', 'Paid')}: {formatarMoeda(f.valorPago ?? 0, moeda)}</p>
+                                  <p className="text-2xs text-success">{tr('Pago', 'Paid')}: {formatarMoeda(f.valorPago ?? 0, moeda)}</p>
                                 )}
                               </div>
                               <span className={`text-2xs font-bold px-2 py-0.5 rounded ${cfg.color}`}>{cfg.label}</span>
                               <button
                                 onClick={() => navigate(`/faturas/${cartao.id}?mes=${f.mes}&ano=${f.ano}`)}
-                                className="min-h-11 min-w-11 sm:min-h-0 sm:min-w-0 p-2.5 sm:p-1 rounded-lg text-muted-foreground hover:text-white hover:bg-white/10 transition-all flex items-center justify-center"
+                                className="min-h-11 min-w-11 sm:min-h-0 sm:min-w-0 p-2.5 sm:p-1 rounded-lg text-muted-foreground hover:text-foreground hover:bg-foreground/10 transition-all flex items-center justify-center"
                                 aria-label={tr('Ver detalhes', 'View details')}
                               >
                                 <Eye size={14} />
@@ -390,50 +390,50 @@ export const CartoesPage = () => {
       </div>
 
       {modalAberto && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200" role="dialog" aria-modal="true">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-overlay backdrop-blur-sm animate-in fade-in duration-200" role="dialog" aria-modal="true">
           <div ref={modalNovoRef} className="glass w-full max-w-md rounded-2xl p-6 space-y-5 animate-in zoom-in-95 duration-200">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2"><CreditCard size={18} className="text-primary" /><h3 className="font-bold text-white">{cartaoEditando ? tr('Editar Cartão', 'Edit Card') : tr('Novo Cartão', 'New Card')}</h3></div>
-              <button onClick={fecharModal} className="text-muted-foreground hover:text-white transition-colors"><X size={18} /></button>
+              <div className="flex items-center gap-2"><CreditCard size={18} className="text-primary" /><h3 className="font-bold text-foreground">{cartaoEditando ? tr('Editar Cartão', 'Edit Card') : tr('Novo Cartão', 'New Card')}</h3></div>
+              <button onClick={fecharModal} className="text-muted-foreground hover:text-foreground transition-colors"><X size={18} /></button>
             </div>
             <div className="space-y-4">
               <div className="space-y-1.5">
                 <label className="block text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Nome', 'Name')}</label>
-                <input type="text" value={nome} onChange={(e) => setNome(e.target.value)} placeholder={tr('Ex: Nubank, Inter...', 'Ex: Chase, Capital One...')} maxLength={50} autoFocus className="w-full bg-secondary/30 border border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium placeholder:text-muted-foreground/30" />
+                <input type="text" value={nome} onChange={(e) => setNome(e.target.value)} placeholder={tr('Ex: Nubank, Inter...', 'Ex: Chase, Capital One...')} maxLength={50} autoFocus className="w-full bg-secondary/30 border border-foreground/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium placeholder:text-muted-foreground/30" />
               </div>
               <div className="space-y-1.5">
                 <label className="block text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Bandeira', 'Brand')}</label>
-                <select value={bandeira} onChange={(e) => setBandeira(e.target.value as CartaoRegistroRequestDTO.bandeira)} className="w-full bg-secondary/30 border border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium appearance-none">
+                <select value={bandeira} onChange={(e) => setBandeira(e.target.value as CartaoRegistroRequestDTO.bandeira)} className="w-full bg-secondary/30 border border-foreground/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium appearance-none">
                   {Object.entries(BANDEIRA_CARTAO_LABELS).map(([val, label]) => (
-                    <option key={val} value={val} className="bg-card text-white">{label}</option>
+                    <option key={val} value={val} className="bg-card text-foreground">{label}</option>
                   ))}
                 </select>
               </div>
               <div className="space-y-1.5">
                 <label className="block text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Limite', 'Limit')}</label>
-                <input type="number" step="0.01" value={limite} onChange={(e) => setLimite(e.target.value)} placeholder="5000,00" className="w-full bg-secondary/30 border border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium placeholder:text-muted-foreground/30" />
+                <input type="number" step="0.01" value={limite} onChange={(e) => setLimite(e.target.value)} placeholder="5000,00" className="w-full bg-secondary/30 border border-foreground/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium placeholder:text-muted-foreground/30" />
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-1.5">
                   <label className="block text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Dia Fechamento', 'Closing Day')}</label>
-                  <input type="number" min={1} max={31} value={diaFechamento} onChange={(e) => setDiaFechamento(e.target.value)} placeholder="25" className="w-full bg-secondary/30 border border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium placeholder:text-muted-foreground/30" />
+                  <input type="number" min={1} max={31} value={diaFechamento} onChange={(e) => setDiaFechamento(e.target.value)} placeholder="25" className="w-full bg-secondary/30 border border-foreground/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium placeholder:text-muted-foreground/30" />
                 </div>
                 <div className="space-y-1.5">
                   <label className="block text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Dia Vencimento', 'Due Day')}</label>
-                  <input type="number" min={1} max={31} value={diaVencimento} onChange={(e) => setDiaVencimento(e.target.value)} placeholder="5" className="w-full bg-secondary/30 border border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium placeholder:text-muted-foreground/30" />
+                  <input type="number" min={1} max={31} value={diaVencimento} onChange={(e) => setDiaVencimento(e.target.value)} placeholder="5" className="w-full bg-secondary/30 border border-foreground/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium placeholder:text-muted-foreground/30" />
                 </div>
               </div>
               <div className="space-y-1.5">
                 <label className="block text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Conta Vinculada', 'Linked Account')} <span className="normal-case text-muted-foreground/60 font-normal">{tr('(opcional — pré-selecionada ao pagar fatura)', '(optional - preselected when paying invoice)')}</span></label>
-                <select value={contaVinculadaId} onChange={(e) => setContaVinculadaId(e.target.value)} className="w-full bg-secondary/30 border border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium appearance-none">
-                  <option value="" className="bg-card text-white">{tr('Nenhuma', 'None')}</option>
+                <select value={contaVinculadaId} onChange={(e) => setContaVinculadaId(e.target.value)} className="w-full bg-secondary/30 border border-foreground/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium appearance-none">
+                  <option value="" className="bg-card text-foreground">{tr('Nenhuma', 'None')}</option>
                   {contas.map((c) => (
-                    <option key={c.id} value={c.id} className="bg-card text-white">{c.nome}</option>
+                    <option key={c.id} value={c.id} className="bg-card text-foreground">{c.nome}</option>
                   ))}
                 </select>
               </div>
             </div>
-            <button onClick={handleSalvarCartao} disabled={!nome.trim() || !limite || !diaFechamento || !diaVencimento || criarMutation.isPending || editarMutation.isPending} className="w-full bg-primary hover:bg-primary/90 text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-primary/20 active:scale-[0.98] text-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+            <button onClick={handleSalvarCartao} disabled={!nome.trim() || !limite || !diaFechamento || !diaVencimento || criarMutation.isPending || editarMutation.isPending} className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold py-3 rounded-xl transition-all shadow-lg shadow-primary/20 active:scale-[0.98] text-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
               {(criarMutation.isPending || editarMutation.isPending)
                 ? <><Loader2 size={16} className="animate-spin" /> {tr('Salvando...', 'Saving...')}</>
                 : cartaoEditando
@@ -446,32 +446,32 @@ export const CartoesPage = () => {
       )}
 
       {modalPagar && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200" role="dialog" aria-modal="true">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-overlay backdrop-blur-sm animate-in fade-in duration-200" role="dialog" aria-modal="true">
           <div ref={modalPagarRef} className="glass w-full max-w-sm rounded-2xl p-6 space-y-5 animate-in zoom-in-95 duration-200">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2"><DollarSign size={18} className="text-emerald-400" /><h3 className="font-bold text-white">{tr('Pagar Fatura', 'Pay Invoice')}</h3></div>
-              <button onClick={() => { setModalPagar(null); setValorPagamento(''); setContaPagamentoId(''); }} className="text-muted-foreground hover:text-white transition-colors"><X size={18} /></button>
+              <div className="flex items-center gap-2"><DollarSign size={18} className="text-success" /><h3 className="font-bold text-foreground">{tr('Pagar Fatura', 'Pay Invoice')}</h3></div>
+              <button onClick={() => { setModalPagar(null); setValorPagamento(''); setContaPagamentoId(''); }} className="text-muted-foreground hover:text-foreground transition-colors"><X size={18} /></button>
             </div>
-            <div className="bg-white/5 rounded-xl p-3">
+            <div className="bg-foreground/5 rounded-xl p-3">
               <p className="text-xs text-muted-foreground">{tr('Fatura', 'Invoice')} {String(modalPagar.mes).padStart(2, '0')}/{modalPagar.ano}</p>
-              <p className="text-lg font-bold text-white mt-1">{tr('Restante', 'Remaining')}: {formatarMoeda(modalPagar.valorRestante ?? 0, moeda)}</p>
+              <p className="text-lg font-bold text-foreground mt-1">{tr('Restante', 'Remaining')}: {formatarMoeda(modalPagar.valorRestante ?? 0, moeda)}</p>
             </div>
             <div className="space-y-4">
               <div className="space-y-1.5">
                 <label className="block text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Conta de Débito', 'Debit Account')}</label>
-                <select value={contaPagamentoId} onChange={(e) => setContaPagamentoId(e.target.value)} className="w-full bg-secondary/30 border border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium appearance-none">
-                  <option value="" className="bg-card text-white">{tr('Selecione...', 'Select...')}</option>
+                <select value={contaPagamentoId} onChange={(e) => setContaPagamentoId(e.target.value)} className="w-full bg-secondary/30 border border-foreground/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium appearance-none">
+                  <option value="" className="bg-card text-foreground">{tr('Selecione...', 'Select...')}</option>
                   {contas.map((c) => (
-                    <option key={c.id} value={c.id} className="bg-card text-white">{c.nome} — {formatarMoeda(c.saldo ?? 0, moeda)}</option>
+                    <option key={c.id} value={c.id} className="bg-card text-foreground">{c.nome} — {formatarMoeda(c.saldo ?? 0, moeda)}</option>
                   ))}
                 </select>
               </div>
               <div className="space-y-1.5">
                 <label className="block text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Valor', 'Amount')}</label>
-                <input type="number" step="0.01" value={valorPagamento} onChange={(e) => setValorPagamento(e.target.value)} className="w-full bg-secondary/30 border border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium placeholder:text-muted-foreground/30" />
+                <input type="number" step="0.01" value={valorPagamento} onChange={(e) => setValorPagamento(e.target.value)} className="w-full bg-secondary/30 border border-foreground/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium placeholder:text-muted-foreground/30" />
               </div>
             </div>
-            <button onClick={() => pagarMutation.mutate()} disabled={!contaPagamentoId || !valorPagamento || Number(valorPagamento) <= 0 || pagarMutation.isPending} className="w-full bg-emerald-500 hover:bg-emerald-500/90 text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-emerald-500/20 active:scale-[0.98] text-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
+            <button onClick={() => pagarMutation.mutate()} disabled={!contaPagamentoId || !valorPagamento || Number(valorPagamento) <= 0 || pagarMutation.isPending} className="w-full bg-success hover:bg-success/90 text-primary-foreground font-bold py-3 rounded-xl transition-all shadow-lg shadow-success/20 active:scale-[0.98] text-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2">
               {pagarMutation.isPending ? <><Loader2 size={16} className="animate-spin" /> {tr('Pagando...', 'Paying...')}</> : <><DollarSign size={16} /> {tr('Confirmar Pagamento', 'Confirm Payment')}</>}
             </button>
           </div>
@@ -482,7 +482,7 @@ export const CartoesPage = () => {
         title={tr('Remover Cartão?', 'Remove Card?')}
         description={
           <>
-            {tr('Você está prestes a remover', 'You are about to remove')} <span className="text-white font-semibold">"{cartaoParaDeletar?.nome}"</span>.
+            {tr('Você está prestes a remover', 'You are about to remove')} <span className="text-foreground font-semibold">"{cartaoParaDeletar?.nome}"</span>.
             <br />
             {tr('Se não houver faturas pendentes, as faturas já pagas e os lançamentos vinculados serão desativados em cascata.', 'If there are no pending invoices, paid invoices and linked entries will be deactivated in cascade.')}
           </>

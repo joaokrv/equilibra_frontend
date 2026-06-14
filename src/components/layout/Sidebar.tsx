@@ -87,7 +87,7 @@ const SidebarItem = ({ icon: Icon, label, to, isOpen, onClick }: SidebarItemProp
     onClick={onClick}
     className={({ isActive }) => `
       flex items-center p-3 rounded-lg cursor-pointer transition-all duration-200
-      ${isActive ? 'bg-primary text-white shadow-lg shadow-primary/20' : 'text-muted-foreground hover:bg-white/5 hover:text-white'}
+      ${isActive ? 'bg-primary text-primary-foreground shadow-lg shadow-primary/20' : 'text-muted-foreground hover:bg-foreground/5 hover:text-foreground'}
       ${isOpen ? 'justify-start gap-4 px-4' : 'justify-center'}
     `}
   >
@@ -144,7 +144,7 @@ const SidebarGroup = ({ entry, language, sidebarOpen, onExpandSidebar, onItemCli
         aria-expanded={open}
         className={`
           w-full flex items-center p-3 rounded-lg cursor-pointer transition-all duration-200
-          ${hasActiveChild ? 'text-primary' : 'text-muted-foreground hover:bg-white/5 hover:text-white'}
+          ${hasActiveChild ? 'text-primary' : 'text-muted-foreground hover:bg-foreground/5 hover:text-foreground'}
           ${sidebarOpen ? 'justify-start gap-4 px-4' : 'justify-center'}
         `}
       >
@@ -163,7 +163,7 @@ const SidebarGroup = ({ entry, language, sidebarOpen, onExpandSidebar, onItemCli
       </button>
 
       {sidebarOpen && open && (
-        <div className="ml-4 mt-1 space-y-1 border-l border-white/5 pl-3">
+        <div className="ml-4 mt-1 space-y-1 border-l border-foreground/5 pl-3">
           {entry.children.map((child) => (
             <NavLink
               key={child.to}
@@ -171,7 +171,7 @@ const SidebarGroup = ({ entry, language, sidebarOpen, onExpandSidebar, onItemCli
               onClick={onItemClick}
               className={({ isActive }) => `
                 flex items-center gap-2 px-3 py-2 rounded-lg text-sm transition-all duration-200 min-h-11
-                ${isActive ? 'bg-primary/10 text-primary font-semibold' : 'text-muted-foreground hover:bg-white/5 hover:text-white'}
+                ${isActive ? 'bg-primary/10 text-primary font-semibold' : 'text-muted-foreground hover:bg-foreground/5 hover:text-foreground'}
               `}
             >
               {t(language as Parameters<typeof t>[0], child.key)}
@@ -252,19 +252,19 @@ export const Sidebar = ({ mobileOpen, onMobileClose }: SidebarProps) => {
   return (
     <>
       <aside className={`
-        hidden md:flex h-screen bg-card border-r border-white/5 transition-all duration-300 flex-col pt-6
+        hidden md:flex h-screen bg-card border-r border-foreground/5 transition-all duration-300 flex-col pt-6
         ${isOpen ? 'w-64' : 'w-20'}
       `}>
         <div className={`flex items-center px-4 mb-10 ${isOpen ? 'justify-between' : 'justify-center'}`}>
           {isOpen && (
             <NavLink to="/dashboard" className="flex items-center gap-2">
-              <img src={logo} alt="Equilibra" className="w-12 h-12 drop-shadow-[0_0_8px_rgba(124,58,237,0.4)]" />
+              <img src={logo} alt="Equilibra" className="brand-logo w-12 h-12" />
               <span className="text-2xl font-bold tracking-tight text-gradient">Equilibra</span>
             </NavLink>
           )}
           <button
             onClick={toggleSidebar}
-            className="p-2 hover:bg-white/5 rounded-lg text-muted-foreground hover:text-white transition-colors inline-flex items-center justify-center min-h-11 min-w-11"
+            className="p-2 hover:bg-foreground/5 rounded-lg text-muted-foreground hover:text-foreground transition-colors inline-flex items-center justify-center min-h-11 min-w-11"
             aria-label={isOpen ? t(language, 'collapseMenu') : t(language, 'expandMenu')}
           >
             <Menu size={20} />
@@ -275,7 +275,7 @@ export const Sidebar = ({ mobileOpen, onMobileClose }: SidebarProps) => {
           {visibleEntries.map((entry) => renderEntry(entry, { sidebarOpen: isOpen }))}
         </nav>
 
-        <div className="shrink-0 border-t border-white/5 px-3 py-3 space-y-1">
+        <div className="shrink-0 border-t border-foreground/5 px-3 py-3 space-y-1">
           <div className={`flex items-center min-h-11 px-4 ${isOpen ? 'justify-start' : 'justify-center'}`}>
             <ServerStatusBadge showLabel={isOpen} align="left" />
           </div>
@@ -298,22 +298,22 @@ export const Sidebar = ({ mobileOpen, onMobileClose }: SidebarProps) => {
       <div className={`md:hidden fixed inset-0 z-[90] ${mobileOpen ? 'pointer-events-auto' : 'pointer-events-none'}`}>
         <button
           onClick={closeMobileSidebar}
-          className={`absolute inset-0 bg-black/60 backdrop-blur-[1px] transition-opacity ${mobileOpen ? 'opacity-100' : 'opacity-0'}`}
+          className={`absolute inset-0 bg-overlay backdrop-blur-[1px] transition-opacity ${mobileOpen ? 'opacity-100' : 'opacity-0'}`}
           aria-label={t(language, 'collapseMenu')}
         />
 
         <aside className={`
-          absolute left-0 top-0 h-dvh w-[82%] max-w-[320px] bg-card border-r border-white/10 flex flex-col pt-5 pb-safe
+          absolute left-0 top-0 h-dvh w-[82%] max-w-[320px] bg-card border-r border-foreground/10 flex flex-col pt-5 pb-safe
           transition-transform duration-300 ${mobileOpen ? 'translate-x-0' : '-translate-x-full'}
         `}>
           <div className="flex items-center justify-between px-4 mb-6">
             <NavLink to="/dashboard" className="flex items-center gap-2" onClick={closeMobileSidebar}>
-              <img src={logo} alt="Equilibra" className="w-10 h-10 drop-shadow-[0_0_8px_rgba(124,58,237,0.4)]" />
+              <img src={logo} alt="Equilibra" className="brand-logo w-10 h-10" />
               <span className="text-xl font-bold tracking-tight text-gradient">Equilibra</span>
             </NavLink>
             <button
               onClick={closeMobileSidebar}
-              className="p-2 hover:bg-white/5 rounded-lg text-muted-foreground hover:text-white transition-colors inline-flex items-center justify-center min-h-11 min-w-11"
+              className="p-2 hover:bg-foreground/5 rounded-lg text-muted-foreground hover:text-foreground transition-colors inline-flex items-center justify-center min-h-11 min-w-11"
               aria-label={t(language, 'collapseMenu')}
             >
               <X size={18} />
@@ -324,7 +324,7 @@ export const Sidebar = ({ mobileOpen, onMobileClose }: SidebarProps) => {
             {visibleEntries.map((entry) => renderEntry(entry, { sidebarOpen: true, onItemClick: closeMobileSidebar }))}
           </nav>
 
-          <div className="shrink-0 border-t border-white/5 px-3 py-3 space-y-1">
+          <div className="shrink-0 border-t border-foreground/5 px-3 py-3 space-y-1">
             <div className="flex items-center min-h-11 px-4">
               <ServerStatusBadge showLabel={true} align="left" />
             </div>

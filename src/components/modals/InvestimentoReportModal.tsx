@@ -103,7 +103,7 @@ export const InvestimentoReportModal = ({
 
   return (
     <div className="fixed inset-0 z-[100] flex items-start sm:items-center justify-center p-2 sm:p-4 animate-in fade-in duration-300">
-      <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" onClick={onClose} />
+      <div className="absolute inset-0 bg-overlay backdrop-blur-sm" onClick={onClose} />
 
       <div
         ref={dialogRef}
@@ -115,7 +115,7 @@ export const InvestimentoReportModal = ({
               <FileDown size={20} />
             </div>
             <div>
-              <h3 className="text-lg sm:text-xl font-bold text-white leading-tight">
+              <h3 className="text-lg sm:text-xl font-bold text-foreground leading-tight">
                 {tr('Exportar Relatório', 'Export Report')}
               </h3>
               <p className="text-2xs uppercase font-bold text-muted-foreground tracking-widest">
@@ -125,7 +125,7 @@ export const InvestimentoReportModal = ({
           </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-white/5 rounded-full text-muted-foreground hover:text-white transition-all"
+            className="p-2 hover:bg-foreground/5 rounded-full text-muted-foreground hover:text-foreground transition-all"
           >
             <X size={20} />
           </button>
@@ -163,23 +163,23 @@ export const InvestimentoReportModal = ({
             </button>
           </div>
 
-          <div className="bg-white/5 rounded-xl p-4 space-y-2">
+          <div className="bg-foreground/5 rounded-xl p-4 space-y-2">
             <p className="text-2xs font-bold text-muted-foreground uppercase tracking-widest">
               {tr('Período do relatório', 'Report period')}
             </p>
-            <p className="text-sm text-white font-semibold">
+            <p className="text-sm text-foreground font-semibold">
               {new Date(dataInicio + 'T00:00:00').toLocaleDateString(language, { day: '2-digit', month: 'long', year: 'numeric' })}
               {' → '}
               {new Date(dataFim + 'T00:00:00').toLocaleDateString(language, { day: '2-digit', month: 'long', year: 'numeric' })}
             </p>
-            <div className="flex gap-4 mt-2 pt-2 border-t border-white/5">
+            <div className="flex gap-4 mt-2 pt-2 border-t border-foreground/5">
               <div>
                 <p className="text-2xs text-muted-foreground">{tr('Registros', 'Records')}</p>
-                <p className="text-sm font-bold text-white">{totalItens}</p>
+                <p className="text-sm font-bold text-foreground">{totalItens}</p>
               </div>
               <div>
                 <p className="text-2xs text-muted-foreground">{tr('Saldo líquido', 'Net balance')}</p>
-                <p className={`text-sm font-bold ${totalCSV >= 0 ? 'text-emerald-400' : 'text-rose-400'}`}>
+                <p className={`text-sm font-bold ${totalCSV >= 0 ? 'text-success' : 'text-danger'}`}>
                   {formatarMoeda(Math.abs(totalCSV), moeda)}
                 </p>
               </div>

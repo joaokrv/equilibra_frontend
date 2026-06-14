@@ -322,7 +322,7 @@ export const TransactionModal = ({
 
   return (
     <div className="fixed inset-0 z-[100] flex items-start justify-center p-2 sm:items-center sm:p-4 animate-in fade-in duration-300">
-      <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" onClick={onClose} />
+      <div className="absolute inset-0 bg-overlay backdrop-blur-sm" onClick={onClose} />
 
       <div ref={dialogRef} className="glass relative z-10 w-full max-w-xl max-h-[94dvh] overflow-y-auto rounded-2xl p-4 sm:rounded-3xl sm:p-8 animate-in zoom-in-95 duration-300">
         <div className="mb-6 flex items-start justify-between gap-3 sm:mb-8 sm:items-center">
@@ -331,7 +331,7 @@ export const TransactionModal = ({
               {isInvestmentSection ? <Target size={20} /> : <ReceiptText size={20} />}
             </div>
             <div>
-              <h3 className="text-lg font-bold leading-tight text-white sm:text-xl">
+              <h3 className="text-lg font-bold leading-tight text-foreground sm:text-xl">
                 {headerTitle}
               </h3>
               <p className="text-2xs font-bold uppercase tracking-widest text-muted-foreground">
@@ -341,7 +341,7 @@ export const TransactionModal = ({
           </div>
           <button
             onClick={onClose}
-            className="rounded-full p-2 text-muted-foreground transition-all hover:bg-white/5 hover:text-white"
+            className="rounded-full p-2 text-muted-foreground transition-all hover:bg-foreground/5 hover:text-foreground"
             aria-label={tr(language, 'Fechar modal', 'Close modal')}
           >
             <X size={20} />
@@ -355,8 +355,8 @@ export const TransactionModal = ({
               onClick={() => setActiveSection('receita')}
               className={`rounded-xl border px-4 py-3 text-xs font-bold uppercase tracking-widest transition-all ${
                 activeSection === 'receita'
-                  ? 'border-emerald-500 bg-emerald-500/10 text-emerald-500 shadow-lg shadow-emerald-500/10'
-                  : 'border-transparent bg-secondary/20 text-muted-foreground hover:text-white'
+                  ? 'border-success bg-success-muted text-success shadow-lg shadow-success/10'
+                  : 'border-transparent bg-secondary/20 text-muted-foreground hover:text-foreground'
               }`}
             >
               {tr(language, 'Receita', 'Income')}
@@ -366,8 +366,8 @@ export const TransactionModal = ({
               onClick={() => setActiveSection('despesa')}
               className={`rounded-xl border px-4 py-3 text-xs font-bold uppercase tracking-widest transition-all ${
                 activeSection === 'despesa'
-                  ? 'border-rose-500 bg-rose-500/10 text-rose-500 shadow-lg shadow-rose-500/10'
-                  : 'border-transparent bg-secondary/20 text-muted-foreground hover:text-white'
+                  ? 'border-danger bg-danger-muted text-danger shadow-lg shadow-danger/10'
+                  : 'border-transparent bg-secondary/20 text-muted-foreground hover:text-foreground'
               }`}
             >
               {tr(language, 'Despesa', 'Expense')}
@@ -378,7 +378,7 @@ export const TransactionModal = ({
               className={`rounded-xl border px-4 py-3 text-xs font-bold uppercase tracking-widest transition-all ${
                 activeSection === 'investimento'
                   ? 'border-sky-500 bg-sky-500/10 text-sky-400 shadow-lg shadow-sky-500/10'
-                  : 'border-transparent bg-secondary/20 text-muted-foreground hover:text-white'
+                  : 'border-transparent bg-secondary/20 text-muted-foreground hover:text-foreground'
               }`}
             >
               {tr(language, 'Investimento', 'Investment')}

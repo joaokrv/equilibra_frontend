@@ -24,8 +24,8 @@ export const Input = React.forwardRef<HTMLInputElement, InputProps>(
           aria-invalid={error ? true : undefined}
           aria-describedby={errorId}
           className={`
-            w-full bg-secondary/30 border ${error ? 'border-destructive/50' : 'border-white/5'} 
-            rounded-xl px-4 py-3.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 
+            w-full bg-secondary/30 border ${error ? 'border-destructive/50' : 'border-foreground/5'}
+            rounded-xl px-4 py-3.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40
             focus:bg-secondary/60 transition-all font-medium placeholder:text-muted-foreground/30
             ${className}
           `}
@@ -66,15 +66,15 @@ export const Select = React.forwardRef<HTMLSelectElement, SelectProps>(
           aria-invalid={error ? true : undefined}
           aria-describedby={errorId}
           className={`
-            w-full bg-secondary/30 border ${error ? 'border-destructive/50' : 'border-white/5'} 
-            rounded-xl px-4 py-3.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 
+            w-full bg-secondary/30 border ${error ? 'border-destructive/50' : 'border-foreground/5'}
+            rounded-xl px-4 py-3.5 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40
             focus:bg-secondary/60 transition-all font-medium appearance-none
             ${className}
           `}
           {...props}
         >
           {options.map((opt) => (
-            <option key={opt.value} value={opt.value} className="bg-card text-white">
+            <option key={opt.value} value={opt.value} className="bg-card text-foreground">
               {opt.label}
             </option>
           ))}

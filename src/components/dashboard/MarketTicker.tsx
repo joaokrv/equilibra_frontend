@@ -19,11 +19,11 @@ export const MarketTicker: React.FC = () => {
 
   if (isLoading) {
     return (
-      <div className="w-full bg-slate-900/50 backdrop-blur-md border-b border-white/5 h-10 flex items-center px-4 overflow-hidden">
+      <div className="w-full bg-card/50 backdrop-blur-md border-b border-foreground/5 h-10 flex items-center px-4 overflow-hidden">
         <div className="flex gap-8 animate-pulse">
-          <div className="h-4 w-24 bg-white/10 rounded" />
-          <div className="h-4 w-24 bg-white/10 rounded" />
-          <div className="h-4 w-24 bg-white/10 rounded" />
+          <div className="h-4 w-24 bg-foreground/10 rounded" />
+          <div className="h-4 w-24 bg-foreground/10 rounded" />
+          <div className="h-4 w-24 bg-foreground/10 rounded" />
         </div>
       </div>
     );
@@ -51,7 +51,7 @@ export const MarketTicker: React.FC = () => {
       change: `${pos ? '+' : ''}${Number(ibov.variacao).toFixed(2)}%`,
       changePositive: pos,
       icon: pos ? <TrendingUp size={14} /> : <TrendingDown size={14} />,
-      iconBg: pos ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400',
+      iconBg: pos ? 'bg-success-muted text-success' : 'bg-danger-muted text-danger',
       href: 'https://finance.yahoo.com/quote/%5EBVSP/',
     });
   }
@@ -64,7 +64,7 @@ export const MarketTicker: React.FC = () => {
       change: `${pos ? '+' : ''}${Number(ifix.variacao).toFixed(2)}%`,
       changePositive: pos,
       icon: pos ? <TrendingUp size={14} /> : <TrendingDown size={14} />,
-      iconBg: pos ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400',
+      iconBg: pos ? 'bg-success-muted text-success' : 'bg-danger-muted text-danger',
       href: 'https://www.b3.com.br/pt_br/market-data-e-indices/indices/indices-de-segmentos-e-setoriais/ifix.htm',
     });
   }
@@ -100,7 +100,7 @@ export const MarketTicker: React.FC = () => {
       change: `${pos ? '+' : ''}${juroReal.toFixed(2)}%`,
       changePositive: pos,
       icon: pos ? <TrendingUp size={14} /> : <TrendingDown size={14} />,
-      iconBg: pos ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400',
+      iconBg: pos ? 'bg-success-muted text-success' : 'bg-danger-muted text-danger',
       href: 'https://www.bcb.gov.br/controleinflacao/taxaselic',
     });
   }
@@ -113,7 +113,7 @@ export const MarketTicker: React.FC = () => {
       change: nasdaq.variacao != null ? `${pos ? '+' : ''}${Number(nasdaq.variacao).toFixed(2)}%` : undefined,
       changePositive: pos,
       icon: pos ? <TrendingUp size={14} /> : <TrendingDown size={14} />,
-      iconBg: pos ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400',
+      iconBg: pos ? 'bg-success-muted text-success' : 'bg-danger-muted text-danger',
       href: 'https://finance.yahoo.com/quote/%5EIXIC/',
     });
   }
@@ -126,7 +126,7 @@ export const MarketTicker: React.FC = () => {
       change: dowjones.variacao != null ? `${pos ? '+' : ''}${Number(dowjones.variacao).toFixed(2)}%` : undefined,
       changePositive: pos,
       icon: pos ? <TrendingUp size={14} /> : <TrendingDown size={14} />,
-      iconBg: pos ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400',
+      iconBg: pos ? 'bg-success-muted text-success' : 'bg-danger-muted text-danger',
       href: 'https://finance.yahoo.com/quote/%5EDJI/',
     });
   }
@@ -136,7 +136,7 @@ export const MarketTicker: React.FC = () => {
     items.push({
       key: 'usd', label: 'USD', value: `R$ ${parseFloat(exchange.bid).toFixed(2)}`,
       change: `${pos ? '+' : ''}${exchange.pctChange}%`, changePositive: pos,
-      icon: <DollarSign size={14} />, iconBg: 'bg-emerald-500/10 text-emerald-400',
+      icon: <DollarSign size={14} />, iconBg: 'bg-success-muted text-success',
       href: 'https://finance.yahoo.com/quote/USDBRL%3DX/',
     });
   }
@@ -170,7 +170,7 @@ export const MarketTicker: React.FC = () => {
       change: `${pos ? '+' : ''}${stock.regularMarketChangePercent.toFixed(2)}%`,
       changePositive: pos,
       icon: pos ? <TrendingUp size={14} /> : <TrendingDown size={14} />,
-      iconBg: pos ? 'bg-emerald-500/10 text-emerald-400' : 'bg-rose-500/10 text-rose-400',
+      iconBg: pos ? 'bg-success-muted text-success' : 'bg-danger-muted text-danger',
       href: `https://finance.yahoo.com/quote/${stock.symbol}.SA/`,
     });
   });
@@ -183,13 +183,13 @@ export const MarketTicker: React.FC = () => {
       href={item.href}
       target="_blank"
       rel="noopener noreferrer"
-      className="flex items-center gap-2 pr-6 mr-1 group cursor-pointer hover:bg-white/5 px-2 py-1 rounded transition-all flex-shrink-0"
+      className="flex items-center gap-2 pr-6 mr-1 group cursor-pointer hover:bg-foreground/5 px-2 py-1 rounded transition-all flex-shrink-0"
     >
       <div className={`p-1 rounded ${item.iconBg} group-hover:brightness-125 transition-all`}>{item.icon}</div>
-      <span className="text-xs font-semibold text-white/50 uppercase tracking-wider">{item.label}</span>
-      <span className="text-sm font-bold text-white">{item.value}</span>
+      <span className="text-xs font-semibold text-foreground/50 uppercase tracking-wider">{item.label}</span>
+      <span className="text-sm font-bold text-foreground">{item.value}</span>
       {item.change && (
-        <span className={`text-2xs font-bold ${item.changePositive ? 'text-emerald-400' : 'text-rose-400'}`}>
+        <span className={`text-2xs font-bold ${item.changePositive ? 'text-success' : 'text-danger'}`}>
           {item.change}
         </span>
       )}
@@ -198,7 +198,7 @@ export const MarketTicker: React.FC = () => {
   const duration = Math.max(30, items.length * 4);
 
   return (
-    <div className="w-full bg-slate-900/80 backdrop-blur-xl border-b border-white/10 h-11 flex items-center overflow-hidden relative z-40 group/ticker">
+    <div className="w-full bg-card/80 backdrop-blur-xl border-b border-foreground/10 h-11 flex items-center overflow-hidden relative z-40 group/ticker">
       <div
         className="flex items-center whitespace-nowrap ticker-scroll"
         style={{ '--ticker-duration': `${duration}s` } as React.CSSProperties}

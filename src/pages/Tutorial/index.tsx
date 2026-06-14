@@ -151,10 +151,10 @@ export const TutorialPage = () => {
   return (
     <MainLayout>
       <div className="p-3 sm:p-4 lg:p-6 space-y-6 animate-in fade-in duration-500">
-        <header className="glass rounded-2xl p-4 sm:p-6 border border-white/10">
+        <header className="glass rounded-2xl p-4 sm:p-6 border border-foreground/10">
           <div className="flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
             <div>
-              <h1 className="text-2xl sm:text-3xl font-black text-white tracking-tight">
+              <h1 className="text-2xl sm:text-3xl font-black text-foreground tracking-tight">
                 {tr('Primeiros Passos no Equilibra', 'Getting Started in Equilibra')}
               </h1>
               <p className="text-sm text-muted-foreground mt-2 max-w-3xl">
@@ -164,7 +164,7 @@ export const TutorialPage = () => {
             <div className="glass rounded-xl p-4 border border-primary/20 min-w-[200px]">
               <p className="text-2xs uppercase tracking-[0.2em] font-bold text-muted-foreground">{tr('Progresso', 'Progress')}</p>
               <p className="text-2xl font-black text-primary mt-1">{progresso}%</p>
-              <div className="w-full h-2 bg-white/10 rounded-full mt-2 overflow-hidden">
+              <div className="w-full h-2 bg-foreground/10 rounded-full mt-2 overflow-hidden">
                 <div className="h-full bg-primary rounded-full transition-all" style={{ width: `${progresso}%` }} />
               </div>
             </div>
@@ -173,25 +173,25 @@ export const TutorialPage = () => {
 
         <section className="grid grid-cols-1 xl:grid-cols-2 gap-4">
           {steps.map((step) => (
-            <div key={step.id} className="glass rounded-2xl p-4 border border-white/10">
+            <div key={step.id} className="glass rounded-2xl p-4 border border-foreground/10">
               <div className="flex items-start gap-3">
                 <div className="pt-0.5">
                   {step.completed ? (
-                    <CheckCircle2 size={20} className="text-emerald-400" />
+                    <CheckCircle2 size={20} className="text-success" />
                   ) : (
                     <Circle size={20} className="text-muted-foreground" />
                   )}
                 </div>
                 <div className="flex-1 min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
-                    <h3 className="text-sm sm:text-base font-bold text-white">{step.title}</h3>
+                    <h3 className="text-sm sm:text-base font-bold text-foreground">{step.title}</h3>
                     {step.optional && (
-                      <span className="text-2xs uppercase tracking-wide font-bold px-2 py-0.5 rounded bg-white/10 text-muted-foreground">
+                      <span className="text-2xs uppercase tracking-wide font-bold px-2 py-0.5 rounded bg-foreground/10 text-muted-foreground">
                         {tr('Opcional', 'Optional')}
                       </span>
                     )}
                     {step.completed && (
-                      <span className="text-2xs uppercase tracking-wide font-bold px-2 py-0.5 rounded bg-emerald-500/15 text-emerald-400">
+                      <span className="text-2xs uppercase tracking-wide font-bold px-2 py-0.5 rounded bg-success-muted text-success">
                         {tr('Concluído', 'Done')}
                       </span>
                     )}
@@ -210,39 +210,39 @@ export const TutorialPage = () => {
         </section>
 
         <section className="grid grid-cols-1 lg:grid-cols-3 gap-4">
-          <div className="glass rounded-2xl p-4 border border-white/10">
+          <div className="glass rounded-2xl p-4 border border-foreground/10">
             <div className="flex items-center gap-2 text-primary">
               <Wallet size={18} />
-              <h3 className="font-bold text-white text-sm">{tr('Como definir saldo inicial', 'How to set initial balance')}</h3>
+              <h3 className="font-bold text-foreground text-sm">{tr('Como definir saldo inicial', 'How to set initial balance')}</h3>
             </div>
             <p className="text-xs sm:text-sm text-muted-foreground mt-3 leading-relaxed">
               {tr('Informe o saldo real de cada conta no momento do cadastro. Inclua apenas dinheiro disponível (conta corrente, poupança, carteira), sem somar limite de cartão.', 'Enter each account real current balance at registration time. Include only available money (checking, savings, wallet), without adding card limit.')}
             </p>
           </div>
 
-          <div className="glass rounded-2xl p-4 border border-white/10">
+          <div className="glass rounded-2xl p-4 border border-foreground/10">
             <div className="flex items-center gap-2 text-primary">
               <Target size={18} />
-              <h3 className="font-bold text-white text-sm">{tr('Investimento e meta na prática', 'Investments and goals in practice')}</h3>
+              <h3 className="font-bold text-foreground text-sm">{tr('Investimento e meta na prática', 'Investments and goals in practice')}</h3>
             </div>
             <p className="text-xs sm:text-sm text-muted-foreground mt-3 leading-relaxed">
               {tr('Crie um investimento, escolha a conta de origem e defina uma meta. Aportes aumentam o valor investido; resgates reduzem. O progresso da meta aparece automaticamente.', 'Create an investment, choose the source account and set a goal. Deposits increase invested value; withdrawals reduce it. Goal progress is shown automatically.')}
             </p>
           </div>
 
-          <div className="glass rounded-2xl p-4 border border-white/10">
+          <div className="glass rounded-2xl p-4 border border-foreground/10">
             <div className="flex items-center gap-2 text-primary">
               <Compass size={18} />
-              <h3 className="font-bold text-white text-sm">{tr('Fluxo recomendado', 'Recommended flow')}</h3>
+              <h3 className="font-bold text-foreground text-sm">{tr('Fluxo recomendado', 'Recommended flow')}</h3>
             </div>
             <div className="text-xs sm:text-sm text-muted-foreground mt-3 space-y-2 leading-relaxed">
-              <p className="flex items-center gap-2"><ShieldCheck size={14} className="text-emerald-400" /> {tr('Conta e e-mail verificado', 'Account and verified email')}</p>
-              <p className="flex items-center gap-2"><Wallet size={14} className="text-emerald-400" /> {tr('Contas e saldo inicial', 'Accounts and initial balance')}</p>
-              <p className="flex items-center gap-2"><Tag size={14} className="text-emerald-400" /> {tr('Categorias', 'Categories')}</p>
-              <p className="flex items-center gap-2"><TrendingUp size={14} className="text-emerald-400" /> {tr('Receitas', 'Income')}</p>
-              <p className="flex items-center gap-2"><TrendingDown size={14} className="text-emerald-400" /> {tr('Despesas', 'Expenses')}</p>
-              <p className="flex items-center gap-2"><CreditCard size={14} className="text-emerald-400" /> {tr('Cartões (se usar)', 'Cards (if you use them)')}</p>
-              <p className="flex items-center gap-2"><Target size={14} className="text-emerald-400" /> {tr('Investimentos e metas', 'Investments and goals')}</p>
+              <p className="flex items-center gap-2"><ShieldCheck size={14} className="text-success" /> {tr('Conta e e-mail verificado', 'Account and verified email')}</p>
+              <p className="flex items-center gap-2"><Wallet size={14} className="text-success" /> {tr('Contas e saldo inicial', 'Accounts and initial balance')}</p>
+              <p className="flex items-center gap-2"><Tag size={14} className="text-success" /> {tr('Categorias', 'Categories')}</p>
+              <p className="flex items-center gap-2"><TrendingUp size={14} className="text-success" /> {tr('Receitas', 'Income')}</p>
+              <p className="flex items-center gap-2"><TrendingDown size={14} className="text-success" /> {tr('Despesas', 'Expenses')}</p>
+              <p className="flex items-center gap-2"><CreditCard size={14} className="text-success" /> {tr('Cartões (se usar)', 'Cards (if you use them)')}</p>
+              <p className="flex items-center gap-2"><Target size={14} className="text-success" /> {tr('Investimentos e metas', 'Investments and goals')}</p>
             </div>
           </div>
         </section>

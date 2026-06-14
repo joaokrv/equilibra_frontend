@@ -17,6 +17,32 @@ interface PatrimonyChartProps {
   onPeriodoChange: (periodo: DashboardPeriodo) => void;
 }
 
+const ChartTooltip = ({
+  active,
+  payload,
+  label,
+  moeda,
+  language,
+}: {
+  active?: boolean;
+  payload?: Array<{ value: number }>;
+  label?: string;
+  moeda: 'BRL' | 'USD' | 'EUR';
+  language: 'pt-BR' | 'en-US';
+}) => {
+  if (!active || !payload?.length) return null;
+  return (
+    <div className="bg-card border border-primary/20 rounded-xl px-3 py-2 text-xs shadow-lg">
+      <p className="text-muted-foreground mb-1">
+        {t(language, 'chartDate')}: {label}
+      </p>
+      <p className="font-semibold text-foreground tabular-nums">
+        {formatarMoeda(payload[0].value, moeda)}
+      </p>
+    </div>
+  );
+};
+
 export const PatrimonyChart = ({ dados, moeda, periodo, onPeriodoChange }: PatrimonyChartProps) => {
   const language = useI18nStore((state) => state.language);
   const periodOptions: Array<{ value: DashboardPeriodo; label: string }> = [
@@ -84,12 +110,12 @@ export const PatrimonyChart = ({ dados, moeda, periodo, onPeriodoChange }: Patri
   <div className="lg:col-span-2 glass p-4 sm:p-6 lg:p-8 rounded-2xl sm:rounded-3xl min-h-[290px] sm:min-h-[380px] lg:min-h-[420px] flex flex-col">
     <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-2 sm:gap-3 mb-4 sm:mb-8">
       <div>
-        <h4 className="text-lg font-bold text-white">{t(language, 'patrimonyEvolution')}</h4>
+        <h4 className="text-lg font-bold text-foreground">{t(language, 'patrimonyEvolution')}</h4>
         <p className="text-xs text-muted-foreground font-medium uppercase tracking-widest mt-1 sm:mt-1.5">
           {periodLabel || t(language, 'lastSixMonths')}
         </p>
       </div>
-      <div className="grid grid-cols-4 sm:inline-flex sm:items-center gap-1 rounded-xl bg-secondary/50 p-1 border border-white/10 w-full sm:w-auto">
+      <div className="grid grid-cols-4 sm:inline-flex sm:items-center gap-1 rounded-xl bg-secondary/50 p-1 border border-foreground/10 w-full sm:w-auto">
         {periodOptions.map((option) => (
           <button
             key={option.value}
@@ -98,7 +124,7 @@ export const PatrimonyChart = ({ dados, moeda, periodo, onPeriodoChange }: Patri
             className={`w-full px-2.5 sm:px-3 py-1.5 text-2xs sm:text-xs font-bold uppercase tracking-wider rounded-md transition-all ${
               periodo === option.value
                 ? 'bg-primary text-primary-foreground'
-                : 'text-muted-foreground hover:text-white'
+                : 'text-muted-foreground hover:text-foreground'
             }`}
           >
             {option.label}
@@ -113,18 +139,18 @@ export const PatrimonyChart = ({ dados, moeda, periodo, onPeriodoChange }: Patri
           <LineChart data={dadosGrafico} margin={{ top: 8, right: 8, left: 0, bottom: 8 }}>
             <XAxis
               dataKey="label"
-              tick={{ fill: '#9ca3af', fontSize: 11 }}
-              axisLine={false}
-              tickLine={false}
+              tick={{ fill: 'var(--muted-foreground)', fontSize: 11 }}
+              axisLine={{ stroke: 'var(--chart-axis)' }}
+              tickLine={{ stroke: 'var(--chart-axis)' }}
               minTickGap={24}
               interval="preserveStartEnd"
               tickMargin={8}
               padding={{ left: 8, right: 8 }}
             />
             <YAxis
-              tick={{ fill: '#9ca3af', fontSize: 11 }}
-              axisLine={false}
-              tickLine={false}
+              tick={{ fill: 'var(--muted-foreground)', fontSize: 11 }}
+              axisLine={{ stroke: 'var(--chart-axis)' }}
+              tickLine={{ stroke: 'var(--chart-axis)' }}
               domain={yDomain}
               tickCount={5}
               tickFormatter={(value: number | string) =>
@@ -135,27 +161,13 @@ export const PatrimonyChart = ({ dados, moeda, periodo, onPeriodoChange }: Patri
             <Tooltip
               allowEscapeViewBox={{ x: false, y: false }}
               wrapperStyle={{ zIndex: 20 }}
-              formatter={(value) => {
-                const numericValue = Array.isArray(value)
-                  ? Number(value[0] || 0)
-                  : Number(value || 0);
-                return [formatarMoeda(numericValue, moeda), t(language, 'chartTotalValue')];
-              }}
-              labelFormatter={(label) => `${t(language, 'chartDate')}: ${label}`}
-              contentStyle={{
-                backgroundColor: 'rgba(2, 6, 23, 0.96)',
-                border: '1px solid rgba(124, 58, 237, 0.35)',
-                borderRadius: '12px',
-                color: '#fff',
-              }}
-              itemStyle={{ color: '#fff', textTransform: 'none' }}
-              labelStyle={{ color: '#cbd5e1', marginBottom: '6px' }}
+              content={<ChartTooltip moeda={moeda} language={language} />}
             />
             <Line
               type="monotone"
               dataKey="valorTotal"
               name={t(language, 'chartTotalValue')}
-              stroke="#7c3aed"
+              stroke="#7c14ff"
               strokeWidth={3}
               dot={{ r: possuiApenasUmSnapshot ? 5 : 2.5 }}
               activeDot={{ r: 5 }}

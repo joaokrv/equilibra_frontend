@@ -26,6 +26,8 @@ interface TabConfig {
   key: Tab;
   label: string;
   labelEn: string;
+  tabLabel?: string;
+  tabLabelEn?: string;
   mobileLabel: string;
   mobileLabelEn: string;
   icon: React.ReactNode;
@@ -45,15 +47,17 @@ const TABS: TabConfig[] = [
     key: 'sacar',
     label: 'Sacar', labelEn: 'Withdraw', mobileLabel: 'Saq.', mobileLabelEn: 'Wth.',
     icon: <TrendingUp size={16} />,
-    color: 'text-emerald-400',
-    activeCls: 'border-emerald-500 bg-emerald-500/10 text-emerald-400 shadow-lg shadow-emerald-500/10',
+    color: 'text-success',
+    activeCls: 'border-success bg-success-muted text-success shadow-lg shadow-success/10',
   },
   {
     key: 'rendimento',
-    label: 'Registrar Rendimento', labelEn: 'Record Earnings', mobileLabel: 'Rend.', mobileLabelEn: 'Earn.',
+    label: 'Registrar Rendimento', labelEn: 'Record Earnings',
+    tabLabel: 'Rendimento', tabLabelEn: 'Earnings',
+    mobileLabel: 'Rend.', mobileLabelEn: 'Earn.',
     icon: <Sparkles size={16} />,
-    color: 'text-purple-400',
-    activeCls: 'border-purple-500 bg-purple-500/10 text-purple-400 shadow-lg shadow-purple-500/10',
+    color: 'text-primary',
+    activeCls: 'border-primary bg-primary/10 text-primary shadow-lg shadow-primary/10',
   },
 ];
 
@@ -130,7 +134,7 @@ export const MovimentacaoInvestimentoModal = ({
 
   return (
     <div className="fixed inset-0 z-[100] flex items-start sm:items-center justify-center p-2 sm:p-4 animate-in fade-in duration-300">
-      <div className="absolute inset-0 bg-background/80 backdrop-blur-sm" onClick={onClose} />
+      <div className="absolute inset-0 bg-overlay backdrop-blur-sm" onClick={onClose} />
 
       <div
         ref={dialogRef}
@@ -142,7 +146,7 @@ export const MovimentacaoInvestimentoModal = ({
               {activeTab.icon}
             </div>
             <div>
-              <h3 className="text-lg sm:text-xl font-bold text-white leading-tight">
+              <h3 className="text-lg sm:text-xl font-bold text-foreground leading-tight">
                 {language === 'en-US' ? activeTab.labelEn : activeTab.label}
               </h3>
               <p className="text-2xs uppercase font-bold text-muted-foreground tracking-widest">
@@ -152,7 +156,7 @@ export const MovimentacaoInvestimentoModal = ({
           </div>
           <button
             onClick={onClose}
-            className="p-2 hover:bg-white/5 rounded-full text-muted-foreground hover:text-white transition-all"
+            className="p-2 hover:bg-foreground/5 rounded-full text-muted-foreground hover:text-foreground transition-all"
           >
             <X size={20} />
           </button>
@@ -164,14 +168,14 @@ export const MovimentacaoInvestimentoModal = ({
               key={t.key}
               type="button"
               onClick={() => setTab(t.key)}
-              className={`py-2.5 rounded-xl border font-bold text-xs uppercase tracking-widest transition-all flex items-center justify-center gap-1.5 ${
+              className={`py-2.5 px-2 rounded-xl border font-bold text-xs uppercase tracking-widest transition-all flex items-center justify-center gap-1.5 whitespace-nowrap ${
                 tab === t.key
                   ? t.activeCls
-                  : 'border-transparent bg-secondary/20 text-muted-foreground hover:text-white'
+                  : 'border-transparent bg-secondary/20 text-muted-foreground hover:text-foreground'
               }`}
             >
-              {t.icon}
-              <span className="hidden sm:inline">{language === 'en-US' ? t.labelEn : t.label}</span>
+              <span className="flex-shrink-0">{t.icon}</span>
+              <span className="hidden sm:inline">{language === 'en-US' ? (t.tabLabelEn ?? t.labelEn) : (t.tabLabel ?? t.label)}</span>
               <span className="sm:hidden">{language === 'en-US' ? t.mobileLabelEn : t.mobileLabel}</span>
             </button>
           ))}
@@ -181,6 +185,7 @@ export const MovimentacaoInvestimentoModal = ({
           <InvestmentQuickSection
             key="depositar"
             defaultOperacao="APORTE"
+            lockOperacao
             onCancel={onClose}
             onSuccess={() => { invalidarTudo(); onClose(); }}
           />
@@ -190,6 +195,7 @@ export const MovimentacaoInvestimentoModal = ({
           <InvestmentQuickSection
             key="sacar"
             defaultOperacao="RESGATE"
+            lockOperacao
             onCancel={onClose}
             onSuccess={() => { invalidarTudo(); onClose(); }}
           />
@@ -204,11 +210,11 @@ export const MovimentacaoInvestimentoModal = ({
               <select
                 value={rendInvId}
                 onChange={(e) => setRendInvId(e.target.value)}
-                className="w-full bg-secondary/30 border border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium appearance-none"
+                className="w-full bg-secondary/30 border border-foreground/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium appearance-none"
               >
-                <option value="" className="bg-card text-white">{tr('Selecione...', 'Select...')}</option>
+                <option value="" className="bg-card text-foreground">{tr('Selecione...', 'Select...')}</option>
                 {investimentosList.map((inv) => (
-                  <option key={inv.id} value={inv.id} className="bg-card text-white">{inv.descricao}</option>
+                  <option key={inv.id} value={inv.id} className="bg-card text-foreground">{inv.descricao}</option>
                 ))}
               </select>
             </div>
@@ -224,7 +230,7 @@ export const MovimentacaoInvestimentoModal = ({
                 onChange={(e) => setRendValor(e.target.value)}
                 placeholder="0,00"
                 autoFocus
-                className="w-full bg-secondary/30 border border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium placeholder:text-muted-foreground/30"
+                className="w-full bg-secondary/30 border border-foreground/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium placeholder:text-muted-foreground/30"
               />
             </div>
 
@@ -237,7 +243,7 @@ export const MovimentacaoInvestimentoModal = ({
                 value={rendData}
                 max={toLocalDateStr(new Date())}
                 onChange={(e) => setRendData(e.target.value)}
-                className="w-full bg-secondary/30 border border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium"
+                className="w-full bg-secondary/30 border border-foreground/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium"
               />
             </div>
 
@@ -251,14 +257,14 @@ export const MovimentacaoInvestimentoModal = ({
                 onChange={(e) => setRendObs(e.target.value)}
                 maxLength={255}
                 placeholder={tr('Ex: rendimento mensal CDB', 'E.g. monthly CDB yield')}
-                className="w-full bg-secondary/30 border border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium placeholder:text-muted-foreground/30"
+                className="w-full bg-secondary/30 border border-foreground/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium placeholder:text-muted-foreground/30"
               />
             </div>
 
             <button
               onClick={submitRendimento}
               disabled={!rendInvId || !rendValor || Number(rendValor) === 0 || rendimentoMutation.isPending}
-              className="w-full bg-purple-600 hover:bg-purple-500 text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-purple-600/20 active:scale-[0.98] text-sm disabled:opacity-50 flex items-center justify-center gap-2"
+              className="w-full bg-primary hover:bg-primary-strong text-primary-foreground font-bold py-3 rounded-xl transition-all shadow-lg shadow-primary/20 active:scale-[0.98] text-sm disabled:opacity-50 flex items-center justify-center gap-2"
             >
               {rendimentoMutation.isPending
                 ? <><Loader2 size={16} className="animate-spin" /> {tr('Registrando...', 'Recording...')}</>

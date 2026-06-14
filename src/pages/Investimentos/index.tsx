@@ -20,13 +20,13 @@ import { useI18nStore } from '../../store/useI18nStore';
 
 const TIPO_ICON_MAP: Record<TipoMovimentacao, React.ReactNode> = {
   APORTE: <TrendingDown size={12} className="text-blue-400" />,
-  RESGATE: <TrendingUp size={12} className="text-emerald-400" />,
-  RENDIMENTO: <Sparkles size={12} className="text-purple-400" />,
+  RESGATE: <TrendingUp size={12} className="text-success" />,
+  RENDIMENTO: <Sparkles size={12} className="text-primary" />,
 };
 const TIPO_COLOR_MAP: Record<TipoMovimentacao, string> = {
   APORTE: 'text-blue-400',
-  RESGATE: 'text-emerald-400',
-  RENDIMENTO: 'text-purple-400',
+  RESGATE: 'text-success',
+  RENDIMENTO: 'text-primary',
 };
 
 type ModalTipo = 'criar' | 'depositar' | 'resgatar' | 'meta' | null;
@@ -214,7 +214,7 @@ export const InvestimentosPage = () => {
       <div className="p-3 sm:p-4 lg:p-6 space-y-5 sm:space-y-6 animate-in fade-in duration-500">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-white">{tr('Investimentos', 'Investments')}</h1>
+            <h1 className="text-2xl font-bold text-foreground">{tr('Investimentos', 'Investments')}</h1>
             <p className="text-sm text-muted-foreground mt-1">{tr('Acompanhe suas metas e faça aportes ou resgates.', 'Track your goals and make deposits or withdrawals.')}</p>
           </div>
         </div>
@@ -226,12 +226,12 @@ export const InvestimentosPage = () => {
           </div>
           <div className="glass rounded-2xl p-4">
             <p className="text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Meta Total', 'Total Goal')}</p>
-            <p className="text-xl font-bold text-white mt-1">{formatarMoeda(totalMeta, moeda)}</p>
+            <p className="text-xl font-bold text-foreground mt-1">{formatarMoeda(totalMeta, moeda)}</p>
           </div>
           <div className="glass rounded-2xl p-4">
             <p className="text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Progresso Geral', 'Overall Progress')}</p>
             <p className="text-xl font-bold text-amber-400 mt-1">{progressoGeral.toFixed(1)}%</p>
-            <div className="w-full h-1.5 bg-white/10 rounded-full mt-2 overflow-hidden">
+            <div className="w-full h-1.5 bg-foreground/10 rounded-full mt-2 overflow-hidden">
               <div className="h-full bg-amber-400 rounded-full transition-all" style={{ width: `${progressoGeral}%` }} />
             </div>
           </div>
@@ -261,11 +261,11 @@ export const InvestimentosPage = () => {
                 <div key={inv.id} className="glass rounded-2xl p-5 space-y-4 group">
                   <div className="flex items-start justify-between">
                     <div className="flex items-center gap-3">
-                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${atingiu ? 'bg-emerald-500/10 text-emerald-400' : 'bg-primary/10 text-primary'}`}>
+                      <div className={`w-10 h-10 rounded-xl flex items-center justify-center ${atingiu ? 'bg-success-muted text-success' : 'bg-primary/10 text-primary'}`}>
                         <Target size={18} />
                       </div>
                       <div>
-                        <p className="text-sm font-bold text-white">{inv.descricao}</p>
+                        <p className="text-sm font-bold text-foreground">{inv.descricao}</p>
                         <p className="text-xs text-muted-foreground mt-0.5">
                           Inicial: {formatarMoeda(inv.valorInicial ?? 0, moeda)}
                           {inv.nomeContaOrigem && <span className="ml-2 text-primary/60">via {inv.nomeContaOrigem}</span>}
@@ -277,7 +277,7 @@ export const InvestimentosPage = () => {
                     </div>
                     <div className="flex gap-1 opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity">
                       <button onClick={() => abrirMeta(inv)} className="min-h-11 min-w-11 sm:min-h-0 sm:min-w-0 p-2.5 sm:p-1.5 rounded-lg text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all flex items-center justify-center" title={tr('Editar meta', 'Edit goal')}><Pencil size={14} /></button>
-                      <button onClick={() => handleDeletar(inv.id!, inv.descricao || '')} disabled={deletandoId === inv.id} className="min-h-11 min-w-11 sm:min-h-0 sm:min-w-0 p-2.5 sm:p-1.5 rounded-lg text-muted-foreground hover:text-rose-400 hover:bg-rose-500/10 transition-all disabled:opacity-50 flex items-center justify-center" title={tr('Remover', 'Remove')}>
+                      <button onClick={() => handleDeletar(inv.id!, inv.descricao || '')} disabled={deletandoId === inv.id} className="min-h-11 min-w-11 sm:min-h-0 sm:min-w-0 p-2.5 sm:p-1.5 rounded-lg text-muted-foreground hover:text-danger hover:bg-danger-muted transition-all disabled:opacity-50 flex items-center justify-center" title={tr('Remover', 'Remove')}>
                         {deletandoId === inv.id ? <Loader2 size={14} className="animate-spin" /> : <Trash2 size={14} />}
                       </button>
                     </div>
@@ -285,13 +285,13 @@ export const InvestimentosPage = () => {
 
                   <div>
                     <div className="flex justify-between text-xs mb-1">
-                      <span className="font-bold text-white">{formatarMoeda(inv.valorAtual ?? 0, moeda)}</span>
+                      <span className="font-bold text-foreground">{formatarMoeda(inv.valorAtual ?? 0, moeda)}</span>
                       <span className="text-muted-foreground">{possuiMeta ? `${tr('de', 'of')} ${formatarMoeda(inv.metaAtual ?? 0, moeda)}` : tr('sem meta', 'no goal')}</span>
                     </div>
-                    <div className="w-full h-2 bg-white/10 rounded-full overflow-hidden">
-                      <div className={`h-full rounded-full transition-all ${(possuiMeta && atingiu) ? 'bg-emerald-400' : 'bg-primary'}`} style={{ width: `${possuiMeta ? progresso : 0}%` }} />
+                    <div className="w-full h-2 bg-foreground/10 rounded-full overflow-hidden">
+                      <div className={`h-full rounded-full transition-all ${(possuiMeta && atingiu) ? 'bg-success' : 'bg-primary'}`} style={{ width: `${possuiMeta ? progresso : 0}%` }} />
                     </div>
-                    <p className={`text-2xs font-bold mt-1 ${(possuiMeta && atingiu) ? 'text-emerald-400' : 'text-muted-foreground'}`}>
+                    <p className={`text-2xs font-bold mt-1 ${(possuiMeta && atingiu) ? 'text-success' : 'text-muted-foreground'}`}>
                       {possuiMeta ? (atingiu ? tr('Meta atingida!', 'Goal achieved!') : `${progresso.toFixed(1)}% ${tr('concluído', 'completed')}`) : tr('Sem meta definida', 'No goal defined')}
                     </p>
                   </div>
@@ -300,7 +300,7 @@ export const InvestimentosPage = () => {
                     <button onClick={() => abrirDepositar(inv)} className="min-h-11 sm:min-h-0 flex-1 flex items-center justify-center gap-1.5 bg-primary/10 hover:bg-primary/20 text-primary font-bold py-3 sm:py-2 rounded-xl transition-all text-xs">
                       <ArrowUpCircle size={14} /> {tr('Depositar', 'Deposit')}
                     </button>
-                    <button onClick={() => abrirResgatar(inv)} disabled={(inv.valorAtual ?? 0) === 0} className="min-h-11 sm:min-h-0 flex-1 flex items-center justify-center gap-1.5 bg-rose-500/10 hover:bg-rose-500/20 text-rose-400 font-bold py-3 sm:py-2 rounded-xl transition-all text-xs disabled:opacity-30">
+                    <button onClick={() => abrirResgatar(inv)} disabled={(inv.valorAtual ?? 0) === 0} className="min-h-11 sm:min-h-0 flex-1 flex items-center justify-center gap-1.5 bg-danger-muted hover:bg-danger/20 text-danger font-bold py-3 sm:py-2 rounded-xl transition-all text-xs disabled:opacity-30">
                       <ArrowDownCircle size={14} /> {tr('Resgatar', 'Withdraw')}
                     </button>
                   </div>
@@ -312,59 +312,59 @@ export const InvestimentosPage = () => {
       </div>
 
       {modal === 'criar' && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200" role="dialog" aria-modal="true">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-overlay backdrop-blur-sm animate-in fade-in duration-200" role="dialog" aria-modal="true">
           <div ref={modalCriarRef} className="glass w-full max-w-sm rounded-2xl p-6 space-y-5 animate-in zoom-in-95 duration-200">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2"><Target size={18} className="text-primary" /><h3 className="font-bold text-white">{tr('Novo Investimento', 'New Investment')}</h3></div>
-              <button onClick={fecharModal} className="text-muted-foreground hover:text-white transition-colors"><X size={18} /></button>
+              <div className="flex items-center gap-2"><Target size={18} className="text-primary" /><h3 className="font-bold text-foreground">{tr('Novo Investimento', 'New Investment')}</h3></div>
+              <button onClick={fecharModal} className="text-muted-foreground hover:text-foreground transition-colors"><X size={18} /></button>
             </div>
             <div className="space-y-4">
               <div className="space-y-1.5">
                 <label className="block text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Nome da Meta', 'Goal Name')}</label>
-                <input type="text" value={descricao} onChange={(e) => setDescricao(e.target.value)} placeholder="Ex: Reserva de emergência" maxLength={100} autoFocus className="w-full bg-secondary/30 border border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium placeholder:text-muted-foreground/30" />
+                <input type="text" value={descricao} onChange={(e) => setDescricao(e.target.value)} placeholder="Ex: Reserva de emergência" maxLength={100} autoFocus className="w-full bg-secondary/30 border border-foreground/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium placeholder:text-muted-foreground/30" />
               </div>
               <div className="space-y-1.5">
                 <label className="block text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Tipo de Investimento', 'Investment Type')}</label>
-                <select value={tipoInvestimento} onChange={(e) => setTipoInvestimento(e.target.value as TipoInvestimento)} className="w-full bg-secondary/30 border border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium appearance-none">
+                <select value={tipoInvestimento} onChange={(e) => setTipoInvestimento(e.target.value as TipoInvestimento)} className="w-full bg-secondary/30 border border-foreground/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium appearance-none">
                   {TIPOS_INVESTIMENTO.map((tipo) => (
-                    <option key={tipo.value} value={tipo.value} className="bg-card text-white">{labelTipo(tipo.value)}</option>
+                    <option key={tipo.value} value={tipo.value} className="bg-card text-foreground">{labelTipo(tipo.value)}</option>
                   ))}
                 </select>
               </div>
               {tipoInvestimento === 'OUTRO' && (
                 <div className="space-y-1.5">
                   <label className="block text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Tipo Personalizado', 'Custom Type')}</label>
-                  <input type="text" value={tipoPersonalizado} onChange={(e) => setTipoPersonalizado(e.target.value)} placeholder="Ex: Debenture, CRA, Coe" maxLength={60} className="w-full bg-secondary/30 border border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium placeholder:text-muted-foreground/30" />
+                  <input type="text" value={tipoPersonalizado} onChange={(e) => setTipoPersonalizado(e.target.value)} placeholder="Ex: Debenture, CRA, Coe" maxLength={60} className="w-full bg-secondary/30 border border-foreground/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium placeholder:text-muted-foreground/30" />
                 </div>
               )}
               <div className="space-y-1.5">
                 <label className="block text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Conta de Origem', 'Source Account')}</label>
-                <select value={contaId} onChange={(e) => setContaId(e.target.value)} className="w-full bg-secondary/30 border border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium appearance-none">
-                  <option value="" className="bg-card text-white">{tr('Selecione a conta...', 'Select account...')}</option>
+                <select value={contaId} onChange={(e) => setContaId(e.target.value)} className="w-full bg-secondary/30 border border-foreground/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium appearance-none">
+                  <option value="" className="bg-card text-foreground">{tr('Selecione a conta...', 'Select account...')}</option>
                   {contasList.map((c) => (
-                    <option key={c.id} value={c.id} className="bg-card text-white">{c.nome} — {formatarMoeda(c.saldo ?? 0, moeda)}</option>
+                    <option key={c.id} value={c.id} className="bg-card text-foreground">{c.nome} — {formatarMoeda(c.saldo ?? 0, moeda)}</option>
                   ))}
                 </select>
               </div>
               <div className="space-y-1.5">
                 <label className="block text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Valor Inicial', 'Initial Amount')}</label>
-                <input type="number" step="0.01" value={valorInicial} onChange={(e) => setValorInicial(e.target.value)} placeholder="0,00" className="w-full bg-secondary/30 border border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium placeholder:text-muted-foreground/30" />
+                <input type="number" step="0.01" value={valorInicial} onChange={(e) => setValorInicial(e.target.value)} placeholder="0,00" className="w-full bg-secondary/30 border border-foreground/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium placeholder:text-muted-foreground/30" />
               </div>
               <div className="space-y-1.5">
                 <label className="block text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Meta (Opcional)', 'Goal (Optional)')}</label>
-                <input type="number" step="0.01" value={meta} onChange={(e) => setMeta(e.target.value)} placeholder="10000,00" className="w-full bg-secondary/30 border border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium placeholder:text-muted-foreground/30" />
+                <input type="number" step="0.01" value={meta} onChange={(e) => setMeta(e.target.value)} placeholder="10000,00" className="w-full bg-secondary/30 border border-foreground/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium placeholder:text-muted-foreground/30" />
               </div>
               <div className="space-y-1.5">
                 <label className="block text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Conta de Destino', 'Destination Account')}</label>
-                <select value={contaDestinoId} onChange={(e) => setContaDestinoId(e.target.value)} className="w-full bg-secondary/30 border border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium appearance-none">
-                  <option value="" className="bg-card text-white">{tr('Mesma da origem', 'Same as source')}</option>
+                <select value={contaDestinoId} onChange={(e) => setContaDestinoId(e.target.value)} className="w-full bg-secondary/30 border border-foreground/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium appearance-none">
+                  <option value="" className="bg-card text-foreground">{tr('Mesma da origem', 'Same as source')}</option>
                   {contasList.map((c) => (
-                    <option key={c.id} value={c.id} className="bg-card text-white">{c.nome} — {formatarMoeda(c.saldo ?? 0, moeda)}</option>
+                    <option key={c.id} value={c.id} className="bg-card text-foreground">{c.nome} — {formatarMoeda(c.saldo ?? 0, moeda)}</option>
                   ))}
                 </select>
               </div>
             </div>
-            <button onClick={() => criarMutation.mutate()} disabled={!descricao.trim() || !contaId || (tipoInvestimento === 'OUTRO' && !tipoPersonalizado.trim()) || criarMutation.isPending} className="w-full bg-primary hover:bg-primary/90 text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-primary/20 active:scale-[0.98] text-sm disabled:opacity-50 flex items-center justify-center gap-2">
+            <button onClick={() => criarMutation.mutate()} disabled={!descricao.trim() || !contaId || (tipoInvestimento === 'OUTRO' && !tipoPersonalizado.trim()) || criarMutation.isPending} className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold py-3 rounded-xl transition-all shadow-lg shadow-primary/20 active:scale-[0.98] text-sm disabled:opacity-50 flex items-center justify-center gap-2">
               {criarMutation.isPending ? <><Loader2 size={16} className="animate-spin" /> {tr('Criando...', 'Creating...')}</> : <><Plus size={16} /> {tr('Criar', 'Create')}</>}
             </button>
           </div>
@@ -372,34 +372,34 @@ export const InvestimentosPage = () => {
       )}
 
       {(modal === 'depositar' || modal === 'resgatar') && investimentoSelecionado && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200" role="dialog" aria-modal="true">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-overlay backdrop-blur-sm animate-in fade-in duration-200" role="dialog" aria-modal="true">
           <div ref={modalAporteResgateRef} className="glass w-full max-w-sm rounded-2xl p-6 space-y-5 animate-in zoom-in-95 duration-200">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                {modal === 'depositar' ? <ArrowUpCircle size={18} className="text-primary" /> : <ArrowDownCircle size={18} className="text-rose-400" />}
-                <h3 className="font-bold text-white">{modal === 'depositar' ? tr('Depositar', 'Deposit') : tr('Resgatar', 'Withdraw')}</h3>
+                {modal === 'depositar' ? <ArrowUpCircle size={18} className="text-primary" /> : <ArrowDownCircle size={18} className="text-danger" />}
+                <h3 className="font-bold text-foreground">{modal === 'depositar' ? tr('Depositar', 'Deposit') : tr('Resgatar', 'Withdraw')}</h3>
               </div>
-              <button onClick={fecharModal} className="text-muted-foreground hover:text-white transition-colors"><X size={18} /></button>
+              <button onClick={fecharModal} className="text-muted-foreground hover:text-foreground transition-colors"><X size={18} /></button>
             </div>
-            <div className="bg-white/5 rounded-xl p-3">
+            <div className="bg-foreground/5 rounded-xl p-3">
               <p className="text-xs text-muted-foreground">{investimentoSelecionado.descricao}</p>
-              <p className="text-lg font-bold text-white mt-1">{tr('Saldo', 'Balance')}: {formatarMoeda(investimentoSelecionado.valorAtual ?? 0, moeda)}</p>
+              <p className="text-lg font-bold text-foreground mt-1">{tr('Saldo', 'Balance')}: {formatarMoeda(investimentoSelecionado.valorAtual ?? 0, moeda)}</p>
             </div>
             <div className="space-y-4">
               <div className="space-y-1.5">
                 <label className="block text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">
                   {modal === 'depositar' ? tr('Conta de Origem', 'Source Account') : tr('Conta de Destino', 'Destination Account')}
                 </label>
-                <select value={contaId} onChange={(e) => setContaId(e.target.value)} className="w-full bg-secondary/30 border border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium appearance-none">
-                  <option value="" className="bg-card text-white">{tr('Selecione...', 'Select...')}</option>
+                <select value={contaId} onChange={(e) => setContaId(e.target.value)} className="w-full bg-secondary/30 border border-foreground/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium appearance-none">
+                  <option value="" className="bg-card text-foreground">{tr('Selecione...', 'Select...')}</option>
                   {contasList.map((c) => (
-                    <option key={c.id} value={c.id} className="bg-card text-white">{c.nome} — {formatarMoeda(c.saldo ?? 0, moeda)}</option>
+                    <option key={c.id} value={c.id} className="bg-card text-foreground">{c.nome} — {formatarMoeda(c.saldo ?? 0, moeda)}</option>
                   ))}
                 </select>
               </div>
               <div className="space-y-1.5">
                 <label className="block text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Valor', 'Amount')}</label>
-                <input type="number" step="0.01" value={valor} onChange={(e) => setValor(e.target.value)} placeholder="500,00" autoFocus className="w-full bg-secondary/30 border border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium placeholder:text-muted-foreground/30" />
+                <input type="number" step="0.01" value={valor} onChange={(e) => setValor(e.target.value)} placeholder="500,00" autoFocus className="w-full bg-secondary/30 border border-foreground/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium placeholder:text-muted-foreground/30" />
               </div>
             </div>
             <button
@@ -407,8 +407,8 @@ export const InvestimentosPage = () => {
               disabled={!contaId || !valor || Number(valor) <= 0 || depositarMutation.isPending || resgatarMutation.isPending}
               className={`w-full font-bold py-3 rounded-xl transition-all active:scale-[0.98] text-sm disabled:opacity-50 flex items-center justify-center gap-2 ${
                 modal === 'depositar'
-                  ? 'bg-primary hover:bg-primary/90 text-white shadow-lg shadow-primary/20'
-                  : 'bg-rose-500 hover:bg-rose-500/90 text-white shadow-lg shadow-rose-500/20'
+                  ? 'bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/20'
+                  : 'bg-danger hover:bg-danger/90 text-primary-foreground shadow-lg shadow-danger/20'
               }`}
             >
               {(depositarMutation.isPending || resgatarMutation.isPending)
@@ -421,39 +421,39 @@ export const InvestimentosPage = () => {
       )}
 
       {modal === 'meta' && investimentoSelecionado && (
-        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm animate-in fade-in duration-200" role="dialog" aria-modal="true">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-overlay backdrop-blur-sm animate-in fade-in duration-200" role="dialog" aria-modal="true">
           <div ref={modalMetaRef} className="glass w-full max-w-sm rounded-2xl p-6 space-y-5 animate-in zoom-in-95 duration-200">
             <div className="flex items-center justify-between">
-              <div className="flex items-center gap-2"><Pencil size={18} className="text-primary" /><h3 className="font-bold text-white">{tr('Editar Meta', 'Edit Goal')}</h3></div>
-              <button onClick={fecharModal} className="text-muted-foreground hover:text-white transition-colors"><X size={18} /></button>
+              <div className="flex items-center gap-2"><Pencil size={18} className="text-primary" /><h3 className="font-bold text-foreground">{tr('Editar Meta', 'Edit Goal')}</h3></div>
+              <button onClick={fecharModal} className="text-muted-foreground hover:text-foreground transition-colors"><X size={18} /></button>
             </div>
-            <div className="bg-white/5 rounded-xl p-3">
+            <div className="bg-foreground/5 rounded-xl p-3">
               <p className="text-xs text-muted-foreground">{tr('Meta atual', 'Current goal')}</p>
-              <p className="text-sm font-bold text-white mt-1">{investimentoSelecionado.metaAtual != null ? formatarMoeda(investimentoSelecionado.metaAtual, moeda) : tr('Sem meta definida', 'No goal defined')}</p>
+              <p className="text-sm font-bold text-foreground mt-1">{investimentoSelecionado.metaAtual != null ? formatarMoeda(investimentoSelecionado.metaAtual, moeda) : tr('Sem meta definida', 'No goal defined')}</p>
             </div>
             <div className="space-y-1.5">
               <label className="block text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Nome da Meta', 'Goal Name')}</label>
-              <input type="text" value={descricao} onChange={(e) => setDescricao(e.target.value)} autoFocus maxLength={100} className="w-full bg-secondary/30 border border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium placeholder:text-muted-foreground/30" />
+              <input type="text" value={descricao} onChange={(e) => setDescricao(e.target.value)} autoFocus maxLength={100} className="w-full bg-secondary/30 border border-foreground/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium placeholder:text-muted-foreground/30" />
             </div>
             <div className="space-y-1.5">
               <label className="block text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Tipo de Investimento', 'Investment Type')}</label>
-              <select value={tipoInvestimento} onChange={(e) => setTipoInvestimento(e.target.value as TipoInvestimento)} className="w-full bg-secondary/30 border border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium appearance-none">
+              <select value={tipoInvestimento} onChange={(e) => setTipoInvestimento(e.target.value as TipoInvestimento)} className="w-full bg-secondary/30 border border-foreground/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium appearance-none">
                 {TIPOS_INVESTIMENTO.map((tipo) => (
-                  <option key={tipo.value} value={tipo.value} className="bg-card text-white">{labelTipo(tipo.value)}</option>
+                  <option key={tipo.value} value={tipo.value} className="bg-card text-foreground">{labelTipo(tipo.value)}</option>
                 ))}
               </select>
             </div>
             {tipoInvestimento === 'OUTRO' && (
               <div className="space-y-1.5">
                 <label className="block text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Tipo Personalizado', 'Custom Type')}</label>
-                <input type="text" value={tipoPersonalizado} onChange={(e) => setTipoPersonalizado(e.target.value)} maxLength={60} className="w-full bg-secondary/30 border border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium placeholder:text-muted-foreground/30" />
+                <input type="text" value={tipoPersonalizado} onChange={(e) => setTipoPersonalizado(e.target.value)} maxLength={60} className="w-full bg-secondary/30 border border-foreground/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium placeholder:text-muted-foreground/30" />
               </div>
             )}
             <div className="space-y-1.5">
               <label className="block text-2xs font-bold text-muted-foreground uppercase tracking-[0.2em]">{tr('Meta (Opcional)', 'Goal (Optional)')}</label>
-              <input type="number" step="0.01" value={meta} onChange={(e) => setMeta(e.target.value)} placeholder={tr('Deixe em branco para sem meta', 'Leave blank for no goal')} className="w-full bg-secondary/30 border border-white/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium placeholder:text-muted-foreground/30" />
+              <input type="number" step="0.01" value={meta} onChange={(e) => setMeta(e.target.value)} placeholder={tr('Deixe em branco para sem meta', 'Leave blank for no goal')} className="w-full bg-secondary/30 border border-foreground/5 rounded-xl px-4 py-3 text-sm focus:outline-none focus:ring-2 focus:ring-primary/40 transition-all font-medium placeholder:text-muted-foreground/30" />
             </div>
-            <button onClick={() => metaMutation.mutate()} disabled={!descricao.trim() || (meta && Number(meta) <= 0) || (tipoInvestimento === 'OUTRO' && !tipoPersonalizado.trim()) || metaMutation.isPending} className="w-full bg-primary hover:bg-primary/90 text-white font-bold py-3 rounded-xl transition-all shadow-lg shadow-primary/20 active:scale-[0.98] text-sm disabled:opacity-50 flex items-center justify-center gap-2">
+            <button onClick={() => metaMutation.mutate()} disabled={!descricao.trim() || (meta && Number(meta) <= 0) || (tipoInvestimento === 'OUTRO' && !tipoPersonalizado.trim()) || metaMutation.isPending} className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-bold py-3 rounded-xl transition-all shadow-lg shadow-primary/20 active:scale-[0.98] text-sm disabled:opacity-50 flex items-center justify-center gap-2">
               {metaMutation.isPending ? <><Loader2 size={16} className="animate-spin" /> {tr('Salvando...', 'Saving...')}</> : <><Pencil size={16} /> {tr('Atualizar Meta', 'Update Goal')}</>}
             </button>
           </div>
@@ -467,7 +467,7 @@ export const InvestimentosPage = () => {
         title={tr('Remover Investimento?', 'Remove Investment?')}
         description={
           <>
-            {tr('Você está prestes a remover', 'You are about to remove')} <span className="text-white font-semibold">"{investimentoParaDeletar?.descricao}"</span>.
+            {tr('Você está prestes a remover', 'You are about to remove')} <span className="text-foreground font-semibold">"{investimentoParaDeletar?.descricao}"</span>.
             <br />
             {tr('Somente investimentos com saldo zerado podem ser removidos.', 'Only investments with zero balance can be removed.')}
           </>
@@ -507,12 +507,12 @@ export const PreviewMovimentacoes = () => {
   return (
     <div className="mt-6">
       <div className="flex items-center justify-between mb-3">
-        <h3 className="text-sm font-semibold text-white">
+        <h3 className="text-sm font-semibold text-foreground">
           {tr('Últimas Movimentações', 'Recent Movements')}
         </h3>
         <button
           onClick={() => navigate('/investimentos/extrato')}
-          className="flex items-center gap-1 text-xs text-[#b794f4] hover:text-white transition-colors"
+          className="flex items-center gap-1 text-xs text-primary hover:text-foreground transition-colors"
         >
           {tr('Ver extrato completo', 'View full statement')}
           <ChevronRight size={12} />
@@ -526,13 +526,13 @@ export const PreviewMovimentacoes = () => {
             onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') navigate('/investimentos/extrato'); }}
             role="button"
             tabIndex={0}
-            className="bg-[#15161e] border border-[#232431] rounded-xl px-4 py-3 flex items-center justify-between cursor-pointer hover:border-[#3b2566] transition-colors"
+            className="bg-card border border-border rounded-xl px-4 py-3 flex items-center justify-between cursor-pointer hover:border-primary/40 transition-colors"
           >
             <div className="flex items-center gap-2">
               {TIPO_ICON_MAP[m.tipo]}
               <div>
-                <p className="text-sm text-white font-medium">{m.descricaoInvestimento}</p>
-                <p className="text-xs text-[#718096]">
+                <p className="text-sm text-foreground font-medium">{m.descricaoInvestimento}</p>
+                <p className="text-xs text-muted-foreground">
                   {new Date(m.data + 'T00:00:00').toLocaleDateString('pt-BR')}
                 </p>
               </div>
