@@ -1,6 +1,5 @@
-// eslint-disable-next-line no-restricted-imports
-import axios from 'axios';
-import type { AxiosError, InternalAxiosRequestConfig } from 'axios';
+// eslint-disable-next-line no-restricted-imports -- este é o ÚNICO ponto autorizado a importar axios cru (instância central + refresh)
+import axios, { type AxiosError, type InternalAxiosRequestConfig } from 'axios';
 import { useAuthStore } from '../store/useAuthStore';
 import { API_BASE_URL } from './apiBaseUrl';
 import { toast } from '../store/useToastStore';
@@ -20,6 +19,14 @@ const apiClient = axios.create({
   },
   withCredentials: true,
 });
+
+/**
+ * Dispara o refresh do access token (cookie httpOnly). Usa axios cru, não o apiClient,
+ * de propósito: evita reentrar no interceptor 401 e cair em loop de refresh. Fonte única
+ * reusada pelo interceptor e pelo bootstrap de sessão (App.tsx).
+ */
+export const refreshSession = () =>
+  axios.post(`${API_BASE_URL}/api/auth/refresh`, {}, { withCredentials: true });
 
 let isRefreshing = false;
 let coldStartToastShown = false;
@@ -81,11 +88,7 @@ apiClient.interceptors.response.use(
     isRefreshing = true;
 
     try {
-      await axios.post(
-        `${API_BASE_URL}/api/auth/refresh`,
-        {},
-        { withCredentials: true },
-      );
+      await refreshSession();
 
       const currentUser = useAuthStore.getState().user;
       if (currentUser) {

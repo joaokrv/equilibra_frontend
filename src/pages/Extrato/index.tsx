@@ -5,6 +5,7 @@ import { MainLayout } from '../../components/layout/MainLayout';
 import { SortIcon } from '../../components/icons/SortIcon';
 import { TransacoesService } from '../../api/services/TransacoesService';
 import { transacoesApi } from '../../lib/transacoesApi';
+import { invalidateTransacaoQueries } from '../../lib/queryInvalidation';
 import { ContasService } from '../../api/services/ContasService';
 import { TransacaoResponseDTO } from '../../api/models/TransacaoResponseDTO';
 import { TransactionModal } from '../../components/modals/TransactionModal';
@@ -102,9 +103,7 @@ export const ExtratoPage = ({ filtroTipo, titulo, descricao }: ExtratoPageProps)
   const deletarMutation = useMutation({
     mutationFn: ({ id, grupo }: { id: number; grupo: boolean }) => transacoesApi.excluir(id, grupo),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['transacoes'] });
-      queryClient.invalidateQueries({ queryKey: ['accounts'] });
-      queryClient.invalidateQueries({ queryKey: ['transactions'] });
+      invalidateTransacaoQueries(queryClient);
       toast.success(tr('Transação excluída com sucesso.', 'Transaction deleted successfully.'));
       setTransacaoParaDeletar(undefined);
     },

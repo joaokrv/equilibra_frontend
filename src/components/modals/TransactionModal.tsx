@@ -12,6 +12,7 @@ import { getApiErrorMessage } from '../../lib/errorMessage';
 import { useI18nStore } from '../../store/useI18nStore';
 import { useAuthStore } from '../../store/useAuthStore';
 import { formatarMoeda } from '../../lib/formatters';
+import { invalidateTransacaoQueries } from '../../lib/queryInvalidation';
 import { InvestmentQuickSection } from './InvestmentQuickSection';
 import {
   TransacoesService,
@@ -196,11 +197,7 @@ export const TransactionModal = ({
   const criarMutation = useMutation({
     mutationFn: (payload: any) => TransacoesService.criarTransacao(payload),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['transactions'] });
-      queryClient.invalidateQueries({ queryKey: ['accounts'] });
-      queryClient.invalidateQueries({ queryKey: ['transacoes'] });
-      queryClient.invalidateQueries({ queryKey: ['dashboard-summary'] });
-      queryClient.invalidateQueries({ queryKey: ['patrimony-evolution'] });
+      invalidateTransacaoQueries(queryClient);
       onSuccess?.();
       reset();
       onClose();
@@ -224,11 +221,7 @@ export const TransactionModal = ({
   const atualizarMutation = useMutation({
     mutationFn: (payload: any) => TransacoesService.atualizarTransacao(transacaoParaEditar!.id!, payload),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['transactions'] });
-      queryClient.invalidateQueries({ queryKey: ['accounts'] });
-      queryClient.invalidateQueries({ queryKey: ['transacoes'] });
-      queryClient.invalidateQueries({ queryKey: ['dashboard-summary'] });
-      queryClient.invalidateQueries({ queryKey: ['patrimony-evolution'] });
+      invalidateTransacaoQueries(queryClient);
       toast.success(tr(language, 'Lançamento atualizado com sucesso!', 'Entry updated successfully!'));
       onSuccess?.();
       reset();

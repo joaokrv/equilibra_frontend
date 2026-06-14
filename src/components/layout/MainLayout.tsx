@@ -6,6 +6,7 @@ import { MarketTicker } from '../dashboard/MarketTicker';
 import { Plus, AlertTriangle, ArrowRight } from 'lucide-react';
 import { TransactionModal } from '../modals/TransactionModal';
 import { useQueryClient } from '@tanstack/react-query';
+import { invalidateTransacaoQueries } from '../../lib/queryInvalidation';
 import { useAuthStore } from '../../store/useAuthStore';
 import { useI18nStore } from '../../store/useI18nStore';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -155,12 +156,7 @@ export const MainLayout = ({ children }: MainLayoutProps) => {
   };
 
   const invalidarAposCriacao = () => {
-    queryClient.invalidateQueries({ queryKey: ['transactions'] });
-    queryClient.invalidateQueries({ queryKey: ['transacoes'] });
-    queryClient.invalidateQueries({ queryKey: ['dashboard-summary'] });
-    queryClient.invalidateQueries({ queryKey: ['patrimony-evolution'] });
-    queryClient.invalidateQueries({ queryKey: ['investimentos'] });
-    queryClient.invalidateQueries({ queryKey: ['accounts'] });
+    invalidateTransacaoQueries(queryClient);
   };
 
   return (

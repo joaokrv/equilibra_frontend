@@ -18,3 +18,22 @@ export function invalidateInvestmentQueries(queryClient: QueryClient): void {
   ];
   keys.forEach((queryKey) => queryClient.invalidateQueries({ queryKey }));
 }
+
+/**
+ * Invalida todas as queries afetadas por criar/editar/excluir uma transação.
+ * Fonte única para o efeito de cache — evita a duplicação dispersa do par de chaves
+ * PT/EN (transacoes/transactions, contas/accounts) que vinha sendo repetida em cada site.
+ */
+export function invalidateTransacaoQueries(queryClient: QueryClient): void {
+  const keys = [
+    ['transacoes'],
+    ['transactions'],
+    ['transactions-period'],
+    ['accounts'],
+    ['contas'],
+    ['investimentos'],
+    ['dashboard-summary'],
+    ['patrimony-evolution'],
+  ];
+  keys.forEach((queryKey) => queryClient.invalidateQueries({ queryKey }));
+}

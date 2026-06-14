@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import axios from 'axios';
 import { useAuthStore } from './store/useAuthStore';
-import { API_BASE_URL } from './lib/apiBaseUrl';
+import { refreshSession } from './lib/axios';
 import { usePrivacyStore } from './store/usePrivacyStore';
 import { toast } from './store/useToastStore';
 import { PerfilService } from './api';
@@ -82,8 +81,7 @@ export default function App() {
       return;
     }
 
-    axios
-      .post(`${API_BASE_URL}/api/auth/refresh`, {}, { withCredentials: true })
+    refreshSession()
       .then(() => {
         if (user) {
           setAuth(user);
