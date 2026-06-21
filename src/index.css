@@ -318,10 +318,13 @@ select {
   accent-color: var(--primary);
 }
 select option {
-  background-color: var(--popover);
+  background-color: var(--card);
   color: var(--foreground);
 }
+select option:hover {
+  background: color-mix(in srgb, var(--primary) 14%, var(--card));
+}
 select option:checked {
-  background: color-mix(in srgb, var(--primary) 24%, var(--popover));
+  background: color-mix(in srgb, var(--primary) 24%, var(--card));
   color: var(--foreground);
 }
