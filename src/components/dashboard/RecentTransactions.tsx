@@ -52,7 +52,7 @@ export const RecentTransactions = ({ transacoesList }: RecentTransactionsProps) 
                 <p className="text-sm font-bold text-foreground mb-0.5 truncate">{transacao.descricao}</p>
                 <p className="text-2xs uppercase text-muted-foreground tracking-[0.12em] font-bold truncate">
                   {transacao.nomeCategoria || translate(language, 'uncategorized')} •{' '}
-                  {format(new Date(transacao.data!), 'dd MMM', { locale: dateLocale })}
+                  {format(new Date(transacao.data! + 'T12:00:00'), 'dd MMM', { locale: dateLocale })}
                 </p>
               </div>
             </div>

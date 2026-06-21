@@ -2,6 +2,7 @@ import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { FaturasService } from '../api/services/FaturasService';
 import { PagarFaturaRequestDTO } from '../api/models/PagarFaturaRequestDTO';
 import { TransacoesService } from '../api/services/TransacoesService';
+import { invalidateFaturaQueries } from '../lib/queryInvalidation';
 
 export function useFaturasPorCartao(cartaoId: number | null) {
   return useQuery({
@@ -33,10 +34,7 @@ export function usePagarFatura() {
     mutationFn: ({ id, body }: { id: number; body: PagarFaturaRequestDTO }) =>
       FaturasService.pagarFatura(id, body),
     onSuccess: () => {
-      qc.invalidateQueries({ queryKey: ['faturas'] });
-      qc.invalidateQueries({ queryKey: ['fatura'] });
-      qc.invalidateQueries({ queryKey: ['cartoes'] });
-      qc.invalidateQueries({ queryKey: ['contas'] });
+      invalidateFaturaQueries(qc);
     },
   });
 }

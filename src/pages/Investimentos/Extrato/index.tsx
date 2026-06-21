@@ -388,7 +388,7 @@ export const InvestimentoExtratoPage = () => {
                       </td>
                       <td className="px-4 py-3 text-foreground font-medium">{m.descricaoInvestimento}</td>
                       <td className="px-4 py-3 text-muted-foreground">
-                        {new Date(m.data + 'T00:00:00').toLocaleDateString('pt-BR')}
+                        {new Date(m.data + 'T00:00:00').toLocaleDateString(language)}
                       </td>
                       <td className="px-4 py-3 text-muted-foreground">{m.nomeContaOrigem ?? '—'}</td>
                       <td className="px-4 py-3 text-muted-foreground max-w-[140px] truncate">{m.observacao ?? '—'}</td>
@@ -435,7 +435,7 @@ export const InvestimentoExtratoPage = () => {
                   <p className="text-foreground text-sm font-medium">{m.descricaoInvestimento}</p>
                   <div className="flex items-center justify-between mt-2">
                     <span className="text-xs text-muted-foreground">
-                      {new Date(m.data + 'T00:00:00').toLocaleDateString('pt-BR')}
+                      {new Date(m.data + 'T00:00:00').toLocaleDateString(language)}
                       {m.nomeContaOrigem ? ` · ${m.nomeContaOrigem}` : ''}
                     </span>
                     <div className="flex items-center gap-1">

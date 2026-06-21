@@ -13,6 +13,7 @@ import { ContasService } from '../../api/services/ContasService';
 import { investimentosApi, InvestimentoItem, TipoInvestimento } from '../../lib/investimentosApi';
 import { movimentacoesInvestimentoApi, TipoMovimentacao } from '../../lib/movimentacoesInvestimentoApi';
 import { formatarMoeda } from '../../lib/formatters';
+import { invalidateInvestmentQueries } from '../../lib/queryInvalidation';
 import { getApiErrorMessage } from '../../lib/errorMessage';
 import { toast } from '../../store/useToastStore';
 import { useAuthStore } from '../../store/useAuthStore';
@@ -118,12 +119,7 @@ export const InvestimentosPage = () => {
   const contasList = ensureArray<any>(contas);
 
   const invalidar = () => {
-    queryClient.invalidateQueries({ queryKey: ['investimentos'] });
-    queryClient.invalidateQueries({ queryKey: ['contas'] });
-    queryClient.invalidateQueries({ queryKey: ['transacoes'] });
-    queryClient.invalidateQueries({ queryKey: ['transactions'] });
-    queryClient.invalidateQueries({ queryKey: ['patrimony-evolution'] });
-    queryClient.invalidateQueries({ queryKey: ['dashboard-summary'] });
+    invalidateInvestmentQueries(queryClient);
   };
 
   const criarMutation = useMutation({
@@ -533,7 +529,7 @@ export const PreviewMovimentacoes = () => {
               <div>
                 <p className="text-sm text-foreground font-medium">{m.descricaoInvestimento}</p>
                 <p className="text-xs text-muted-foreground">
-                  {new Date(m.data + 'T00:00:00').toLocaleDateString('pt-BR')}
+                  {new Date(m.data + 'T00:00:00').toLocaleDateString(language)}
                 </p>
               </div>
             </div>

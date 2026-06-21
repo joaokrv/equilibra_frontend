@@ -1,13 +1,17 @@
 import React from 'react';
+import { useI18nStore } from '../../store/useI18nStore';
 
 interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   variant?: 'primary' | 'secondary' | 'outline' | 'destructive';
   size?: 'sm' | 'md' | 'lg' | 'icon';
   isLoading?: boolean;
+  /** Texto durante o loading; default traduzido conforme o idioma do app. */
+  loadingText?: string;
 }
 
 export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
-  ({ className = '', variant = 'primary', size = 'md', isLoading, children, ...props }, ref) => {
+  ({ className = '', variant = 'primary', size = 'md', isLoading, loadingText, children, ...props }, ref) => {
+    const language = useI18nStore((s) => s.language);
     const baseStyles = 'inline-flex items-center justify-center rounded-xl font-bold transition-all active:scale-[0.98] disabled:opacity-50 disabled:pointer-events-none';
     
     const variants = {
@@ -31,7 +35,7 @@ export const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
         {isLoading ? (
           <div className="flex items-center gap-2">
             <div className="h-4 w-4 animate-spin rounded-full border-2 border-current border-t-transparent" />
-            <span>Processando...</span>
+            <span>{loadingText ?? (language === 'en-US' ? 'Processing...' : 'Processando...')}</span>
           </div>
         ) : children}
       </button>

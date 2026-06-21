@@ -4,6 +4,7 @@
 /* eslint-disable */
 import type { AlterarSenhaRequestDTO } from '../models/AlterarSenhaRequestDTO';
 import type { ConfirmarAlteracaoEmailRequestDTO } from '../models/ConfirmarAlteracaoEmailRequestDTO';
+import type { FotoResponseDTO } from '../models/FotoResponseDTO';
 import type { PerfilResumoResponseDTO } from '../models/PerfilResumoResponseDTO';
 import type { SolicitarAlteracaoEmailRequestDTO } from '../models/SolicitarAlteracaoEmailRequestDTO';
 import type { UsuarioAtualizacaoRequestDTO } from '../models/UsuarioAtualizacaoRequestDTO';
@@ -109,6 +110,28 @@ export class PerfilService {
             url: '/api/usuarios/perfil/me/foto',
             formData: formData,
             mediaType: 'multipart/form-data',
+        });
+    }
+    /**
+     * Obter foto
+     * @returns FotoResponseDTO OK
+     * @throws ApiError
+     */
+    public static obterFoto(): CancelablePromise<FotoResponseDTO> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/usuarios/perfil/me/foto',
+        });
+    }
+    /**
+     * Remover foto
+     * @returns any OK
+     * @throws ApiError
+     */
+    public static removerFoto(): CancelablePromise<any> {
+        return __request(OpenAPI, {
+            method: 'DELETE',
+            url: '/api/usuarios/perfil/me/foto',
         });
     }
     /**

@@ -76,7 +76,7 @@ export default function App() {
   const [isInitializing, setIsInitializing] = useState(true);
 
   useEffect(() => {
-    const { isAuthenticated, user, setAuth, logout } = useAuthStore.getState();
+    const { isAuthenticated, user, setAuth, updateProfile, logout } = useAuthStore.getState();
 
     if (!isAuthenticated) {
       setIsInitializing(false);
@@ -84,9 +84,23 @@ export default function App() {
     }
 
     refreshSession()
-      .then(() => {
-        if (user) {
-          setAuth(user);
+      .then(async () => {
+        if (user) setAuth(user);
+        // Perfil persistido pode estar defasado (ex.: e-mail verificado em outra
+        // aba). Sobrepõe com o dado fresco antes de liberar as rotas — evita que
+        // o VerifiedRoute decida com isEmailVerificado obsoleto.
+        try {
+          // Prime o mesmo cache que ProtectedRoute consome (['auth-session-check'],
+          // staleTime 30s) — evita um segundo GET /perfil idêntico no boot.
+          const perfil = await queryClient.fetchQuery({
+            queryKey: ['auth-session-check'],
+            queryFn: () => PerfilService.obterPerfil(),
+            staleTime: 30_000,
+            retry: false,
+          });
+          updateProfile(perfil);
+        } catch {
+          /* perfil indisponível: mantém o persistido, a sessão segue válida */
         }
       })
       .catch(() => {
@@ -95,7 +109,7 @@ export default function App() {
       .finally(() => {
         setIsInitializing(false);
       });
-  }, []);
+  }, [queryClient]);
 
   useEffect(() => {
     const handleForceLogout = () => {

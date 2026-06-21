@@ -310,3 +310,18 @@
 [data-theme="light"] .brand-logo {
   filter: brightness(0.88) contrast(1.25) drop-shadow(0 4px 10px rgba(124, 20, 255, 0.12));
 }
+
+/* <select> nativo: o realce da opção selecionada herda a cor do SO e destoa
+   do tema. Força a superfície do popover e um realce da marca em todos os
+   selects do app, legível em tema claro e escuro. */
+select {
+  accent-color: var(--primary);
+}
+select option {
+  background-color: var(--popover);
+  color: var(--foreground);
+}
+select option:checked {
+  background: color-mix(in srgb, var(--primary) 24%, var(--popover));
+  color: var(--foreground);
+}

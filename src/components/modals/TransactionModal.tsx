@@ -12,6 +12,7 @@ import { getApiErrorMessage } from '../../lib/errorMessage';
 import { useI18nStore } from '../../store/useI18nStore';
 import { useAuthStore } from '../../store/useAuthStore';
 import { formatarMoeda } from '../../lib/formatters';
+import { toLocalDateStr } from '../../lib/dateUtils';
 import { invalidateTransacaoQueries } from '../../lib/queryInvalidation';
 import { InvestmentQuickSection } from './InvestmentQuickSection';
 import {
@@ -104,7 +105,7 @@ export const TransactionModal = ({
       tipo: tipoInicial,
       status: 'PAGO',
       metodoPagamento: 'PIX',
-      data: new Date().toISOString().split('T')[0],
+      data: toLocalDateStr(new Date()),
       numeroParcela: '1',
       totalParcelas: '1',
       idempotencyKey: '',
@@ -153,7 +154,7 @@ export const TransactionModal = ({
     if (isEditMode && transacaoParaEditar) {
       setValue('descricao', transacaoParaEditar.descricao ?? '');
       setValue('valor', String(transacaoParaEditar.valor ?? ''));
-      setValue('data', transacaoParaEditar.data ?? new Date().toISOString().split('T')[0]);
+      setValue('data', transacaoParaEditar.data ?? toLocalDateStr(new Date()));
       setValue('tipo', (transacaoParaEditar.tipo ?? 'DESPESA') as 'RECEITA' | 'DESPESA');
       setValue('status', (transacaoParaEditar.status ?? 'PAGO') as 'PAGO' | 'PENDENTE');
       setValue('metodoPagamento', (transacaoParaEditar.metodoPagamento ?? 'PIX') as TransactionFormValues['metodoPagamento']);
@@ -168,7 +169,7 @@ export const TransactionModal = ({
         tipo: tipoInicial,
         status: 'PAGO',
         metodoPagamento: 'PIX',
-        data: new Date().toISOString().split('T')[0],
+        data: toLocalDateStr(new Date()),
         numeroParcela: '1',
         totalParcelas: '1',
         idempotencyKey: uuidv4(),

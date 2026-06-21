@@ -8,7 +8,6 @@ export type UsuarioResponseDTO = {
     email?: string;
     isEmailVerificado?: boolean;
     celular?: string;
-    fotoBase64?: string;
     moeda?: UsuarioResponseDTO.moeda;
 };
 export namespace UsuarioResponseDTO {

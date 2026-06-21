@@ -12,6 +12,7 @@ import { getApiErrorMessage } from '../../lib/errorMessage';
 import { useI18nStore } from '../../store/useI18nStore';
 import { ContasService } from '../../api';
 import { investimentosApi, type InvestimentoItem } from '../../lib/investimentosApi';
+import { invalidateInvestmentQueries } from '../../lib/queryInvalidation';
 
 const tr = (language: 'pt-BR' | 'en-US', pt: string, en: string) =>
   language === 'en-US' ? en : pt;
@@ -81,17 +82,6 @@ export const InvestmentQuickSection = ({ onSuccess, onCancel, defaultOperacao, l
   const investimentos = ensureArray<InvestimentoItem>(investimentosRaw);
   const contas = ensureArray<any>(contasRaw);
 
-  const invalidarCaches = async () => {
-    await Promise.all([
-      queryClient.invalidateQueries({ queryKey: ['investimentos'] }),
-      queryClient.invalidateQueries({ queryKey: ['accounts'] }),
-      queryClient.invalidateQueries({ queryKey: ['transactions'] }),
-      queryClient.invalidateQueries({ queryKey: ['transacoes'] }),
-      queryClient.invalidateQueries({ queryKey: ['dashboard-summary'] }),
-      queryClient.invalidateQueries({ queryKey: ['patrimony-evolution'] }),
-    ]);
-  };
-
   const mutation = useMutation({
     mutationFn: async (values: QuickInvestmentFormValues) => {
       const investimentoId = Number(values.investimentoId);
@@ -104,8 +94,8 @@ export const InvestmentQuickSection = ({ onSuccess, onCancel, defaultOperacao, l
 
       return investimentosApi.resgatar(investimentoId, valor, contaId);
     },
-    onSuccess: async () => {
-      await invalidarCaches();
+    onSuccess: () => {
+      invalidateInvestmentQueries(queryClient);
       toast.success(tr(language, 'Movimentação de investimento registrada.', 'Investment movement recorded.'));
       reset({ investimentoId: '', operacao: 'APORTE', valor: '', contaId: '' });
       onSuccess?.();

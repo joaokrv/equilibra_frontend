@@ -58,7 +58,7 @@ export const InvestimentoReportModal = ({
       return [
         TIPO_LABEL[m.tipo] ?? m.tipo,
         m.descricaoInvestimento,
-        new Date(m.data + 'T00:00:00').toLocaleDateString('pt-BR'),
+        new Date(m.data + 'T00:00:00').toLocaleDateString(language),
         m.nomeContaOrigem ?? '',
         m.observacao ?? '',
         valorFormatado,

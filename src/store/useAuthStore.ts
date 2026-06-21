@@ -14,7 +14,6 @@ export interface User {
   isEmailVerificado: boolean;
   celular?: string;
   moeda?: 'BRL' | 'USD' | 'EUR';
-  fotoBase64?: string;
   notificacoesFaturaAtivo?: boolean;
 }
 

@@ -9,6 +9,7 @@ import { useModalA11y } from '../../hooks/useModalA11y';
 import { ContasService } from '../../api/services/ContasService';
 import { ContaResponseDTO } from '../../api/models/ContaResponseDTO';
 import { investimentosApi } from '../../lib/investimentosApi';
+import { invalidateInvestmentQueries, invalidateTransacaoQueries } from '../../lib/queryInvalidation';
 import { formatarMoeda } from '../../lib/formatters';
 import { getApiErrorMessage } from '../../lib/errorMessage';
 import { toast } from '../../store/useToastStore';
@@ -77,52 +78,24 @@ export const ContasPage = () => {
   const contasList = ensureArray<ContaResponseDTO>(contas);
   const investimentosList = ensureArray<any>(investimentos);
 
+  const valorInvestimentoInicial = Number(investimentoInicial || 0);
+
   const criarMutation = useMutation({
     mutationFn: () =>
       ContasService.criarConta({
         nome: nome.trim(),
-        saldo: (saldo ? Number(saldo) : 0) + (investimentoInicial ? Number(investimentoInicial) : 0),
+        saldo: saldo ? Number(saldo) : 0,
+        investimentoInicial: valorInvestimentoInicial > 0 ? valorInvestimentoInicial : undefined,
+        investimentoInicialDescricao: valorInvestimentoInicial > 0
+          ? tr(`Investimento Inicial - ${nome.trim()}`, `Initial Investment - ${nome.trim()}`)
+          : undefined,
       }),
-    onSuccess: async (contaCriada: any) => {
-      queryClient.invalidateQueries({ queryKey: ['contas'] });
-
-      const valorInvestimentoInicial = Number(investimentoInicial || 0);
-      if (valorInvestimentoInicial > 0 && contaCriada?.id) {
-        try {
-          await investimentosApi.criar({
-            descricao: tr(`Investimento Inicial - ${nome.trim()}`, `Initial Investment - ${nome.trim()}`),
-            valorInicial: valorInvestimentoInicial,
-            meta: null,
-            contaId: Number(contaCriada.id),
-            tipoInvestimento: 'OUTRO',
-            tipoPersonalizado: tr('Investimento Inicial', 'Initial Investment'),
-          });
-          await Promise.all([
-            queryClient.invalidateQueries({ queryKey: ['contas'] }),
-            queryClient.invalidateQueries({ queryKey: ['investimentos'] }),
-          ]);
-          toast.success(tr('Conta e investimento inicial criados com sucesso.', 'Account and initial investment created successfully.'));
-        } catch (error: unknown) {
-          if (contaCriada?.id) {
-            try {
-              await ContasService.atualizarSaldo(Number(contaCriada.id), Number(saldo || 0));
-              await queryClient.invalidateQueries({ queryKey: ['contas'] });
-              toast.warning(getApiErrorMessage(
-                error,
-                tr(
-                  'Conta criada, mas o investimento inicial falhou. O saldo da conta foi restaurado automaticamente.',
-                  'Account created, but initial investment failed. The account balance was automatically restored.'
-                )
-              ));
-            } catch {
-              toast.error(tr(
-                'Conta criada, mas o investimento inicial falhou e nao foi possivel restaurar o saldo automaticamente. Ajuste o saldo manualmente.',
-                'Account created, but initial investment failed and balance could not be restored automatically. Please adjust the balance manually.'
-              ));
-            }
-          }
-        }
+    onSuccess: (contaCriada: any) => {
+      if (valorInvestimentoInicial > 0) {
+        invalidateInvestmentQueries(queryClient);
+        toast.success(tr('Conta e investimento inicial criados com sucesso.', 'Account and initial investment created successfully.'));
       } else {
+        queryClient.invalidateQueries({ queryKey: ['contas'] });
         toast.success(tr(`Conta "${nome.trim()}" criada com sucesso.`, `Account "${nome.trim()}" created successfully.`));
       }
 
@@ -141,6 +114,8 @@ export const ContasPage = () => {
     mutationFn: () => ContasService.atualizarSaldo(editando!.id!, Number(saldo)),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['contas'] });
+      queryClient.invalidateQueries({ queryKey: ['dashboard-summary'] });
+      queryClient.invalidateQueries({ queryKey: ['patrimony-evolution'] });
       toast.success(tr('Saldo atualizado com sucesso.', 'Balance updated successfully.'));
       fecharModal();
     },
@@ -151,7 +126,8 @@ export const ContasPage = () => {
   const deletarMutation = useMutation({
     mutationFn: (id: number) => ContasService.deletarConta(id),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['contas'] });
+      invalidateTransacaoQueries(queryClient);
+      invalidateInvestmentQueries(queryClient);
       toast.success(tr('Conta removida.', 'Account removed.'));
       setDeletandoId(null);
       setContaParaDeletar(null);
@@ -221,7 +197,7 @@ export const ContasPage = () => {
       <div className="p-3 sm:p-4 lg:p-6 space-y-5 sm:space-y-6 animate-in fade-in duration-500">
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 sm:gap-4">
           <div>
-            <h1 className="text-2xl font-bold text-foreground">Minhas Contas</h1>
+            <h1 className="text-2xl font-bold text-foreground">{tr('Minhas Contas', 'My Accounts')}</h1>
             <p className="text-sm text-muted-foreground mt-1">{tr('Gerencie suas contas bancárias e acompanhe seus saldos.', 'Manage your bank accounts and track your balances.')}</p>
           </div>
         </div>
@@ -356,8 +332,8 @@ export const ContasPage = () => {
             {tr('Investimentos, transações e recorrências vinculados serão desativados em cascata. A conta só pode ser removida com saldo zerado.', 'Linked investments, transactions, and recurrences will be deactivated in cascade. The account can only be removed when balance is zero.')}
           </>
         }
-        confirmText="CONFIRMAR"
-        loadingText="REMOVENDO..."
+        confirmText={tr('CONFIRMAR', 'CONFIRM')}
+        loadingText={tr('REMOVENDO...', 'REMOVING...')}
         isLoading={deletarMutation.isPending}
         onCancel={() => {
           if (!deletarMutation.isPending) {

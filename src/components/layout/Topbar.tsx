@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { Search, User, Eye, EyeOff, Sun, Moon, Monitor } from 'lucide-react';
 import { useAuthStore } from '../../store/useAuthStore';
+import { usePerfilFoto } from '../../hooks/usePerfilFoto';
 import { Link, useNavigate } from 'react-router-dom';
 import { useQuery } from '@tanstack/react-query';
 import { ContasService } from '../../api/services/ContasService';
@@ -36,6 +37,7 @@ export const Topbar = () => {
 
   const resolvedTheme = resolveTheme(theme);
   const ThemeIcon = theme === 'system' ? Monitor : resolvedTheme === 'dark' ? Moon : Sun;
+  const fotoUrl = usePerfilFoto();
   const moeda = (user?.moeda as 'BRL' | 'USD' | 'EUR') || 'BRL';
   const navigate = useNavigate();
   const [busca, setBusca] = useState('');
@@ -102,7 +104,7 @@ export const Topbar = () => {
         tipo: 'transacao',
         label: t.descricao || '',
         detalhe: hideValues ? '• • • • • •' : `${t.tipo === 'RECEITA' ? '+' : '-'} ${formatarMoeda(t.valor ?? 0, moeda)}${t.nomeCategoria ? ` • ${t.nomeCategoria}` : ''}`,
-        rota: `/extrato?busca=${encodeURIComponent(busca.trim())}`,
+        rota: `/extrato?transacao=${t.id}`,
       })),
   ].slice(0, 8);
 
@@ -205,10 +207,10 @@ export const Topbar = () => {
             </p>
           </div>
           <div className="w-11 h-11 sm:w-10 sm:h-10 rounded-full bg-secondary border border-foreground/10 flex items-center justify-center overflow-hidden group-hover:border-primary/50 transition-all shadow-inner">
-            {user?.fotoBase64 ? (
+            {fotoUrl ? (
               <img
-                src={`data:image/png;base64,${user.fotoBase64}`}
-                alt={user.nome}
+                src={fotoUrl}
+                alt={user?.nome}
                 className="w-full h-full object-cover transition-transform group-hover:scale-110 duration-500"
               />
             ) : (

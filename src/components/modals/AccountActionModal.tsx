@@ -93,7 +93,11 @@ export function AccountActionModal({ isOpen, onClose, onSuccess }: AccountAction
   if (!isOpen) return null;
 
   const isExcluir = acao === Acao.EXCLUIR;
-  const accentColor = isExcluir ? 'rose' : 'amber';
+  // Classes Tailwind como literais completas: o scanner do v4 não detecta nomes
+  // construídos por interpolação (bg-${cor}-500), então a cor sumiria do bundle.
+  const accent = isExcluir
+    ? { glow: 'bg-rose-500/20', box: 'bg-rose-500/20 border-rose-500/20', btn: 'bg-rose-500 hover:bg-rose-400' }
+    : { glow: 'bg-amber-500/20', box: 'bg-amber-500/20 border-amber-500/20', btn: 'bg-amber-500 hover:bg-amber-400' };
   const isPending =
     solicitarMutation.isPending ||
     confirmarExcluirMutation.isPending ||
@@ -103,7 +107,7 @@ export function AccountActionModal({ isOpen, onClose, onSuccess }: AccountAction
     <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-overlay backdrop-blur-sm animate-in fade-in duration-200">
       <div ref={dialogRef} className="glass w-full max-w-md p-8 rounded-[2rem] border border-foreground/10 shadow-2xl relative overflow-hidden">
         <div
-          className={`absolute -top-24 -right-24 w-48 h-48 bg-${accentColor}-500/20 rounded-full blur-[80px]`}
+          className={`absolute -top-24 -right-24 w-48 h-48 ${accent.glow} rounded-full blur-[80px]`}
         />
 
         <button
@@ -184,7 +188,7 @@ export function AccountActionModal({ isOpen, onClose, onSuccess }: AccountAction
             </button>
 
             <div className={`flex items-center gap-3`}>
-              <div className={`p-2 bg-${accentColor}-500/20 rounded-xl border border-${accentColor}-500/20`}>
+              <div className={`p-2 ${accent.box} rounded-xl border`}>
                 {isExcluir
                   ? <Trash2 className="text-rose-500 w-6 h-6" />
                   : <EyeOff className="text-amber-500 w-6 h-6" />}
@@ -221,7 +225,7 @@ export function AccountActionModal({ isOpen, onClose, onSuccess }: AccountAction
               <button
                 type="submit"
                 disabled={!senha || isPending}
-                className={`w-full py-4 bg-${accentColor}-500 hover:bg-${accentColor}-400 text-primary-foreground font-black rounded-2xl transition-all uppercase tracking-widest text-xs shadow-lg disabled:opacity-50 active:scale-95`}
+                className={`w-full py-4 ${accent.btn} text-primary-foreground font-black rounded-2xl transition-all uppercase tracking-widest text-xs shadow-lg disabled:opacity-50 active:scale-95`}
               >
                 {isPending
                   ? tr('Processando...', 'Processing...')
@@ -277,7 +281,7 @@ export function AccountActionModal({ isOpen, onClose, onSuccess }: AccountAction
               <button
                 type="submit"
                 disabled={codigo.length !== 6 || !senha || isPending}
-                className={`w-full py-4 bg-${accentColor}-500 hover:bg-${accentColor}-400 text-primary-foreground font-black rounded-2xl transition-all uppercase tracking-widest text-xs shadow-lg disabled:opacity-50 active:scale-95`}
+                className={`w-full py-4 ${accent.btn} text-primary-foreground font-black rounded-2xl transition-all uppercase tracking-widest text-xs shadow-lg disabled:opacity-50 active:scale-95`}
               >
                 {isPending
                   ? tr('Processando...', 'Processing...')

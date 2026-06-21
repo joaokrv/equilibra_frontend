@@ -1,4 +1,5 @@
 import { useEffect, useState, useMemo } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { Receipt, ChevronLeft, ChevronRight, Loader2, TrendingUp, TrendingDown, Pencil, Trash2, Repeat, FileDown } from 'lucide-react';
 import { MainLayout } from '../../components/layout/MainLayout';
@@ -7,6 +8,7 @@ import { TransacoesService } from '../../api/services/TransacoesService';
 import { transacoesApi } from '../../lib/transacoesApi';
 import { invalidateTransacaoQueries } from '../../lib/queryInvalidation';
 import { ContasService } from '../../api/services/ContasService';
+import { CategoriasService } from '../../api/services/CategoriasService';
 import { TransacaoResponseDTO } from '../../api/models/TransacaoResponseDTO';
 import { TransactionModal } from '../../components/modals/TransactionModal';
 import { DeleteConfirmationModal } from '../../components/modals/DeleteConfirmationModal';
@@ -50,6 +52,7 @@ export const ExtratoPage = ({ filtroTipo, titulo, descricao }: ExtratoPageProps)
   };
 
   const queryClient = useQueryClient();
+  const [searchParams, setSearchParams] = useSearchParams();
   const hoje = new Date();
   const primeiroDiaDoMes = new Date(hoje.getFullYear(), hoje.getMonth(), 1);
 
@@ -74,14 +77,11 @@ export const ExtratoPage = ({ filtroTipo, titulo, descricao }: ExtratoPageProps)
   const [modalEditarAberto, setModalEditarAberto] = useState(false);
   const [transacaoParaDeletar, setTransacaoParaDeletar] = useState<TransacaoResponseDTO | undefined>(undefined);
 
-  const ano = Number(dataInicio.slice(0, 4));
-  const mes = Number(dataInicio.slice(5, 7));
-
   const resetPage = () => setCurrentPage(0);
 
   const { data: transacoes = [], isLoading, isError, refetch } = useQuery({
-    queryKey: ['transacoes', ano, mes],
-    queryFn: () => TransacoesService.listarMensal(ano, mes),
+    queryKey: ['transacoes', dataInicio, dataFim],
+    queryFn: () => TransacoesService.listarPorIntervalo(dataInicio, dataFim),
   });
 
   const { data: contasRaw = [] } = useQuery({
@@ -118,12 +118,20 @@ export const ExtratoPage = ({ filtroTipo, titulo, descricao }: ExtratoPageProps)
     ? listaSemTransferencias.filter((t: TransacaoResponseDTO) => t.tipo === filtroTipo)
     : lista;
 
+  const tipoCategorias = filtroTipo === TransacaoResponseDTO.tipo.RECEITA ? 'RECEITA'
+    : filtroTipo === TransacaoResponseDTO.tipo.DESPESA ? 'DESPESA' : undefined;
+
+  const { data: categoriasApi = [] } = useQuery({
+    queryKey: ['categorias', tipoCategorias ?? 'todas'],
+    queryFn: () => CategoriasService.listarCategorias(tipoCategorias),
+    staleTime: 5 * 60_000,
+  });
+
   const categorias = useMemo(() => {
     const set = new Set<string>();
-    listaBase.forEach((t: TransacaoResponseDTO) => { if (t.nomeCategoria) set.add(t.nomeCategoria); });
+    categoriasApi.forEach((c) => { if (c.nome) set.add(c.nome); });
     return Array.from(set).sort((a, b) => a.localeCompare(b));
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [transacoes, filtroTipo]);
+  }, [categoriasApi]);
 
   const metodos = useMemo(() => {
     const set = new Set<string>();
@@ -200,6 +208,23 @@ export const ExtratoPage = ({ filtroTipo, titulo, descricao }: ExtratoPageProps)
 
   const abrirEditar = (t: TransacaoResponseDTO) => { setTransacaoParaEditar(t); setModalEditarAberto(true); };
   const fecharEditar = () => { setModalEditarAberto(false); setTransacaoParaEditar(undefined); };
+
+  useEffect(() => {
+    const idParam = searchParams.get('transacao');
+    if (!idParam || isLoading) return;
+    const alvo = transacoes.find((t: TransacaoResponseDTO) => String(t.id) === idParam);
+    if (alvo) {
+      abrirEditar(alvo);
+    } else {
+      toast.error(tr(
+        'Transação não encontrada no período exibido. Ajuste o filtro de datas.',
+        'Transaction not found in the displayed period. Adjust the date filter.',
+      ));
+    }
+    searchParams.delete('transacao');
+    setSearchParams(searchParams, { replace: true });
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [transacoes, searchParams, isLoading]);
 
   return (
     <MainLayout>

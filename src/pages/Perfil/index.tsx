@@ -1,9 +1,10 @@
 import { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../../store/useAuthStore';
+import { usePerfilFoto } from '../../hooks/usePerfilFoto';
 import { toast } from '../../store/useToastStore';
 import { PerfilService, AutenticacaoService, UsuarioAtualizacaoRequestDTO } from '../../api';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   CheckCircle2,
   AlertTriangle,
@@ -37,6 +38,8 @@ export function PerfilPage() {
   const { language, setLanguage } = useI18nStore();
   const { theme, setTheme } = useThemeStore();
   const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const fotoUrl = usePerfilFoto();
   const tr = (pt: string, en: string) => (idioma === 'en-US' ? en : pt);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -58,17 +61,23 @@ export function PerfilPage() {
 
   useEffect(() => {
     setIdioma(language);
-  }, [language]);  useEffect(() => {
+  }, [language]);
+
+  useEffect(() => {
     if (cooldown <= 0) return;
     const timer = setInterval(() => {
       setCooldown(prev => Math.max(0, prev - 1));
     }, 1000);
     return () => clearInterval(timer);
-  }, [cooldown]);  const { data: resumo, isLoading: isLoadingResumo } = useQuery({
+  }, [cooldown]);
+
+  const { data: resumo, isLoading: isLoadingResumo } = useQuery({
     queryKey: ['perfil-resumo'],
     queryFn: () => PerfilService.obterResumoFinanceiro(),
     enabled: !!user,
-  });  const updatePerfilMutation = useMutation({
+  });
+
+  const updatePerfilMutation = useMutation({
     mutationFn: (data: UsuarioAtualizacaoRequestDTO) =>
       PerfilService.atualizarPerfil(data),
     onSuccess: (updatedUser) => {
@@ -78,17 +87,31 @@ export function PerfilPage() {
     onError: (error: unknown) => {
       toast.error(getApiErrorMessage(error, tr('Nao foi possivel salvar seu perfil agora. Verifique os dados e tente novamente.', 'Could not save your profile right now. Check your data and try again.')));
     }
-  });  const uploadFotoMutation = useMutation({
+  });
+
+  const uploadFotoMutation = useMutation({
     mutationFn: (file: Blob) => PerfilService.atualizarFoto({ file }),
-    onSuccess: () => {      PerfilService.obterPerfil().then(updatedUser => {
-        updateProfile(updatedUser);
-        toast.success(tr('Foto de perfil atualizada!', 'Profile photo updated!'), 3000);
-      });
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['perfil-foto'] });
+      toast.success(tr('Foto de perfil atualizada!', 'Profile photo updated!'), 3000);
     },
     onError: (error: unknown) => {
       toast.error(getApiErrorMessage(error, tr('Nao foi possivel enviar sua imagem de perfil. Tente novamente com outra imagem.', 'Could not upload your profile image. Try again with another image.')));
     }
-  });  const ativarContaMutation = useMutation({
+  });
+
+  const removerFotoMutation = useMutation({
+    mutationFn: () => PerfilService.removerFoto(),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['perfil-foto'] });
+      toast.success(tr('Foto de perfil removida.', 'Profile photo removed.'), 3000);
+    },
+    onError: (error: unknown) => {
+      toast.error(getApiErrorMessage(error, tr('Nao foi possivel remover a foto agora. Tente novamente.', 'Could not remove the photo right now. Please try again.')));
+    }
+  });
+
+  const ativarContaMutation = useMutation({
     mutationFn: (codigoAtivacao: string) => AutenticacaoService.verificarEmail({
       email: user?.email || '',
       codigo: codigoAtivacao
@@ -101,7 +124,9 @@ export function PerfilPage() {
     onError: (error: unknown) => {
       toast.error(getApiErrorMessage(error, tr('Codigo invalido ou expirado. Confira o e-mail e tente novamente.', 'Invalid or expired code. Check your email and try again.')));
     }
-  });  const reenviarCodigoMutation = useMutation({
+  });
+
+  const reenviarCodigoMutation = useMutation({
     mutationFn: () => AutenticacaoService.reenviarCodigo({
       email: user?.email || ''
     }),
@@ -205,10 +230,10 @@ export function PerfilPage() {
               
               <div className="relative group cursor-pointer mb-6" onClick={() => fileInputRef.current?.click()}>
                 <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full overflow-hidden border-4 border-foreground/10 shadow-2xl relative">
-                  {user?.fotoBase64 ? (
-                    <img 
-                      src={`data:image/png;base64,${user.fotoBase64}`} 
-                      alt={user.nome} 
+                  {fotoUrl ? (
+                    <img
+                      src={fotoUrl}
+                      alt={user?.nome}
                       className="w-full h-full object-cover transition-transform group-hover:scale-110 duration-500"
                     />
                   ) : (
@@ -229,10 +254,21 @@ export function PerfilPage() {
               <input 
                 type="file" 
                 ref={fileInputRef} 
-                onChange={handleFileChange} 
-                accept="image/*" 
-                className="hidden" 
+                onChange={handleFileChange}
+                accept="image/png,image/jpeg"
+                className="hidden"
               />
+
+              {fotoUrl && (
+                <button
+                  type="button"
+                  onClick={() => removerFotoMutation.mutate()}
+                  disabled={removerFotoMutation.isPending}
+                  className="text-2xs font-bold uppercase tracking-wider text-danger/80 hover:text-danger transition-colors mb-3 disabled:opacity-50"
+                >
+                  {tr('Remover foto', 'Remove photo')}
+                </button>
+              )}
 
               <h2 className="text-xl sm:text-2xl font-black text-foreground text-center mb-1">{user?.nome}</h2>
               <p className="text-muted-foreground text-xs sm:text-sm flex items-center gap-2 mb-6 font-medium text-center break-all">

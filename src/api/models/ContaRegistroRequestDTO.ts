@@ -5,5 +5,7 @@
 export type ContaRegistroRequestDTO = {
     nome: string;
     saldo?: number;
+    investimentoInicial?: number;
+    investimentoInicialDescricao?: string;
 };
 

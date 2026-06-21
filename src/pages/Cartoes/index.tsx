@@ -50,6 +50,7 @@ import { BANDEIRA_CARTAO_LABELS } from '../../lib/constants';
 import { useModalA11y } from '../../hooks/useModalA11y';
 import { cartoesApi } from '../../lib/cartoesApi';
 import { getApiErrorMessage } from '../../lib/errorMessage';
+import { invalidateFaturaQueries } from '../../lib/queryInvalidation';
 import { toast } from '../../store/useToastStore';
 import { useAuthStore } from '../../store/useAuthStore';
 import { useI18nStore } from '../../store/useI18nStore';
@@ -181,9 +182,7 @@ export const CartoesPage = () => {
         valorPago: Number(valorPagamento),
       }),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['faturas'] });
-      queryClient.invalidateQueries({ queryKey: ['cartoes'] });
-      queryClient.invalidateQueries({ queryKey: ['contas'] });
+      invalidateFaturaQueries(queryClient);
       toast.success(tr('Pagamento registrado com sucesso.', 'Payment registered successfully.'));
       setModalPagar(null);
       setValorPagamento('');

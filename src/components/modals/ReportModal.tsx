@@ -8,6 +8,7 @@ import { Input, Select } from '../ui/Input';
 import { useI18nStore } from '../../store/useI18nStore';
 import { toast } from '../../store/useToastStore';
 import { OpenAPI } from '../../api/core/OpenAPI';
+import { toLocalDateStr } from '../../lib/dateUtils';
 
 const tr = (language: 'pt-BR' | 'en-US', pt: string, en: string) =>
   language === 'en-US' ? en : pt;
@@ -59,8 +60,8 @@ export const ReportModal = ({ isOpen, onClose, tipoContextoFixo }: ReportModalPr
     }
 
     const date = new Date();
-    const start = new Date(date.getFullYear(), date.getMonth(), 1).toISOString().split('T')[0];
-    const end = new Date(date.getFullYear(), date.getMonth() + 1, 0).toISOString().split('T')[0];
+    const start = toLocalDateStr(new Date(date.getFullYear(), date.getMonth(), 1));
+    const end = toLocalDateStr(new Date(date.getFullYear(), date.getMonth() + 1, 0));
 
     setValue('dataInicio', start);
     setValue('dataFim', end);
@@ -71,10 +72,6 @@ export const ReportModal = ({ isOpen, onClose, tipoContextoFixo }: ReportModalPr
   const onSubmit = async (data: ReportFormValues) => {
     try {
       setIsSubmittingManual(true);
-      const token = typeof OpenAPI.TOKEN === 'function'
-        ? await OpenAPI.TOKEN({ method: 'POST', url: '/api/v1/relatorios/exportar' })
-        : OpenAPI.TOKEN;
-      
       const payload = {
           dataInicio: data.dataInicio,
           dataFim: data.dataFim,
@@ -83,9 +80,9 @@ export const ReportModal = ({ isOpen, onClose, tipoContextoFixo }: ReportModalPr
       };
       const response = await fetch(`${OpenAPI.BASE}/api/v1/relatorios/exportar?formato=${data.formato}`, {
           method: 'POST',
+          credentials: 'include',
           headers: {
               'Content-Type': 'application/json',
-              'Authorization': `Bearer ${token}`
           },
           body: JSON.stringify(payload)
       });
