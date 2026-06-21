@@ -17,7 +17,9 @@ export type DashboardResumoPeriodoResponseDTO = {
     totalDespesasPendentesAtual?: number;
     variacaoDespesasPercentual?: number;
     saldoContasAtual?: number;
+    saldoContasAnterior?: number;
     totalInvestidoAtual?: number;
+    totalInvestidoAnterior?: number;
     variacaoSaldoContasPercentual?: number;
     variacaoInvestimentosPercentual?: number;
 };

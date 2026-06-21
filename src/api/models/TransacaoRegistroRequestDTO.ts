@@ -12,6 +12,7 @@ export type TransacaoRegistroRequestDTO = {
     contaId?: number;
     cartaoId?: number;
     categoriaId?: number;
+    recorrenteId?: number;
     numeroParcela?: number;
     totalParcelas?: number;
     idempotencyKey: string;

@@ -3,12 +3,12 @@
 /* tslint:disable */
 /* eslint-disable */
 export type OtpStatusResponseDTO = {
-    status: string;
-    tentativasRestantes: number;
-    expiraEm: string;
+    status?: string;
+    tentativasRestantes?: number;
+    expiraEm?: string;
     bloqueadoAte?: string;
     proximoReenvioEm?: string;
     proximaTentativaEm?: string;
-    registroId: string;
+    registroId?: string;
 };
 

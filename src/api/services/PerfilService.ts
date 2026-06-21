@@ -6,6 +6,7 @@ import type { AlterarSenhaRequestDTO } from '../models/AlterarSenhaRequestDTO';
 import type { ConfirmarAlteracaoEmailRequestDTO } from '../models/ConfirmarAlteracaoEmailRequestDTO';
 import type { FotoResponseDTO } from '../models/FotoResponseDTO';
 import type { PerfilResumoResponseDTO } from '../models/PerfilResumoResponseDTO';
+import type { PreferenciaNotificacaoRequestDTO } from '../models/PreferenciaNotificacaoRequestDTO';
 import type { SolicitarAlteracaoEmailRequestDTO } from '../models/SolicitarAlteracaoEmailRequestDTO';
 import type { UsuarioAtualizacaoRequestDTO } from '../models/UsuarioAtualizacaoRequestDTO';
 import type { UsuarioResponseDTO } from '../models/UsuarioResponseDTO';
@@ -94,8 +95,49 @@ export class PerfilService {
         });
     }
     /**
+     * Atualizar preferências de notificação
+     * Liga (true) ou desliga (false) o envio de e-mails de lembrete de fatura para o usuário logado.
+     * @param requestBody
+     * @returns UsuarioResponseDTO OK
+     * @throws ApiError
+     */
+    public static atualizarNotificacoes(
+        requestBody: PreferenciaNotificacaoRequestDTO,
+    ): CancelablePromise<UsuarioResponseDTO> {
+        return __request(OpenAPI, {
+            method: 'PATCH',
+            url: '/api/usuarios/perfil/me/notificacoes',
+            body: requestBody,
+            mediaType: 'application/json',
+        });
+    }
+    /**
+     * Obter foto
+     * Retorna a foto de perfil (base64 + content-type), ou 204 se não houver.
+     * @returns FotoResponseDTO OK
+     * @throws ApiError
+     */
+    public static obterFoto(): CancelablePromise<FotoResponseDTO> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/usuarios/perfil/me/foto',
+        });
+    }
+    /**
+     * Remover foto
+     * Remove a foto de perfil do usuário logado.
+     * @returns any OK
+     * @throws ApiError
+     */
+    public static removerFoto(): CancelablePromise<any> {
+        return __request(OpenAPI, {
+            method: 'DELETE',
+            url: '/api/usuarios/perfil/me/foto',
+        });
+    }
+    /**
      * Upload de foto
-     * Realiza o upload real da foto de perfil para armazenamento local.
+     * Valida (magic bytes, máx 2MB) e grava a foto de perfil na tabela usuario_foto.
      * @param formData
      * @returns any OK
      * @throws ApiError
@@ -110,28 +152,6 @@ export class PerfilService {
             url: '/api/usuarios/perfil/me/foto',
             formData: formData,
             mediaType: 'multipart/form-data',
-        });
-    }
-    /**
-     * Obter foto
-     * @returns FotoResponseDTO OK
-     * @throws ApiError
-     */
-    public static obterFoto(): CancelablePromise<FotoResponseDTO> {
-        return __request(OpenAPI, {
-            method: 'GET',
-            url: '/api/usuarios/perfil/me/foto',
-        });
-    }
-    /**
-     * Remover foto
-     * @returns any OK
-     * @throws ApiError
-     */
-    public static removerFoto(): CancelablePromise<any> {
-        return __request(OpenAPI, {
-            method: 'DELETE',
-            url: '/api/usuarios/perfil/me/foto',
         });
     }
     /**

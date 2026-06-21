@@ -2,8 +2,10 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type FotoResponseDTO = {
-    fotoBase64?: string;
-    contentType?: string;
+export type RendimentoRegistroRequestDTO = {
+    investimentoId: number;
+    valor: number;
+    data: string;
+    observacao?: string;
 };
 

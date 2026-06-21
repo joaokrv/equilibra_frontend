@@ -2,14 +2,14 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
+import type { MovimentacaoInvestimentoResponseDTO } from './MovimentacaoInvestimentoResponseDTO';
 import type { PageableObject } from './PageableObject';
 import type { SortObject } from './SortObject';
-import type { TransacaoResponseDTO } from './TransacaoResponseDTO';
-export type PageTransacaoResponseDTO = {
+export type PageMovimentacaoInvestimentoResponseDTO = {
     totalPages?: number;
     totalElements?: number;
     size?: number;
-    content?: Array<TransacaoResponseDTO>;
+    content?: Array<MovimentacaoInvestimentoResponseDTO>;
     number?: number;
     first?: boolean;
     last?: boolean;

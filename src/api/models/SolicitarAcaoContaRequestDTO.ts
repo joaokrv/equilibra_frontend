@@ -3,13 +3,7 @@
 /* tslint:disable */
 /* eslint-disable */
 export type SolicitarAcaoContaRequestDTO = {
-    acao: SolicitarAcaoContaRequestDTO.acao;
+    acao: string;
     senha: string;
 };
-export namespace SolicitarAcaoContaRequestDTO {
-    export enum acao {
-        EXCLUIR = 'EXCLUIR',
-        DESATIVAR = 'DESATIVAR',
-    }
-}
 

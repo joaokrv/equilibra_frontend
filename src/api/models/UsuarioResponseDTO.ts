@@ -9,6 +9,7 @@ export type UsuarioResponseDTO = {
     isEmailVerificado?: boolean;
     celular?: string;
     moeda?: UsuarioResponseDTO.moeda;
+    notificacoesFaturaAtivo?: boolean;
 };
 export namespace UsuarioResponseDTO {
     export enum moeda {

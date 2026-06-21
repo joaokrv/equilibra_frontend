@@ -7,8 +7,8 @@ export type RelatorioFiltroDTO = {
     dataFim: string;
     tipoFiltro: RelatorioFiltroDTO.tipoFiltro;
     statusTransacao?: RelatorioFiltroDTO.statusTransacao;
-    dataFimValida?: boolean;
     intervaloValido?: boolean;
+    dataFimValida?: boolean;
 };
 export namespace RelatorioFiltroDTO {
     export enum tipoFiltro {

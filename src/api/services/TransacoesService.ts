@@ -34,19 +34,24 @@ export class TransacoesService {
     }
     /**
      * Excluir transação
-     * Remove logicamente uma transação e estorna seu impacto financeiro (saldo/limite).
+     * Remove logicamente uma transação e estorna seu impacto financeiro (saldo/limite). Use grupo=true para excluir todas as parcelas de uma compra parcelada.
      * @param id
+     * @param grupo
      * @returns any OK
      * @throws ApiError
      */
     public static deletarTransacao(
         id: number,
+        grupo: boolean = false,
     ): CancelablePromise<any> {
         return __request(OpenAPI, {
             method: 'DELETE',
             url: '/api/transacoes/{id}',
             path: {
                 'id': id,
+            },
+            query: {
+                'grupo': grupo,
             },
         });
     }

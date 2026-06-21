@@ -2,8 +2,7 @@
 /* istanbul ignore file */
 /* tslint:disable */
 /* eslint-disable */
-export type FotoResponseDTO = {
-    fotoBase64?: string;
-    contentType?: string;
+export type PreferenciaNotificacaoRequestDTO = {
+    notificacoesFaturaAtivo: boolean;
 };
 

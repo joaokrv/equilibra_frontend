@@ -5,13 +5,16 @@
 import type { InvestimentoAtualizacaoRequestDTO } from '../models/InvestimentoAtualizacaoRequestDTO';
 import type { InvestimentoRegistroRequestDTO } from '../models/InvestimentoRegistroRequestDTO';
 import type { InvestimentoResponseDTO } from '../models/InvestimentoResponseDTO';
+import type { MovimentacaoAtualizacaoRequestDTO } from '../models/MovimentacaoAtualizacaoRequestDTO';
+import type { MovimentacaoInvestimentoResponseDTO } from '../models/MovimentacaoInvestimentoResponseDTO';
+import type { PageMovimentacaoInvestimentoResponseDTO } from '../models/PageMovimentacaoInvestimentoResponseDTO';
+import type { RendimentoRegistroRequestDTO } from '../models/RendimentoRegistroRequestDTO';
 import type { CancelablePromise } from '../core/CancelablePromise';
 import { OpenAPI } from '../core/OpenAPI';
 import { request as __request } from '../core/request';
 export class InvestimentosService {
     /**
      * Atualizar investimento
-     * Edita nome, meta e tipo do investimento, incluindo tipo personalizado.
      * @param id
      * @param requestBody
      * @returns InvestimentoResponseDTO OK
@@ -33,7 +36,6 @@ export class InvestimentosService {
     }
     /**
      * Excluir investimento
-     * Realiza o soft delete do investimento. Só é permitido se o saldo estiver zerado.
      * @param id
      * @returns any OK
      * @throws ApiError
@@ -51,7 +53,6 @@ export class InvestimentosService {
     }
     /**
      * Atualizar meta
-     * Altera o valor do objetivo (meta final) de um investimento.
      * @param id
      * @param novaMeta
      * @returns InvestimentoResponseDTO OK
@@ -73,8 +74,47 @@ export class InvestimentosService {
         });
     }
     /**
+     * Editar movimentação
+     * Edita qualquer tipo de movimentação. Para APORTE/RESGATE, reverte o efeito anterior e recria. contaId obrigatório para APORTE/RESGATE.
+     * @param movId
+     * @param requestBody
+     * @returns MovimentacaoInvestimentoResponseDTO OK
+     * @throws ApiError
+     */
+    public static editarMovimentacao(
+        movId: number,
+        requestBody: MovimentacaoAtualizacaoRequestDTO,
+    ): CancelablePromise<MovimentacaoInvestimentoResponseDTO> {
+        return __request(OpenAPI, {
+            method: 'PUT',
+            url: '/api/investimentos/movimentacoes/{movId}',
+            path: {
+                'movId': movId,
+            },
+            body: requestBody,
+            mediaType: 'application/json',
+        });
+    }
+    /**
+     * Excluir movimentação
+     * Soft delete com reversão completa do efeito financeiro (saldo de conta e valorAtual do investimento).
+     * @param movId
+     * @returns any OK
+     * @throws ApiError
+     */
+    public static excluirMovimentacao(
+        movId: number,
+    ): CancelablePromise<any> {
+        return __request(OpenAPI, {
+            method: 'DELETE',
+            url: '/api/investimentos/movimentacoes/{movId}',
+            path: {
+                'movId': movId,
+            },
+        });
+    }
+    /**
      * Listar investimentos
-     * Retorna todos os investimentos ativos do usuário logado.
      * @returns InvestimentoResponseDTO OK
      * @throws ApiError
      */
@@ -86,7 +126,6 @@ export class InvestimentosService {
     }
     /**
      * Criar investimento
-     * Cria uma nova meta de investimento para o usuário logado.
      * @param requestBody
      * @returns InvestimentoResponseDTO OK
      * @throws ApiError
@@ -103,7 +142,6 @@ export class InvestimentosService {
     }
     /**
      * Resgatar valor
-     * Retira um valor do investimento e credita em uma conta bancária.
      * @param id
      * @param valor
      * @param contaId
@@ -128,8 +166,7 @@ export class InvestimentosService {
         });
     }
     /**
-     * Adicionar depósito
-     * Registra um aporte em um investimento, debitando o valor de uma conta bancária.
+     * Adicionar aporte
      * @param id
      * @param valor
      * @param contaId
@@ -151,6 +188,68 @@ export class InvestimentosService {
                 'valor': valor,
                 'contaId': contaId,
             },
+        });
+    }
+    /**
+     * Registrar rendimento
+     * Registra um rendimento (positivo ou negativo) em um investimento. Não movimenta conta bancária.
+     * @param requestBody
+     * @returns MovimentacaoInvestimentoResponseDTO OK
+     * @throws ApiError
+     */
+    public static registrarRendimento(
+        requestBody: RendimentoRegistroRequestDTO,
+    ): CancelablePromise<MovimentacaoInvestimentoResponseDTO> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/investimentos/rendimento',
+            body: requestBody,
+            mediaType: 'application/json',
+        });
+    }
+    /**
+     * Extrato de movimentações
+     * Retorna movimentações paginadas. Filtro padrão: últimos 30 dias. Tamanhos: 10, 20, 50.
+     * @param dataInicio
+     * @param dataFim
+     * @param tipo
+     * @param investimentoId
+     * @param page
+     * @param size
+     * @returns PageMovimentacaoInvestimentoResponseDTO OK
+     * @throws ApiError
+     */
+    public static listarMovimentacoes(
+        dataInicio?: string,
+        dataFim?: string,
+        tipo?: 'APORTE' | 'RESGATE' | 'RENDIMENTO',
+        investimentoId?: number,
+        page?: number,
+        size: number = 10,
+    ): CancelablePromise<PageMovimentacaoInvestimentoResponseDTO> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/investimentos/movimentacoes',
+            query: {
+                'dataInicio': dataInicio,
+                'dataFim': dataFim,
+                'tipo': tipo,
+                'investimentoId': investimentoId,
+                'page': page,
+                'size': size,
+            },
+        });
+    }
+    /**
+     * Preview de movimentações
+     * Retorna as últimas 5 movimentações de todos os investimentos do usuário.
+     * @returns MovimentacaoInvestimentoResponseDTO OK
+     * @throws ApiError
+     */
+    public static buscarPreview(): CancelablePromise<Array<MovimentacaoInvestimentoResponseDTO>> {
+        return __request(OpenAPI, {
+            method: 'GET',
+            url: '/api/investimentos/movimentacoes/preview',
         });
     }
 }

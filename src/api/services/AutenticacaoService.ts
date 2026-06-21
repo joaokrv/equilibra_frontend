@@ -19,14 +19,13 @@ import { request as __request } from '../core/request';
 export class AutenticacaoService {
     /**
      * Verificar e-mail
-     * Valida a conta do usuário usando o código de 6 dígitos enviado por e-mail.
      * @param requestBody
-     * @returns string OK
+     * @returns any OK
      * @throws ApiError
      */
     public static verificarEmail(
         requestBody: VerificarEmailRequestDTO,
-    ): CancelablePromise<string> {
+    ): CancelablePromise<Record<string, any>> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/auth/verificar-email',
@@ -36,7 +35,6 @@ export class AutenticacaoService {
     }
     /**
      * Solicitar recuperação de senha
-     * Envia um link de recuperação de senha para o e-mail informado.
      * @param requestBody
      * @returns string OK
      * @throws ApiError
@@ -52,8 +50,23 @@ export class AutenticacaoService {
         });
     }
     /**
+     * Solicitar ação de conta
+     * @param requestBody
+     * @returns any OK
+     * @throws ApiError
+     */
+    public static solicitarAcaoConta(
+        requestBody: SolicitarAcaoContaRequestDTO,
+    ): CancelablePromise<Record<string, any>> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/auth/solicitar-acao-conta',
+            body: requestBody,
+            mediaType: 'application/json',
+        });
+    }
+    /**
      * Resetar senha
-     * Redefine a senha do usuário usando o token de recuperação enviado por e-mail.
      * @param requestBody
      * @returns string OK
      * @throws ApiError
@@ -69,25 +82,7 @@ export class AutenticacaoService {
         });
     }
     /**
-     * Registrar novo usuário
-     * Cria uma conta pendente de verificação.
-     * @param requestBody
-     * @returns string OK
-     * @throws ApiError
-     */
-    public static registrar(
-        requestBody: UsuarioRegistroRequestDTO,
-    ): CancelablePromise<string> {
-        return __request(OpenAPI, {
-            method: 'POST',
-            url: '/api/auth/registrar',
-            body: requestBody,
-            mediaType: 'application/json',
-        });
-    }
-    /**
      * Renovar token
-     * Gera novo access token + rotaciona refresh token via cookie HttpOnly.
      * @param refreshToken
      * @returns AuthResponseDTO OK
      * @throws ApiError
@@ -105,14 +100,13 @@ export class AutenticacaoService {
     }
     /**
      * Reenviar código
-     * Gera um novo código de ativação e reenvia para o e-mail do usuário.
      * @param requestBody
-     * @returns string OK
+     * @returns any OK
      * @throws ApiError
      */
     public static reenviarCodigo(
         requestBody: ReenviarCodigoRequestDTO,
-    ): CancelablePromise<string> {
+    ): CancelablePromise<Record<string, any>> {
         return __request(OpenAPI, {
             method: 'POST',
             url: '/api/auth/reenviar-codigo',
@@ -122,7 +116,6 @@ export class AutenticacaoService {
     }
     /**
      * Reativar conta
-     * Reativa uma conta desativada após confirmação de identidade via senha.
      * @param requestBody
      * @returns string OK
      * @throws ApiError
@@ -138,8 +131,23 @@ export class AutenticacaoService {
         });
     }
     /**
+     * Solicitar pré-registro
+     * @param requestBody
+     * @returns OtpStatusResponseDTO OK
+     * @throws ApiError
+     */
+    public static preRegistrar(
+        requestBody: UsuarioRegistroRequestDTO,
+    ): CancelablePromise<OtpStatusResponseDTO> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/auth/pre-registrar',
+            body: requestBody,
+            mediaType: 'application/json',
+        });
+    }
+    /**
      * Logout
-     * Invalida a sessão do usuário e remove o cookie de refresh token.
      * @param refreshToken
      * @returns any OK
      * @throws ApiError
@@ -157,7 +165,6 @@ export class AutenticacaoService {
     }
     /**
      * Login de usuário
-     * Autentica o usuário, seta refresh token em cookie HttpOnly e retorna access token.
      * @param requestBody
      * @returns any OK
      * @throws ApiError
@@ -173,8 +180,23 @@ export class AutenticacaoService {
         });
     }
     /**
+     * Desativar conta
+     * @param requestBody
+     * @returns any OK
+     * @throws ApiError
+     */
+    public static desativarConta(
+        requestBody: ConfirmarAcaoContaRequestDTO,
+    ): CancelablePromise<Record<string, any>> {
+        return __request(OpenAPI, {
+            method: 'POST',
+            url: '/api/auth/desativar-conta',
+            body: requestBody,
+            mediaType: 'application/json',
+        });
+    }
+    /**
      * Validar token de recuperação
-     * Verifica se o token é válido e retorna o e-mail associado.
      * @param token
      * @returns string OK
      * @throws ApiError
@@ -191,25 +213,7 @@ export class AutenticacaoService {
         });
     }
     /**
-     * Solicitar pré-registro
-     * Inicia o fluxo de cadastro com OTP. Retorna registroId para validação.
-     * @param requestBody
-     * @returns OtpStatusResponseDTO OK
-     * @throws ApiError
-     */
-    public static preRegistrar(
-        requestBody: UsuarioRegistroRequestDTO,
-    ): CancelablePromise<OtpStatusResponseDTO> {
-        return __request(OpenAPI, {
-            method: 'POST',
-            url: '/api/auth/pre-registrar',
-            body: requestBody,
-            mediaType: 'application/json',
-        });
-    }
-    /**
      * Consultar status do OTP
-     * Retorna o estado atual do pré-registro.
      * @param registroId
      * @returns OtpStatusResponseDTO OK
      * @throws ApiError
@@ -226,52 +230,17 @@ export class AutenticacaoService {
         });
     }
     /**
-     * Solicitar ação de conta
-     * Valida senha e envia OTP tipado para excluir ou desativar conta.
-     * @param requestBody
-     * @returns any OK
-     * @throws ApiError
-     */
-    public static solicitarAcaoConta(
-        requestBody: SolicitarAcaoContaRequestDTO,
-    ): CancelablePromise<any> {
-        return __request(OpenAPI, {
-            method: 'POST',
-            url: '/api/auth/solicitar-acao-conta',
-            body: requestBody,
-            mediaType: 'application/json',
-        });
-    }
-    /**
      * Excluir conta
-     * Confirma exclusão permanente da conta via senha + OTP.
      * @param requestBody
      * @returns any OK
      * @throws ApiError
      */
     public static excluirConta(
         requestBody: ConfirmarAcaoContaRequestDTO,
-    ): CancelablePromise<any> {
+    ): CancelablePromise<Record<string, any>> {
         return __request(OpenAPI, {
             method: 'DELETE',
             url: '/api/auth/excluir-conta',
-            body: requestBody,
-            mediaType: 'application/json',
-        });
-    }
-    /**
-     * Desativar conta
-     * Confirma desativação da conta via senha + OTP.
-     * @param requestBody
-     * @returns any OK
-     * @throws ApiError
-     */
-    public static desativarConta(
-        requestBody: ConfirmarAcaoContaRequestDTO,
-    ): CancelablePromise<any> {
-        return __request(OpenAPI, {
-            method: 'POST',
-            url: '/api/auth/desativar-conta',
             body: requestBody,
             mediaType: 'application/json',
         });
